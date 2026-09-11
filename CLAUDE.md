@@ -77,10 +77,11 @@ If a console error, overlay, or warning shows up — in the user's browser or ou
 ## Milestone checklist
 
 1. `pnpm check` clean
-2. Playwright screenshots of every touched page, **both locales**, at 375 / 768 / 1280 / 1440 → `.artifacts/screens/<milestone>/`
-3. Compare honestly against `_context/brand/references/`; fix what's off; say what's still off
-4. Commit with a clear message
-5. Short summary to the user
+2. `pnpm test:e2e` green — including `console.spec.ts` (zero console errors **or warnings** on every route, both locales, and after client-side navigation) and `hydration.spec.ts`
+3. Playwright screenshots of every touched page, **both locales**, at 375 / 768 / 1280 / 1440 → `.artifacts/screens/<milestone>/`
+4. Compare honestly against `_context/brand/references/`; fix what's off; say what's still off
+5. Commit with a clear message
+6. Short summary to the user
 
 Never report a milestone complete with a failing check. If something is blocked, finish everything else and say exactly what was left and why.
 

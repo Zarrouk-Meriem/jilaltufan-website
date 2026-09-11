@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isNoiseSource } from '@/lib/dev/extension-noise-filter'
-
-const isNoise = new Function('args', `${isNoiseSource}; return isNoise(args)`) as (
-  args: unknown[],
-) => boolean
+import { isNoise } from '@/lib/dev/extension-noise-filter'
 
 const report = (diff: string) => [
   "%s A tree hydrated but some attributes of the server rendered HTML didn't match the client properties.",

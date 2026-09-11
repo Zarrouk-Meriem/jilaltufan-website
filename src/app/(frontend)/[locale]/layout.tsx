@@ -7,7 +7,6 @@ import { SiteHeader } from '@/components/layout/SiteHeader'
 import { SkipLink } from '@/components/layout/SkipLink'
 import { localeMeta, routing } from '@/i18n/routing'
 import { SITE_URL } from '@/lib/site'
-import { EXTENSION_NOISE_FILTER } from '@/lib/dev/extension-noise-filter'
 import { fontVariables } from '@/styles/fonts'
 import '@/styles/globals.css'
 
@@ -43,17 +42,12 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   const t = await getTranslations('a11y')
 
   return (
-    <html lang={meta.htmlLang} dir={meta.dir} className={fontVariables}>
-      {process.env.NODE_ENV !== 'production' ? (
-        <head>
-          {/* Dev only. Browser extensions (Bitdefender TrafficLight) stamp bis_skin_checked="1" on
-              every div before React hydrates — including Next's own metadata wrapper, which no
-              component of ours can suppress. Drop a hydration report ONLY when every differing
-              line is that attribute; any real mismatch still reaches the overlay. Guarded by
-              tests/e2e/hydration.spec.ts. */}
-          <script dangerouslySetInnerHTML={{ __html: EXTENSION_NOISE_FILTER }} />
-        </head>
-      ) : null}
+    <html
+      lang={meta.htmlLang}
+      dir={meta.dir}
+      className={fontVariables}
+      data-scroll-behavior="smooth"
+    >
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
           <SkipLink label={t('skipToContent')} />
