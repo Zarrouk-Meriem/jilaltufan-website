@@ -18,7 +18,7 @@ export function LanguageSwitch({
 }: {
   label: string
   className?: string
-  tone?: 'ink' | 'onNavy'
+  tone?: 'ink' | 'muted' | 'onNavy'
   alternates?: Partial<Record<Locale, string>>
 }) {
   const locale = useLocale() as Locale
@@ -39,8 +39,10 @@ export function LanguageSwitch({
       dir={other === 'ar' ? 'rtl' : 'ltr'}
       aria-label={`${label}: ${otherLabel}`}
       className={cn(
-        'link-grow relative inline-flex h-9 items-center text-sm font-medium',
-        tone === 'ink' ? 'text-ink-900' : 'text-on-navy',
+        'link-grow relative h-9 items-center text-sm font-medium',
+        tone === 'ink' && 'text-ink-900',
+        tone === 'muted' && 'font-normal text-ink-500 hover:text-ink-900',
+        tone === 'onNavy' && 'text-on-navy',
         className,
       )}
     >

@@ -48,6 +48,7 @@ After changing any collection or global: **`pnpm generate:types`** (wraps Payloa
 - Red (`--red-600`) is ~5–10% of any screen: the mark, primary CTAs, rules, active states. Nothing else.
 - On navy: text is white or `rgb(255 255 255 / .78)`. **Red is decorative on navy** (mark and rules only) — it fails text contrast.
 - **The mark is never a small UI indicator** (nav, bullets, badges) — user feedback. It appears as logo, hero/timeline station, and card corner notch only. State is shown with weight, colour, or a hairline.
+- **No utility row above the header** (user feedback). The header is one row: logo · five nav items · language switch · CTA. Student/Instructor windows live in the footer, the mobile menu, and contextual links.
 - Buttons and badges: 2px radius. The brand is angular; no pills.
 - Section rhythm: 128px desktop / 72px mobile. Content max-width 1200px; reading pages narrower.
 

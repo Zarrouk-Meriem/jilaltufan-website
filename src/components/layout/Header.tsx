@@ -72,33 +72,6 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
         compact ? 'shadow-[0_1px_0_0_var(--line)]' : 'shadow-[0_1px_0_0_transparent]',
       )}
     >
-      {/* Utility row — desktop only, collapses when compact */}
-      <div
-        className={cn(
-          'hidden overflow-hidden transition-[height,opacity] duration-200 ease-brand md:block',
-          compact ? 'h-0 opacity-0' : 'h-9 opacity-100',
-        )}
-      >
-        <nav
-          aria-label={labels.utilityNav}
-          className="container-site flex h-9 items-center justify-end gap-6 text-sm text-ink-500"
-        >
-          {utility.map((u) => (
-            <Link
-              key={u.href}
-              href={u.href as never}
-              className="link-grow relative hover:text-ink-900"
-            >
-              {u.label}
-            </Link>
-          ))}
-          <LanguageSwitch
-            label={labels.switchLanguage}
-            className="text-ink-500 hover:text-ink-900"
-          />
-        </nav>
-      </div>
-
       <div
         className={cn(
           'container-site flex items-center justify-between gap-6 transition-[height] duration-200 ease-brand',
@@ -139,7 +112,12 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-5">
+          <LanguageSwitch
+            label={labels.switchLanguage}
+            tone="muted"
+            className="hidden md:inline-flex"
+          />
           <ButtonLink href={apply.href as never} size="md" className="hidden sm:inline-flex">
             {apply.label}
           </ButtonLink>
@@ -204,7 +182,7 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
               </li>
             ))}
             <li>
-              <LanguageSwitch label={labels.switchLanguage} tone="onNavy" />
+              <LanguageSwitch label={labels.switchLanguage} tone="onNavy" className="inline-flex" />
             </li>
           </ul>
           <div className="mt-auto py-10">

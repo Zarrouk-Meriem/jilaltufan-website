@@ -102,7 +102,7 @@ export async function Footer({ locale }: { locale: string }) {
             <LanguageSwitch
               label={t('a11y.switchLanguage')}
               tone="onNavy"
-              className="h-auto text-xs"
+              className="inline-flex h-auto text-xs"
             />
           </div>
         </div>
