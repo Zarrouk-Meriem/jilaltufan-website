@@ -68,7 +68,12 @@ function findExtensions() {
       if (m.type() === 'error' || m.type() === 'warning')
         msgs.push(m.type() + ': ' + m.text().split('\n')[0].slice(0, 140))
     })
-    page.on('pageerror', (e) => msgs.push('pageerror: ' + e.message.slice(0, 140)))
+    page.on('pageerror', (e) => {
+      // Only an error with a frame of ours is ours; extension content scripts throw into the page too
+      // (e.g. Chrome's "message channel closed before a response was received").
+      const ours = /localhost:\d+\//.test(e.stack ?? '')
+      msgs.push((ours ? 'pageerror: ' : 'ext-pageerror (ignored): ') + e.message.slice(0, 140))
+    })
     page.on('console', async (m) => {
       if (m.type() !== 'error' || !/hydrat/i.test(m.text())) return
       const args = await Promise.all(m.args().map((a) => a.jsonValue().catch(() => '')))

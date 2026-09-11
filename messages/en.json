@@ -27,7 +27,8 @@
     "instructors": "Instructor window",
     "apply": "Apply now",
     "contact": "Contact",
-    "projects": "Projects"
+    "projects": "Projects",
+    "knowledgeHub": "Content & knowledge"
   },
   "footer": {
     "explore": "Explore",
@@ -314,5 +315,209 @@
     "backHome": "Home",
     "otherPrograms": "Other programs",
     "turnstileLabel": "Security check"
+  },
+  "students": {
+    "title": "Student **window**",
+    "intro": "Everything you need in one place: how sessions work, how to join, and your program's schedule and materials.",
+    "howTitle": "How do live sessions work?",
+    "how": [
+      "All sessions are live on Zoom; there are no recordings.",
+      "Each program has eight sessions per season, one each month from September to April.",
+      "Times are announced in Al-Quds time; the site shows your local time beside them.",
+      "You receive each session's link by email before it starts, and the join button appears on the site {minutes} minutes before."
+    ],
+    "joinTitle": "How do I join on Zoom?",
+    "join": [
+      "Install the Zoom app on your phone or computer in advance.",
+      "Open the session link from the email, or from the schedule when the join button appears.",
+      "Join with your real name as registered so the instructor recognises you.",
+      "Keep your microphone muted until you're invited to speak."
+    ],
+    "myScheduleTitle": "My program's schedule",
+    "pickProgram": "Choose your program",
+    "fullSchedule": "Full schedule for this program",
+    "noSessions": "Sessions for this program haven't been published yet.",
+    "materialsTitle": "My program's materials",
+    "noMaterials": "No materials have been published for this program yet.",
+    "conductTitle": "Code of conduct",
+    "conduct": ["[Placeholder — to be defined by the Academy's team]"],
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "q": "Are sessions recorded?",
+        "a": "No. All sessions are live only."
+      },
+      {
+        "q": "What if I miss a session?",
+        "a": "Contact the Academy through the contact form; there are no recordings, but session materials may be available."
+      },
+      {
+        "q": "In which time zone are times announced?",
+        "a": "Al-Quds time. The site shows your local time next to each session."
+      },
+      {
+        "q": "How will I know my application was accepted?",
+        "a": "The Academy's team contacts you by email after reviewing it."
+      }
+    ],
+    "accountTitle": "My account",
+    "accountSoon": "Coming soon",
+    "accountBody": "You'll be able to follow your sessions and materials from your own account.",
+    "contactTitle": "Have a question?",
+    "contactBody": "The Academy's team answers through the contact form."
+  },
+  "instructors": {
+    "title": "Instructor **window**",
+    "intro": "The instructor directory, and what an instructor needs to deliver a session and share materials.",
+    "directoryTitle": "Instructors",
+    "empty": "Instructor profiles haven't been published yet.",
+    "forTitle": "For instructors",
+    "guidelinesTitle": "Session guidelines",
+    "guidelines": [
+      "Sessions are live on Zoom in Al-Quds time; please join ten minutes early.",
+      "The default session length is 90 minutes.",
+      "The Academy sends the Zoom link to participants; don't share links publicly."
+    ],
+    "materialsTitle": "Sharing materials",
+    "materialsBody": "Send PDFs or links to the Academy's email or through the contact form; the team publishes them on the materials page.",
+    "scheduleTitle": "My sessions",
+    "scheduleBody": "Your upcoming sessions appear on your profile page.",
+    "contactTitle": "Contact the Academy",
+    "profilePrograms": "Programs",
+    "profileSessions": "Upcoming sessions",
+    "noUpcoming": "No upcoming sessions.",
+    "allInstructors": "All instructors",
+    "links": "Links"
+  },
+  "knowledge": {
+    "title": "Content & **knowledge**",
+    "intro": "Minbar Al-Toufan, and lectures and learning materials.",
+    "minbarTitle": "Minbar Al-Toufan",
+    "minbarIntro": "Articles and knowledge pieces from the Academy.",
+    "minbarEmpty": "No posts have been published yet.",
+    "allPosts": "All posts",
+    "materialsTitle": "Lectures & materials",
+    "materialsIntro": "Files, links, and readings tied to programs and sessions.",
+    "materialsEmpty": "No materials have been published yet.",
+    "allMaterials": "All materials",
+    "by": "By",
+    "tags": "Tags",
+    "readingTime": "",
+    "pdf": "PDF",
+    "link": "Link",
+    "reading": "Reading",
+    "open": "Open",
+    "download": "Download",
+    "forProgram": "Program",
+    "allPrograms": "All programs",
+    "filterLabel": "Filter by program"
+  },
+  "contact": {
+    "title": "**Contact** us",
+    "intro": "We usually reply within a few days by email.",
+    "email": "Email",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message"
+    },
+    "hints": {
+      "message": "At least 10 characters."
+    },
+    "errors": {
+      "required": "This field is required.",
+      "email": "Enter a valid email address.",
+      "tooLong": "This is longer than allowed.",
+      "messageShort": "Write at least 10 characters.",
+      "spam": "The message could not be sent.",
+      "rateLimited": "Too many messages in a short time. Please try again shortly.",
+      "server": "Something went wrong. Please try again.",
+      "formInvalid": "Please review the highlighted fields."
+    },
+    "submit": "Send message",
+    "submitting": "Sending…",
+    "successTitle": "We received your message",
+    "successBody": "Thank you. We'll reply to your email address."
+  },
+  "privacy": {
+    "title": "Privacy policy",
+    "draftNote": "Draft — pending the Academy's review and approval.",
+    "updated": "Last updated: {date}",
+    "sections": [
+      {
+        "h": "What we collect",
+        "p": [
+          "When you apply we collect: full name, email, phone (optional), country, city (optional), age range, your motivation, and how you heard about the Academy (optional).",
+          "When you contact us we collect: name, email, subject, and your message."
+        ]
+      },
+      {
+        "h": "Why we collect it",
+        "p": [
+          "To review applications and contact applicants, to send registered participants the links and times of live sessions, and to reply to messages."
+        ]
+      },
+      {
+        "h": "Who can see it",
+        "p": [
+          "Only the Academy's team responsible for running the programs. We do not sell data or share it with third parties for marketing.",
+          "Data is stored with the hosting and email providers the Academy contracts."
+        ]
+      },
+      {
+        "h": "How long we keep it",
+        "p": [
+          "For as long as it is needed to run the program you applied to; then it is deleted or anonymised unless the law requires otherwise."
+        ]
+      },
+      {
+        "h": "Your rights",
+        "p": [
+          "You can ask to access, correct, or delete your data by writing to the address below."
+        ]
+      },
+      {
+        "h": "Cookies",
+        "p": [
+          "The site uses a single cookie to remember your preferred language. We use no advertising trackers."
+        ]
+      },
+      {
+        "h": "Contact",
+        "p": ["For any question about this policy: {email}"]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms",
+    "draftNote": "Draft — pending the Academy's review and approval.",
+    "sections": [
+      {
+        "h": "Using the site",
+        "p": [
+          "This site is the digital home of Jeel Al-Toufan Academy. Its content is for reading and learning; please don't republish it without permission."
+        ]
+      },
+      {
+        "h": "Program registration",
+        "p": [
+          "Submitting an application does not mean automatic acceptance unless the program is open-registration. The Academy reviews applications and contacts applicants.",
+          "Information given in an application must be accurate."
+        ]
+      },
+      {
+        "h": "Live sessions",
+        "p": [
+          "Zoom links are for registered participants and must not be shared. The Academy may change times or cancel sessions, notifying registrants."
+        ]
+      },
+      {
+        "h": "Conduct",
+        "p": [
+          "Participants are expected to follow the code of conduct published in the student window."
+        ]
+      }
+    ]
   }
 }
