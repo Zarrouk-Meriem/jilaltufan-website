@@ -25,7 +25,7 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 - [ ] **P1 — Real session dates and Zoom links** for the 2026/2027 season. _48 placeholder sessions exist, one per month Sep→Apr, with no Zoom URLs._
 - [ ] **P1 — Instructors:** names, roles, short bios, photos. _Seeded as «[اسم المحاضر]», no photos, no invented biography. Sessions currently have no instructor attached — this is deliberate._
 - [ ] **P1 — الهيكلة والمجالس والفرق** — council and team structure for `/about/structure`.
-- [ ] **P2 — مخيمات جيل الطوفان** — the camp's week programme, dates, location, and photos. *The Camp page renders programme-by-day, details, and a lightbox gallery as soon as they are entered; all three sections hide until then.*
+- [ ] **P2 — مخيمات جيل الطوفان** — the camp's week programme, dates, location, and photos. _The Camp page renders programme-by-day, details, and a lightbox gallery as soon as they are entered; all three sections hide until then._
 - [ ] **P2 — المشاريع والمبادرات** — projects for `/projects`.
 - [ ] **P2 — منبر الطوفان** — at least three posts, or the home section stays hidden (by design).
 - [ ] **P2 — Code of conduct** and the student FAQ for `/students`.
@@ -46,7 +46,7 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 - [ ] **P1 — `contact@jilaltufan.com`** — create the mailbox; it receives application and contact notifications.
 - [ ] **P2 — Social links** (Instagram, X, YouTube, Telegram…) for the footer and JSON-LD `sameAs`.
 - [ ] **P2 — Registration mode per program.** Default is `application` for all six. Confirm, or mark specific programs `open`.
-- [ ] **P2 — Join-link policy.** Default is `window` (link appears 30 min before start). Alternatives: `always`, `email-only`. *Enforced in the query layer: the Zoom URL is not in the HTML outside the window.*
+- [ ] **P2 — Join-link policy.** Default is `window` (link appears 30 min before start). Alternatives: `always`, `email-only`. _Enforced in the query layer: the Zoom URL is not in the HTML outside the window._
 - [ ] **P2 — Academy time zone.** Default `Asia/Hebron`, labelled «بتوقيت القدس». Confirm.
 - [ ] **P3 — Red display type on navy** — brand does it (refs 07, 08), WCAG fails it. See `PLAN.md` §2.2 for the compromise; confirm or override.
 

@@ -15,6 +15,8 @@ const routes = [
   '/events',
   '/events/jeel-altoufan-camp',
   '/projects',
+  '/apply',
+  '/apply/palestine-our-compass',
   '/styleguide',
   '/this-page-does-not-exist',
 ]

@@ -252,5 +252,67 @@
     "upcoming": "Upcoming",
     "completed": "Completed",
     "allProjects": "All projects"
+  },
+  "apply": {
+    "title": "**Apply** now",
+    "intro": "Choose the program that fits you. Registration is short, and we follow up by email.",
+    "chooseProgram": "Choose a program",
+    "formTitle": "Apply to {program}",
+    "formTitleOpen": "Register for {program}",
+    "formIntro": "Fill in the form below. Fields marked with a star are required.",
+    "closedTitle": "Registration is currently closed",
+    "closedBody": "Registration for \"{program}\" is closed at the moment. Contact us if you have questions, or explore the other programs.",
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone / WhatsApp",
+      "country": "Country",
+      "city": "City",
+      "ageRange": "Age range",
+      "motivation": "Why do you want to join this program?",
+      "hearAbout": "How did you hear about the Academy?",
+      "consent": "I agree to my data being processed according to the <privacy>privacy policy</privacy>."
+    },
+    "hints": {
+      "email": "We send the confirmation and session links here.",
+      "phone": "Optional. With country code.",
+      "motivation": "A few sentences are enough. At least 20 characters.",
+      "hearAbout": "Optional."
+    },
+    "ages": {
+      "under-18": "Under 18",
+      "18-24": "18–24",
+      "25-34": "25–34",
+      "35-44": "35–44",
+      "45-plus": "45 and over"
+    },
+    "agePlaceholder": "Select",
+    "errors": {
+      "required": "This field is required.",
+      "email": "Enter a valid email address.",
+      "tooLong": "This is longer than allowed.",
+      "motivationShort": "Write at least 20 characters.",
+      "consent": "Agreeing to the privacy policy is required.",
+      "spam": "The form could not be sent.",
+      "rateLimited": "Too many submissions in a short time. Please try again in a few minutes.",
+      "turnstile": "We couldn't verify you're not a robot. Please try again.",
+      "programNotFound": "Program not found.",
+      "programClosed": "Registration for this program is closed.",
+      "server": "Something went wrong. Please try again or contact us.",
+      "formInvalid": "Please review the highlighted fields."
+    },
+    "submit": "Send application",
+    "submitOpen": "Register now",
+    "submitting": "Sending…",
+    "successOpenTitle": "You're registered",
+    "successOpenBody": "You're registered for \"{program}\". We sent a confirmation to <bdi>{email}</bdi> and will email the link to each session before it starts.",
+    "successApplicationTitle": "We received your application",
+    "successApplicationBody": "We received your application to \"{program}\". We sent a confirmation to <bdi>{email}</bdi>; the Academy's team will be in touch after review.",
+    "successNext": "In the meantime",
+    "seeSchedule": "See the session schedule",
+    "studentWindow": "Student window",
+    "backHome": "Home",
+    "otherPrograms": "Other programs",
+    "turnstileLabel": "Security check"
   }
 }
