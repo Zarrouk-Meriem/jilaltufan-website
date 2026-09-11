@@ -1,0 +1,20 @@
+/* Academy branding inside the Payload admin. Kept minimal on purpose. */
+.jaa-admin-logo {
+  display: inline-block;
+  max-width: 260px;
+}
+.jaa-admin-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* Same specificity as the rule above, later in the sheet, so it wins. */
+.jaa-admin-logo .jaa-admin-logo__dark {
+  display: none;
+}
+[data-theme='dark'] .jaa-admin-logo .jaa-admin-logo__light {
+  display: none;
+}
+[data-theme='dark'] .jaa-admin-logo .jaa-admin-logo__dark {
+  display: block;
+}

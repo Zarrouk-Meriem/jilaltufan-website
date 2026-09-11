@@ -34,7 +34,16 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
-    meta: { titleSuffix: ' — أكاديمية جيل الطوفان' },
+    meta: {
+      titleSuffix: ' — أكاديمية جيل الطوفان',
+      icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/brand/favicon.svg' }],
+    },
+    components: {
+      graphics: {
+        Logo: '@/components/admin/Logo#Logo',
+        Icon: '@/components/admin/Icon#Icon',
+      },
+    },
     livePreview: {
       breakpoints: [
         { label: 'Mobile', name: 'mobile', width: 375, height: 812 },

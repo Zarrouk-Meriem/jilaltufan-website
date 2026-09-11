@@ -32,6 +32,11 @@ export default defineConfig([
     rules: { '@typescript-eslint/no-unused-vars': 'off' },
   },
   {
+    // Admin branding renders inside Payload's tree; a plain <img> is the right tool there.
+    files: ['src/components/admin/**/*.tsx'],
+    rules: { '@next/next/no-img-element': 'off' },
+  },
+  {
     files: ['scripts/**/*.cjs'],
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
