@@ -11,6 +11,10 @@ const routes = [
   '/about/structure',
   '/programs',
   '/programs/palestine-our-compass',
+  '/schedule',
+  '/events',
+  '/events/jeel-altoufan-camp',
+  '/projects',
   '/styleguide',
   '/this-page-does-not-exist',
 ]

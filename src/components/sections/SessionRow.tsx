@@ -1,4 +1,6 @@
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
+import { ButtonLink } from '@/components/ui/Button'
+import { AddToCalendar } from './AddToCalendar'
 import { DateBlock } from '@/components/ui/DateBlock'
 import { LocalTime } from '@/components/ui/LocalTime'
 import { Link } from '@/i18n/navigation'
@@ -28,6 +30,9 @@ export type SessionRowProps = {
   localLabel: string
   href?: string
   className?: string
+  joinUrl?: string | null
+  joinLabel?: string
+  calendar?: { icsHref: string; googleHref: string; icsLabel: string; googleLabel: string }
 }
 
 /** One session, as a calm row: date block · program + title · time (Al-Quds + local) · state. */
@@ -71,6 +76,21 @@ export function SessionRow(p: SessionRowProps) {
           />
           {p.instructor ? <span className="text-ink-500">· {p.instructor}</span> : null}
         </div>
+        {p.calendar || p.joinUrl ? (
+          <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2">
+            {p.joinUrl && p.joinLabel ? (
+              <ButtonLink
+                href={p.joinUrl as never}
+                size="sm"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {p.joinLabel}
+              </ButtonLink>
+            ) : null}
+            {p.calendar ? <AddToCalendar {...p.calendar} /> : null}
+          </div>
+        ) : null}
       </div>
       <Badge tone={tone[p.state]} pulse={p.state === 'live'} className="mt-1 shrink-0">
         {p.stateLabel}

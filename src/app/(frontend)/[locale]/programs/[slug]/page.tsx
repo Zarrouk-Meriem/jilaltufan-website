@@ -3,6 +3,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/content/Prose'
 import { PageIntro } from '@/components/sections/PageIntro'
+import { AddToCalendar } from '@/components/sections/AddToCalendar'
+import { RefreshAtBoundary } from '@/components/sections/RefreshAtBoundary'
 import { Accordion } from '@/components/ui/Accordion'
 import { Badge } from '@/components/ui/Badge'
 import { ButtonLink } from '@/components/ui/Button'
@@ -20,7 +22,7 @@ import {
 } from '@/lib/queries'
 import { rels } from '@/lib/relations'
 import { formatInZone } from '@/lib/time'
-import { ordinalFor, registrationBadge, sessionView } from '@/lib/view'
+import { nextBoundaryMs, ordinalFor, registrationBadge, sessionView } from '@/lib/view'
 
 export const revalidate = 60
 
@@ -112,6 +114,19 @@ export default async function ProgramPage({ params }: PageProps<'/[locale]/progr
           {s.materialsNote ? (
             <p className="measure text-sm text-ink-500">{s.materialsNote}</p>
           ) : null}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            {v.joinUrl ? (
+              <ButtonLink
+                href={v.joinUrl as never}
+                size="sm"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('session.joinNow')}
+              </ButtonLink>
+            ) : null}
+            <AddToCalendar {...v.calendar} />
+          </div>
         </div>
       ),
     }
@@ -238,6 +253,7 @@ export default async function ProgramPage({ params }: PageProps<'/[locale]/progr
               intro={t('program.sessionsIntro')}
             />
             <div className="mt-8">
+              <RefreshAtBoundary inMs={nextBoundaryMs(sessions, settings.joinWindowMinutes, now)} />
               {items.length ? (
                 <Accordion items={items} />
               ) : (

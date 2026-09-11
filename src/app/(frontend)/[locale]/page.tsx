@@ -139,9 +139,21 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                     {next.parts.dateTime} · {t('common.alQudsTime')}
                   </span>
                 </Link>
-              ) : (
+              ) : null}
+              {next?.joinUrl ? (
+                <ButtonLink
+                  href={next.joinUrl as never}
+                  size="sm"
+                  className="ms-6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t('session.joinNow')}
+                </ButtonLink>
+              ) : null}
+              {!next ? (
                 <p className="text-sm text-on-navy-muted">{t('home.nextSessionEmpty')}</p>
-              )}
+              ) : null}
             </div>
           ) : null}
         </div>

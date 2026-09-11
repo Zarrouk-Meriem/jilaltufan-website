@@ -3,7 +3,8 @@ import type { Locale } from '@/i18n/routing'
 import type { Program } from '@/payload-types'
 import type { PublicSession } from '@/lib/queries'
 import { rel, rels } from '@/lib/relations'
-import { formatInZone, getSessionState, type SessionState } from '@/lib/time'
+import { googleCalendarUrl } from '@/lib/calendar'
+import { formatInZone, getSessionState, msUntilNextBoundary, type SessionState } from '@/lib/time'
 
 type T = (key: string, values?: Record<string, string | number | Date>) => string
 
@@ -57,7 +58,39 @@ export function sessionView(
     href: program ? `/programs/${program.slug}#session-${s.number}` : undefined,
     instructor: instructors.map((i) => i.name).join('، ') || null,
     number: s.number,
+    joinUrl: s.joinUrl,
+    calendar: {
+      icsHref: `/${locale}/sessions/${s.id}/calendar.ics`,
+      googleHref: googleCalendarUrl({
+        uid: String(s.id),
+        title: program ? `${program.title} — ${s.title}` : s.title,
+        description: t('session.calendarDescription', { program: program?.title ?? '' }),
+        location: t('session.calendarLocation'),
+        start: new Date(s.startsAt),
+        end: new Date(new Date(s.startsAt).getTime() + (s.durationMinutes ?? 90) * 60_000),
+      }),
+      icsLabel: t('session.ics'),
+      googleLabel: t('session.google'),
+    },
   }
+}
+
+/** Milliseconds until the earliest state change among these sessions (for RefreshAtBoundary). */
+export function nextBoundaryMs(
+  sessions: PublicSession[],
+  windowMinutes: number,
+  now = new Date(),
+): number | null {
+  let min: number | null = null
+  for (const s of sessions) {
+    const ms = msUntilNextBoundary(
+      { startsAt: s.startsAt, durationMinutes: s.durationMinutes, sessionStatus: s.sessionStatus },
+      now,
+      windowMinutes,
+    )
+    if (ms !== null && (min === null || ms < min)) min = ms
+  }
+  return min
 }
 
 export function ordinalFor(index: number, t: { raw: (key: string) => unknown }): string {

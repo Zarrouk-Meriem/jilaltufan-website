@@ -26,7 +26,8 @@
     "students": "Student window",
     "instructors": "Instructor window",
     "apply": "Apply now",
-    "contact": "Contact"
+    "contact": "Contact",
+    "projects": "Projects"
   },
   "footer": {
     "explore": "Explore",
@@ -105,7 +106,7 @@
     "campIntro": "A full week of meeting, work, and formation — once a year.",
     "campCta": "About the camp",
     "minbarTitle": "From **Minbar Al-Toufan**",
-    "instructorsTitle": "**Instructors**",
+    "instructorsTitle": "Instructors",
     "closingTitle": "Your place is **with us**",
     "closingText": "Apply to the program that fits you and begin your season with Jeel Al-Toufan.",
     "viewSchedule": "Full schedule",
@@ -194,6 +195,62 @@
     "join": "Join on Zoom",
     "addToCalendar": "Add to calendar",
     "minutes": "{n} min",
-    "details": "Details"
+    "details": "Details",
+    "joinNow": "Join now",
+    "joinSoon": "Link appears {minutes} min before start",
+    "emailOnly": "Link sent by email",
+    "ics": "Calendar file (.ics)",
+    "google": "Google Calendar",
+    "calendarDescription": "Live session on Zoom from {program} — Jeel Al-Toufan Academy. The link is sent to registered participants.",
+    "calendarLocation": "Live on Zoom"
+  },
+  "schedule": {
+    "title": "Session **schedule**",
+    "intro": "Every upcoming live session across programs, in Al-Quds time and yours. Pick a program to filter — the link is shareable.",
+    "allPrograms": "All programs",
+    "filterLabel": "Filter by program",
+    "empty": "No sessions have been published yet.",
+    "emptyForProgram": "No sessions have been published for this program yet.",
+    "past": "Past sessions",
+    "upcoming": "Upcoming sessions",
+    "showPast": "Show past sessions",
+    "joinNote": "The join button appears {minutes} minutes before a session starts.",
+    "joinEmailOnly": "Join links are emailed to registered participants before each session.",
+    "month": "{month} {year}"
+  },
+  "events": {
+    "title": "Events",
+    "intro": "The Jeel Al-Toufan camps, activities, and seminars connected to the Academy.",
+    "camp": "Camp",
+    "activity": "Activity",
+    "seminar": "Seminar",
+    "online": "Online",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "empty": "No events have been published yet.",
+    "programme": "Camp programme",
+    "details": "Details",
+    "gallery": "Gallery",
+    "register": "Register for this event",
+    "registerExternal": "Register via link",
+    "registrationNone": "No registration needed",
+    "dates": "Dates",
+    "location": "Location",
+    "day": "Day {n}",
+    "openImage": "View image {n} of {total}",
+    "closeLightbox": "Close",
+    "prevImage": "Previous image",
+    "nextImage": "Next image",
+    "allEvents": "All events",
+    "toDate": "to"
+  },
+  "projects": {
+    "title": "Projects & **initiatives**",
+    "intro": "What the Academy works on beyond the classroom.",
+    "empty": "No projects have been published yet.",
+    "ongoing": "Ongoing",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "allProjects": "All projects"
   }
 }
