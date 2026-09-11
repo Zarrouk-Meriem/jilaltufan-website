@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { ApplySection } from '@/components/forms/ApplySection'
@@ -21,6 +22,7 @@ export async function generateMetadata({
   ])
   if (!p) return {}
   return {
+    alternates: alternatesFor(locale as Locale, `/apply/${programSlug}`),
     title:
       p.registrationMode === 'open'
         ? t('formTitleOpen', { program: p.title })

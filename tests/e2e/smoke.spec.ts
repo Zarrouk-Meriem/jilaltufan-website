@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
+import { isDevServer } from './helpers/dev'
 
 const locales = [
   { code: 'ar', dir: 'rtl' },
@@ -39,6 +40,11 @@ for (const { code, dir } of locales) {
       test(`${route} renders with lang/dir and no serious axe violations`, async ({ page }) => {
         const res = await page.goto(`/${code}${route}`)
         const is404 = route.includes('does-not-exist')
+        // The styleguide is dev-only (STYLEGUIDE_ENABLED): a production server must 404 it.
+        if (route === '/styleguide' && !(await isDevServer(page))) {
+          expect(res?.status()).toBe(404)
+          return
+        }
         expect(res?.status()).toBe(is404 ? 404 : 200)
         await expect(page.locator('html')).toHaveAttribute('lang', code)
         await expect(page.locator('html')).toHaveAttribute('dir', dir)

@@ -1,4 +1,5 @@
 import { expect, test, type BrowserContext } from '@playwright/test'
+import { skipUnlessDev } from './helpers/dev'
 
 const routes = [
   '/ar',
@@ -79,6 +80,9 @@ test.describe('hydration', () => {
     const page = await context.newPage()
     const errs = collectHydrationErrors(page)
     await page.goto('/ar', { waitUntil: 'networkidle' })
+    // Production React reports mismatches through onRecoverableError, not console.error,
+    // and the filter under test is dev-only anyway.
+    await skipUnlessDev(page, 'checks that the dev-only filter is not a blanket suppression')
     await page.waitForTimeout(800)
     expect(errs.length).toBeGreaterThan(0)
     await context.close()

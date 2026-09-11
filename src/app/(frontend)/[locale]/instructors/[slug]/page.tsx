@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/content/Prose'
@@ -32,6 +33,7 @@ export async function generateMetadata({
   const i = await getInstructorBySlug(locale as Locale, slug)
   if (!i) return {}
   return {
+    alternates: alternatesFor(locale as Locale, `/instructors/${slug}`),
     title: i.seo?.title || i.name,
     description: i.seo?.description || i.shortBio || undefined,
   }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { Lock } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { MaterialRow } from '@/components/sections/MaterialRow'
@@ -24,7 +25,11 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/students'>): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'students' })
-  return { title: stripAccent(t('title')), description: t('intro') }
+  return {
+    alternates: alternatesFor(locale as Locale, '/students'),
+    title: stripAccent(t('title')),
+    description: t('intro'),
+  }
 }
 
 export default async function StudentsPage({

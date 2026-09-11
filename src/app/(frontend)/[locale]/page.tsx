@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { InstructorCard } from '@/components/sections/InstructorCard'
 import { ProgramCard } from '@/components/sections/ProgramCard'
@@ -31,7 +32,11 @@ export const revalidate = 60
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'site' })
-  return { title: { absolute: `${t('name')} — ${t('tagline')}` }, description: t('description') }
+  return {
+    alternates: alternatesFor(locale as Locale, '/'),
+    title: { absolute: `${t('name')} — ${t('tagline')}` },
+    description: t('description'),
+  }
 }
 
 export default async function HomePage({ params }: PageProps<'/[locale]'>) {

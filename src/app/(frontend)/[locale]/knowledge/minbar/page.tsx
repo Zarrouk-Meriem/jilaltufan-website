@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { PageIntro } from '@/components/sections/PageIntro'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -14,7 +15,11 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/knowledge/minbar'>): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'knowledge' })
-  return { title: t('minbarTitle'), description: t('minbarIntro') }
+  return {
+    alternates: alternatesFor(locale as Locale, '/knowledge/minbar'),
+    title: t('minbarTitle'),
+    description: t('minbarIntro'),
+  }
 }
 
 export default async function MinbarIndex({ params }: PageProps<'/[locale]/knowledge/minbar'>) {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { MaterialRow } from '@/components/sections/MaterialRow'
 import { PageIntro } from '@/components/sections/PageIntro'
@@ -19,7 +20,11 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/knowledge'>): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'knowledge' })
-  return { title: stripAccent(t('title')), description: t('intro') }
+  return {
+    alternates: alternatesFor(locale as Locale, '/knowledge'),
+    title: stripAccent(t('title')),
+    description: t('intro'),
+  }
 }
 
 export default async function KnowledgePage({ params }: PageProps<'/[locale]/knowledge'>) {

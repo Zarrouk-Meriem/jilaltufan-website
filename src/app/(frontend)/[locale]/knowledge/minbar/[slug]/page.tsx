@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/content/Prose'
@@ -26,6 +27,7 @@ export async function generateMetadata({
   const p = await getMinbarPostBySlug(locale as Locale, slug)
   if (!p) return {}
   return {
+    alternates: alternatesFor(locale as Locale, `/knowledge/minbar/${slug}`),
     title: p.seo?.title || p.title,
     description: p.seo?.description || p.excerpt || undefined,
   }

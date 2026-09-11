@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import { JsonLd } from '@/components/content/JsonLd'
+import { eventJsonLd } from '@/lib/seo'
+import { SITE_URL } from '@/lib/site'
 import { Prose } from '@/components/content/Prose'
 import { Badge } from '@/components/ui/Badge'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
@@ -28,6 +32,7 @@ export async function generateMetadata({
   const e = await getEventBySlug(locale as Locale, slug)
   if (!e) return {}
   return {
+    alternates: alternatesFor(locale as Locale, `/events/${slug}`),
     title: e.seo?.title || e.title,
     description: e.seo?.description || e.summary || undefined,
   }
@@ -54,6 +59,18 @@ export default async function EventPage({ params }: PageProps<'/[locale]/events/
 
   return (
     <>
+      <JsonLd
+        data={eventJsonLd(locale, {
+          url: `${SITE_URL}/${locale}/events/${event.slug}`,
+          name: event.title,
+          description: event.summary,
+          startDate: event.startDate,
+          endDate: event.endDate,
+          online: !!event.isOnline,
+          location: event.location,
+          organizerName: t('site.name'),
+        })}
+      />
       {/* Hero — navy for the camp, paper for other events */}
       <header className={isCamp ? 'pattern-keffiyeh-navy surface-navy' : 'hairline-b'}>
         <div className="container-site pt-10 pb-14 md:pt-14 md:pb-20">

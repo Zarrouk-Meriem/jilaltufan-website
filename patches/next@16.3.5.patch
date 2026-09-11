@@ -1,0 +1,51 @@
+diff --git a/dist/server/image-optimizer.js b/dist/server/image-optimizer.js
+index b25880a32c763d0e0ac84e58c254ba601100e8c7..e8b910b818176dc07599cf8c44832922160e9a8c 100644
+--- a/dist/server/image-optimizer.js
++++ b/dist/server/image-optimizer.js
+@@ -1041,8 +1041,44 @@ async function fetchInternalImage(href, _req, _res, maximumResponseBody, handleR
+             socket: _req.socket,
+             maximumResponseBody
+         });
+-        await handleRequest(mocked.req, mocked.res, (0, _url.parseReqUrl)(href));
+-        await mocked.res.hasStreamed;
++        // JAA patch: the mocked request/response share the visitor's real socket.
++        // If the visitor drops the connection while the static file is being
++        // piped, `send`/`on-finished` abort the pipe without ending the mock, so
++        // neither `handleRequest` nor `hasStreamed` ever settles and the batched
++        // cache entry hangs every later request for this variant until restart.
++        // Racing against the socket closing lets the generator reject instead.
++        const socket = _req.socket;
++        let onSocketClose;
++        const clientGone = new Promise((_, reject)=>{
++            if (!socket) return;
++            onSocketClose = ()=>reject(Object.defineProperty(new ImageError(499, 'client closed the connection before the image was generated'), "__NEXT_ERROR_CODE", {
++                value: "E394",
++                enumerable: false,
++                configurable: true
++            }));
++            if (socket.destroyed) return onSocketClose();
++            socket.once('close', onSocketClose);
++        });
++        // Under `next dev` the router hop hides the visitor's socket, so also cap the
++        // internal fetch: a static file that has not streamed in 30s is never going to.
++        let timer;
++        const tooSlow = new Promise((_, reject)=>{
++            timer = setTimeout(()=>reject(Object.defineProperty(new ImageError(504, 'internal image response timed out'), "__NEXT_ERROR_CODE", {
++                value: "E394",
++                enumerable: false,
++                configurable: true
++            })), 30000);
++        });
++        try {
++            await Promise.race([
++                handleRequest(mocked.req, mocked.res, (0, _url.parseReqUrl)(href)).then(()=>mocked.res.hasStreamed),
++                clientGone,
++                tooSlow
++            ]);
++        } finally{
++            clearTimeout(timer);
++            if (socket && onSocketClose) socket.off('close', onSocketClose);
++        }
+         if (!mocked.res.statusCode) {
+             _log.error('image response failed for', href, mocked.res.statusCode);
+             throw Object.defineProperty(new ImageError(mocked.res.statusCode, '"url" parameter is valid but internal response is invalid'), "__NEXT_ERROR_CODE", {

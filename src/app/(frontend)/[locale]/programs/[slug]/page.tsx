@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
+import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import { JsonLd } from '@/components/content/JsonLd'
+import { courseJsonLd } from '@/lib/seo'
 import { Prose } from '@/components/content/Prose'
 import { PageIntro } from '@/components/sections/PageIntro'
 import { AddToCalendar } from '@/components/sections/AddToCalendar'
@@ -38,6 +41,7 @@ export async function generateMetadata({
   const p = await getProgramBySlug(locale as Locale, slug)
   if (!p) return {}
   return {
+    alternates: alternatesFor(locale as Locale, `/programs/${slug}`),
     title: p.seo?.title || p.title,
     description: p.seo?.description || p.shortDescription || undefined,
   }
@@ -134,6 +138,18 @@ export default async function ProgramPage({ params }: PageProps<'/[locale]/progr
 
   return (
     <>
+      <JsonLd
+        data={courseJsonLd(locale, {
+          slug: program.slug,
+          title: program.title,
+          description: program.shortDescription,
+          providerName: t('site.name'),
+          sessions: sessions.map((s) => ({
+            startsAt: s.startsAt,
+            durationMinutes: s.durationMinutes,
+          })),
+        })}
+      />
       <PageIntro
         locale={locale}
         title={program.title}

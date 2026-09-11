@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { skipUnlessDev } from './helpers/dev'
 
 /**
  * Errors thrown inside a browser extension's injected script must not open the
@@ -30,6 +31,7 @@ test('an unhandled rejection from an extension script does not open the dev over
   page,
 }) => {
   await page.goto('/ar', { waitUntil: 'networkidle' })
+  await skipUnlessDev(page, 'the extension filters and the overlay exist only under next dev')
   expect(
     await page.evaluate(
       () => (window as unknown as { __jaaExtErrorFilter?: boolean }).__jaaExtErrorFilter,
@@ -41,6 +43,7 @@ test('an unhandled rejection from an extension script does not open the dev over
 
 test('an unhandled rejection from our own code still opens the dev overlay', async ({ page }) => {
   await page.goto('/ar', { waitUntil: 'networkidle' })
+  await skipUnlessDev(page, 'the overlay exists only under next dev')
   const ours =
     'TypeError: jaa-real-failure\n    at Header (http://localhost:3001/_next/static/chunks/src_components_layout.js:12:5)'
   await rejectWithStack(page, ours, 'jaa-real-failure')
