@@ -70,6 +70,10 @@ Honour `prefers-reduced-motion` by removing transforms — not by shortening the
 
 `src/i18n/routing.ts` + `payload.config.ts` locales + `messages/xx.json`. If it needs more than that, the abstraction has leaked — fix the abstraction.
 
+## Errors are never "environmental" until proven
+
+If a console error, overlay, or warning shows up — in the user's browser or ours — it is not dismissed until it is **reproduced deterministically and pinned by a test**. `tests/e2e/hydration.spec.ts` is the model: a clean-browser guard on every route, a simulation of the offending condition, and a proof that real failures still surface. "It's an extension" is a hypothesis, not a verdict.
+
 ## Milestone checklist
 
 1. `pnpm check` clean
