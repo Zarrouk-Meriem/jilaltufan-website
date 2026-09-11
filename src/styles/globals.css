@@ -200,3 +200,62 @@
     }
   }
 }
+
+/* Editorial rich text ------------------------------------------------- */
+@layer components {
+  .prose-jaa > * + * {
+    margin-block-start: 1em;
+  }
+  .prose-jaa h2,
+  .prose-jaa h3,
+  .prose-jaa h4 {
+    margin-block-start: 2em;
+    color: var(--ink-900);
+  }
+  .prose-jaa h2 {
+    font-size: var(--text-xl);
+  }
+  .prose-jaa h3 {
+    font-size: var(--text-lg);
+  }
+  .prose-jaa h4 {
+    font-size: var(--text-md);
+  }
+  .prose-jaa ul,
+  .prose-jaa ol {
+    padding-inline-start: 1.4em;
+  }
+  .prose-jaa ul {
+    list-style: disc;
+  }
+  .prose-jaa ol {
+    list-style: decimal;
+  }
+  .prose-jaa li + li {
+    margin-block-start: 0.4em;
+  }
+  .prose-jaa li::marker {
+    color: var(--red-600);
+  }
+  .prose-jaa a {
+    color: var(--ink-900);
+    text-decoration: underline;
+    text-decoration-color: var(--red-600);
+    text-underline-offset: 0.2em;
+  }
+  .prose-jaa blockquote {
+    border-inline-start: 3px solid var(--red-600);
+    padding-inline-start: 1.25em;
+    color: var(--ink-900);
+    font-size: var(--text-md);
+  }
+  .prose-jaa strong {
+    color: var(--ink-900);
+    font-weight: 600;
+  }
+  .prose-jaa hr {
+    border: 0;
+    border-top: 1px solid var(--line);
+    margin-block: 2.5em;
+  }
+}

@@ -14,7 +14,7 @@
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload",
-    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:types",
+    "generate:types": "node --import tsx/esm scripts/generate-types.mjs",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:importmap",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload run src/seed/index.ts",
     "typecheck": "tsc --noEmit",
@@ -26,7 +26,8 @@
     "screens": "playwright test --project=screens",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:unit",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate",
-    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate:create"
+    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate:create",
+    "payload:tsx": "node --import tsx/esm scripts/payload-cli.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",

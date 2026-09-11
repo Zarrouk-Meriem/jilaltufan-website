@@ -121,3 +121,15 @@ export const localizedRichText = (
   label: { ar: string; en: string },
   opts: Partial<Field> = {},
 ): Field => ({ name, type: 'richText', localized: true, label, ...opts }) as Field
+
+/** Non-localized text for use INSIDE localized arrays (the array owns the locale). */
+export const plainText = (
+  name: string,
+  label: { ar: string; en: string },
+  opts: Partial<Field> = {},
+): Field => ({ name, type: 'text', label, ...opts }) as Field
+export const plainTextarea = (
+  name: string,
+  label: { ar: string; en: string },
+  opts: Partial<Field> = {},
+): Field => ({ name, type: 'textarea', label, ...opts }) as Field

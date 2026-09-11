@@ -41,14 +41,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE "programs_goals" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL
-  );
-  
-  CREATE TABLE "programs_goals_locales" (
-  	"text" varchar NOT NULL,
-  	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"text" varchar NOT NULL
   );
   
   CREATE TABLE "programs" (
@@ -184,14 +179,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE "minbar_posts_tags" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL
-  );
-  
-  CREATE TABLE "minbar_posts_tags_locales" (
-  	"tag" varchar NOT NULL,
-  	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"tag" varchar NOT NULL
   );
   
   CREATE TABLE "minbar_posts" (
@@ -243,30 +233,20 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE "events_programme_items" (
   	"_order" integer NOT NULL,
   	"_parent_id" varchar NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"time" varchar
-  );
-  
-  CREATE TABLE "events_programme_items_locales" (
-  	"title" varchar NOT NULL,
-  	"description" varchar,
-  	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"time" varchar,
+  	"title" varchar NOT NULL,
+  	"description" varchar
   );
   
   CREATE TABLE "events_programme" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"date" timestamp(3) with time zone
-  );
-  
-  CREATE TABLE "events_programme_locales" (
-  	"day_title" varchar NOT NULL,
-  	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"day_title" varchar NOT NULL,
+  	"date" timestamp(3) with time zone
   );
   
   CREATE TABLE "events_gallery" (
@@ -543,57 +523,37 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE "about_page_pillars" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL
-  );
-  
-  CREATE TABLE "about_page_pillars_locales" (
-  	"title" varchar NOT NULL,
-  	"text" varchar,
-  	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"title" varchar NOT NULL,
+  	"text" varchar
   );
   
   CREATE TABLE "about_page_goals" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL
-  );
-  
-  CREATE TABLE "about_page_goals_locales" (
-  	"text" varchar NOT NULL,
-  	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"text" varchar NOT NULL
   );
   
   CREATE TABLE "about_page_structure_members" (
   	"_order" integer NOT NULL,
   	"_parent_id" varchar NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL
-  );
-  
-  CREATE TABLE "about_page_structure_members_locales" (
-  	"name" varchar NOT NULL,
-  	"role" varchar,
-  	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"name" varchar NOT NULL,
+  	"role" varchar
   );
   
   CREATE TABLE "about_page_structure" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"kind" "enum_about_page_structure_kind" DEFAULT 'council'
-  );
-  
-  CREATE TABLE "about_page_structure_locales" (
-  	"name" varchar NOT NULL,
-  	"description" varchar,
-  	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"name" varchar NOT NULL,
+  	"kind" "enum_about_page_structure_kind" DEFAULT 'council',
+  	"description" varchar
   );
   
   CREATE TABLE "about_page" (
@@ -768,7 +728,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   );
   
   ALTER TABLE "programs_goals" ADD CONSTRAINT "programs_goals_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."programs"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "programs_goals_locales" ADD CONSTRAINT "programs_goals_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."programs_goals"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "programs" ADD CONSTRAINT "programs_seo_og_image_id_media_id_fk" FOREIGN KEY ("seo_og_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "programs" ADD CONSTRAINT "programs_cover_image_id_media_id_fk" FOREIGN KEY ("cover_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "programs_locales" ADD CONSTRAINT "programs_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."programs"("id") ON DELETE cascade ON UPDATE no action;
@@ -786,7 +745,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "projects" ADD CONSTRAINT "projects_seo_og_image_id_media_id_fk" FOREIGN KEY ("seo_og_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "projects_locales" ADD CONSTRAINT "projects_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."projects"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "minbar_posts_tags" ADD CONSTRAINT "minbar_posts_tags_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."minbar_posts"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "minbar_posts_tags_locales" ADD CONSTRAINT "minbar_posts_tags_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."minbar_posts_tags"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "minbar_posts" ADD CONSTRAINT "minbar_posts_cover_id_media_id_fk" FOREIGN KEY ("cover_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "minbar_posts" ADD CONSTRAINT "minbar_posts_author_id_instructors_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."instructors"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "minbar_posts" ADD CONSTRAINT "minbar_posts_seo_og_image_id_media_id_fk" FOREIGN KEY ("seo_og_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
@@ -796,9 +754,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "materials" ADD CONSTRAINT "materials_file_id_media_id_fk" FOREIGN KEY ("file_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "materials_locales" ADD CONSTRAINT "materials_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."materials"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "events_programme_items" ADD CONSTRAINT "events_programme_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."events_programme"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "events_programme_items_locales" ADD CONSTRAINT "events_programme_items_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."events_programme_items"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "events_programme" ADD CONSTRAINT "events_programme_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."events"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "events_programme_locales" ADD CONSTRAINT "events_programme_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."events_programme"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "events_gallery" ADD CONSTRAINT "events_gallery_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "events_gallery" ADD CONSTRAINT "events_gallery_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."events"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "events" ADD CONSTRAINT "events_cover_image_id_media_id_fk" FOREIGN KEY ("cover_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
@@ -824,13 +780,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "payload_preferences_rels" ADD CONSTRAINT "payload_preferences_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_preferences"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_preferences_rels" ADD CONSTRAINT "payload_preferences_rels_users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "about_page_pillars" ADD CONSTRAINT "about_page_pillars_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "about_page_pillars_locales" ADD CONSTRAINT "about_page_pillars_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page_pillars"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "about_page_goals" ADD CONSTRAINT "about_page_goals_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "about_page_goals_locales" ADD CONSTRAINT "about_page_goals_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page_goals"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "about_page_structure_members" ADD CONSTRAINT "about_page_structure_members_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page_structure"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "about_page_structure_members_locales" ADD CONSTRAINT "about_page_structure_members_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page_structure_members"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "about_page_structure" ADD CONSTRAINT "about_page_structure_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "about_page_structure_locales" ADD CONSTRAINT "about_page_structure_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page_structure"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "about_page_locales" ADD CONSTRAINT "about_page_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."about_page"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "home_page" ADD CONSTRAINT "home_page_hero_image_id_media_id_fk" FOREIGN KEY ("hero_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "home_page_locales" ADD CONSTRAINT "home_page_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."home_page"("id") ON DELETE cascade ON UPDATE no action;
@@ -850,7 +802,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "footer_locales" ADD CONSTRAINT "footer_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."footer"("id") ON DELETE cascade ON UPDATE no action;
   CREATE INDEX "programs_goals_order_idx" ON "programs_goals" USING btree ("_order");
   CREATE INDEX "programs_goals_parent_id_idx" ON "programs_goals" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "programs_goals_locales_locale_parent_id_unique" ON "programs_goals_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "programs_goals_locale_idx" ON "programs_goals" USING btree ("_locale");
   CREATE INDEX "programs_seo_seo_og_image_idx" ON "programs" USING btree ("seo_og_image_id");
   CREATE INDEX "programs_cover_image_idx" ON "programs" USING btree ("cover_image_id");
   CREATE UNIQUE INDEX "programs_slug_idx" ON "programs" USING btree ("slug");
@@ -886,7 +838,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE UNIQUE INDEX "projects_locales_locale_parent_id_unique" ON "projects_locales" USING btree ("_locale","_parent_id");
   CREATE INDEX "minbar_posts_tags_order_idx" ON "minbar_posts_tags" USING btree ("_order");
   CREATE INDEX "minbar_posts_tags_parent_id_idx" ON "minbar_posts_tags" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "minbar_posts_tags_locales_locale_parent_id_unique" ON "minbar_posts_tags_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "minbar_posts_tags_locale_idx" ON "minbar_posts_tags" USING btree ("_locale");
   CREATE INDEX "minbar_posts_cover_idx" ON "minbar_posts" USING btree ("cover_id");
   CREATE INDEX "minbar_posts_author_idx" ON "minbar_posts" USING btree ("author_id");
   CREATE INDEX "minbar_posts_seo_seo_og_image_idx" ON "minbar_posts" USING btree ("seo_og_image_id");
@@ -902,10 +854,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE UNIQUE INDEX "materials_locales_locale_parent_id_unique" ON "materials_locales" USING btree ("_locale","_parent_id");
   CREATE INDEX "events_programme_items_order_idx" ON "events_programme_items" USING btree ("_order");
   CREATE INDEX "events_programme_items_parent_id_idx" ON "events_programme_items" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "events_programme_items_locales_locale_parent_id_unique" ON "events_programme_items_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "events_programme_items_locale_idx" ON "events_programme_items" USING btree ("_locale");
   CREATE INDEX "events_programme_order_idx" ON "events_programme" USING btree ("_order");
   CREATE INDEX "events_programme_parent_id_idx" ON "events_programme" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "events_programme_locales_locale_parent_id_unique" ON "events_programme_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "events_programme_locale_idx" ON "events_programme" USING btree ("_locale");
   CREATE INDEX "events_gallery_order_idx" ON "events_gallery" USING btree ("_order");
   CREATE INDEX "events_gallery_parent_id_idx" ON "events_gallery" USING btree ("_parent_id");
   CREATE INDEX "events_gallery_image_idx" ON "events_gallery" USING btree ("image_id");
@@ -981,16 +933,16 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_migrations_created_at_idx" ON "payload_migrations" USING btree ("created_at");
   CREATE INDEX "about_page_pillars_order_idx" ON "about_page_pillars" USING btree ("_order");
   CREATE INDEX "about_page_pillars_parent_id_idx" ON "about_page_pillars" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "about_page_pillars_locales_locale_parent_id_unique" ON "about_page_pillars_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "about_page_pillars_locale_idx" ON "about_page_pillars" USING btree ("_locale");
   CREATE INDEX "about_page_goals_order_idx" ON "about_page_goals" USING btree ("_order");
   CREATE INDEX "about_page_goals_parent_id_idx" ON "about_page_goals" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "about_page_goals_locales_locale_parent_id_unique" ON "about_page_goals_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "about_page_goals_locale_idx" ON "about_page_goals" USING btree ("_locale");
   CREATE INDEX "about_page_structure_members_order_idx" ON "about_page_structure_members" USING btree ("_order");
   CREATE INDEX "about_page_structure_members_parent_id_idx" ON "about_page_structure_members" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "about_page_structure_members_locales_locale_parent_id_unique" ON "about_page_structure_members_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "about_page_structure_members_locale_idx" ON "about_page_structure_members" USING btree ("_locale");
   CREATE INDEX "about_page_structure_order_idx" ON "about_page_structure" USING btree ("_order");
   CREATE INDEX "about_page_structure_parent_id_idx" ON "about_page_structure" USING btree ("_parent_id");
-  CREATE UNIQUE INDEX "about_page_structure_locales_locale_parent_id_unique" ON "about_page_structure_locales" USING btree ("_locale","_parent_id");
+  CREATE INDEX "about_page_structure_locale_idx" ON "about_page_structure" USING btree ("_locale");
   CREATE UNIQUE INDEX "about_page_locales_locale_parent_id_unique" ON "about_page_locales" USING btree ("_locale","_parent_id");
   CREATE INDEX "home_page_hero_image_idx" ON "home_page" USING btree ("hero_image_id");
   CREATE UNIQUE INDEX "home_page_locales_locale_parent_id_unique" ON "home_page_locales" USING btree ("_locale","_parent_id");
@@ -1019,7 +971,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
    DROP TABLE "programs_goals" CASCADE;
-  DROP TABLE "programs_goals_locales" CASCADE;
   DROP TABLE "programs" CASCADE;
   DROP TABLE "programs_locales" CASCADE;
   DROP TABLE "programs_rels" CASCADE;
@@ -1032,15 +983,12 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "projects" CASCADE;
   DROP TABLE "projects_locales" CASCADE;
   DROP TABLE "minbar_posts_tags" CASCADE;
-  DROP TABLE "minbar_posts_tags_locales" CASCADE;
   DROP TABLE "minbar_posts" CASCADE;
   DROP TABLE "minbar_posts_locales" CASCADE;
   DROP TABLE "materials" CASCADE;
   DROP TABLE "materials_locales" CASCADE;
   DROP TABLE "events_programme_items" CASCADE;
-  DROP TABLE "events_programme_items_locales" CASCADE;
   DROP TABLE "events_programme" CASCADE;
-  DROP TABLE "events_programme_locales" CASCADE;
   DROP TABLE "events_gallery" CASCADE;
   DROP TABLE "events" CASCADE;
   DROP TABLE "events_locales" CASCADE;
@@ -1062,13 +1010,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "payload_preferences_rels" CASCADE;
   DROP TABLE "payload_migrations" CASCADE;
   DROP TABLE "about_page_pillars" CASCADE;
-  DROP TABLE "about_page_pillars_locales" CASCADE;
   DROP TABLE "about_page_goals" CASCADE;
-  DROP TABLE "about_page_goals_locales" CASCADE;
   DROP TABLE "about_page_structure_members" CASCADE;
-  DROP TABLE "about_page_structure_members_locales" CASCADE;
   DROP TABLE "about_page_structure" CASCADE;
-  DROP TABLE "about_page_structure_locales" CASCADE;
   DROP TABLE "about_page" CASCADE;
   DROP TABLE "about_page_locales" CASCADE;
   DROP TABLE "home_page" CASCADE;

@@ -1,6 +1,13 @@
 import type { CollectionConfig } from 'payload'
 import { publishedOrStaff, staffOnly } from '@/access'
-import { localizedRichText, localizedText, localizedTextarea, publicMeta, seoField } from '@/fields'
+import {
+  localizedRichText,
+  localizedText,
+  localizedTextarea,
+  publicMeta,
+  seoField,
+  plainText,
+} from '@/fields'
 
 export const MinbarPosts: CollectionConfig = {
   slug: 'minbar-posts',
@@ -61,8 +68,9 @@ export const MinbarPosts: CollectionConfig = {
     {
       name: 'tags',
       type: 'array',
+      localized: true,
       label: { ar: 'الوسوم', en: 'Tags' },
-      fields: [localizedText('tag', { ar: 'وسم', en: 'Tag' }, { required: true })],
+      fields: [plainText('tag', { ar: 'وسم', en: 'Tag' }, { required: true })],
     },
     seoField(),
     ...publicMeta(),

@@ -1,6 +1,14 @@
 import type { CollectionConfig } from 'payload'
 import { publishedOrStaff, staffOnly } from '@/access'
-import { localizedRichText, localizedText, localizedTextarea, publicMeta, seoField } from '@/fields'
+import {
+  localizedRichText,
+  localizedText,
+  localizedTextarea,
+  publicMeta,
+  seoField,
+  plainText,
+  plainTextarea,
+} from '@/fields'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -70,10 +78,11 @@ export const Events: CollectionConfig = {
     {
       name: 'programme',
       type: 'array',
+      localized: true,
       label: { ar: 'البرنامج اليومي', en: 'Programme' },
       labels: { singular: { ar: 'يوم', en: 'Day' }, plural: { ar: 'الأيام', en: 'Days' } },
       fields: [
-        localizedText('dayTitle', { ar: 'عنوان اليوم', en: 'Day title' }, { required: true }),
+        plainText('dayTitle', { ar: 'عنوان اليوم', en: 'Day title' }, { required: true }),
         { name: 'date', type: 'date', label: { ar: 'التاريخ', en: 'Date' } },
         {
           name: 'items',
@@ -89,14 +98,14 @@ export const Events: CollectionConfig = {
                   label: { ar: 'الوقت', en: 'Time' },
                   admin: { width: '25%' },
                 },
-                localizedText(
+                plainText(
                   'title',
                   { ar: 'الفقرة', en: 'Item' },
                   { required: true, admin: { width: '75%' } },
                 ),
               ],
             },
-            localizedTextarea('description', { ar: 'الوصف', en: 'Description' }),
+            plainTextarea('description', { ar: 'الوصف', en: 'Description' }),
           ],
         },
       ],

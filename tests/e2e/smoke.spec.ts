@@ -7,7 +7,15 @@ const locales = [
 ] as const
 
 // Grows with every milestone. M1: the shell, the styleguide, and the 404.
-const routes = ['/', '/styleguide', '/this-page-does-not-exist']
+const routes = [
+  '/',
+  '/about',
+  '/about/structure',
+  '/programs',
+  '/programs/palestine-our-compass',
+  '/styleguide',
+  '/this-page-does-not-exist',
+]
 
 for (const { code, dir } of locales) {
   test.describe(`[${code}]`, () => {

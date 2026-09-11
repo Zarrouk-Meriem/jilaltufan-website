@@ -28,9 +28,10 @@ pnpm payload      # Payload CLI (migrations, generate:types)
 Payload CLI gotchas (learned the hard way):
 
 - The CLI needs `PAYLOAD_CONFIG_PATH` or it **silently no-ops** — the scripts in `package.json` set it; don't call `payload` bare.
+- If a `payload` command exits 0 **silently or halfway** (generate:types, migrate:*), Payload's bin has hit its tsx loader-worker hang. Use the fallback: `pnpm payload:tsx <command>` (runs the same CLI under tsx's sync hooks).
 - `payload run <script>` awaits the module import, not a dangling promise — scripts must use **top-level `await`** and `import 'dotenv/config'`.
 
-After changing any collection or global: **`pnpm payload generate:types`** and commit `src/payload-types.ts`.
+After changing any collection or global: **`pnpm generate:types`** (wraps Payload's generator directly — the CLI wrapper hangs here) and commit `src/payload-types.ts`.
 
 ## Layout rules — non-negotiable
 

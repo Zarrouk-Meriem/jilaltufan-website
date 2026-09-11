@@ -1,6 +1,13 @@
 import type { CollectionConfig } from 'payload'
 import { publishedOrStaff, staffOnly } from '@/access'
-import { localizedRichText, localizedText, localizedTextarea, publicMeta, seoField } from '@/fields'
+import {
+  localizedRichText,
+  localizedText,
+  localizedTextarea,
+  publicMeta,
+  seoField,
+  plainText,
+} from '@/fields'
 
 const MONTHS = [
   ['sep', 'سبتمبر', 'September'],
@@ -78,12 +85,13 @@ export const Programs: CollectionConfig = {
             {
               name: 'goals',
               type: 'array',
+              localized: true,
               label: { ar: 'الأهداف', en: 'Goals' },
               labels: {
                 singular: { ar: 'هدف', en: 'Goal' },
                 plural: { ar: 'الأهداف', en: 'Goals' },
               },
-              fields: [localizedText('text', { ar: 'الهدف', en: 'Goal' }, { required: true })],
+              fields: [plainText('text', { ar: 'الهدف', en: 'Goal' }, { required: true })],
             },
             localizedRichText('targetAudience', { ar: 'الفئة المستهدفة', en: 'Target audience' }),
             localizedText(

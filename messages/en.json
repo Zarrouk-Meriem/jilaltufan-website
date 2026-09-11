@@ -68,14 +68,49 @@
       "mar": "March",
       "apr": "April"
     },
-    "ordinals": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"]
+    "ordinals": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+    "breadcrumb": "Breadcrumb"
   },
   "home": {
     "title": "Jeel Al-Toufan Academy",
     "heroTitle": "Through knowledge, we are **liberated**",
     "exploreCta": "Explore programs",
     "applyCta": "Apply now",
-    "nextSession": "Next live session"
+    "nextSession": "Next live session",
+    "missionOrdinal": "Mission",
+    "missionTitle": "Why the **Academy**?",
+    "pillars": {
+      "educational": {
+        "title": "Educational",
+        "text": "Character, values, and the discipline a long road requires."
+      },
+      "cognitive": {
+        "title": "Cognitive",
+        "text": "Scientific curricula that read history and the present with tools of analysis, not slogans."
+      },
+      "political": {
+        "title": "Political",
+        "text": "Understanding balances of power and the stakes of the flood — and acting on them."
+      }
+    },
+    "programsTitle": "Training **programs**",
+    "programsIntro": "One open track for a wide audience, and five directed programs — each eight sessions per season, one every month.",
+    "openTrackLabel": "Open track",
+    "directedTrackLabel": "Directed programs",
+    "seasonTitle": "One **season**, eight stations",
+    "seasonIntro": "From September to April, every cohort meets once a month. The current station is marked in red.",
+    "upcomingTitle": "Upcoming **sessions**",
+    "upcomingIntro": "The next three sessions across all programs, in Al-Quds time and yours.",
+    "campTitle": "The **Jeel Al-Toufan** Camp",
+    "campIntro": "A full week of meeting, work, and formation — once a year.",
+    "campCta": "About the camp",
+    "minbarTitle": "From **Minbar Al-Toufan**",
+    "instructorsTitle": "**Instructors**",
+    "closingTitle": "Your place is **with us**",
+    "closingText": "Apply to the program that fits you and begin your season with Jeel Al-Toufan.",
+    "viewSchedule": "Full schedule",
+    "allPrograms": "All programs",
+    "nextSessionEmpty": "The session schedule hasn't been published yet."
   },
   "status": {
     "upcoming": "Upcoming",
@@ -96,5 +131,69 @@
   "styleguide": {
     "title": "Styleguide",
     "intro": "The site's visual reference: colour, type, and every component in every state."
+  },
+  "program": {
+    "sessionsCount": "8 sessions",
+    "oneMonthly": "One session a month",
+    "sepToApr": "September → April",
+    "track": "Track",
+    "duration": "Duration",
+    "sessions": "Sessions",
+    "season": "Season",
+    "registration": "Registration",
+    "open": "Open Training",
+    "directed": "Directed program",
+    "introTitle": "About the program",
+    "goalsTitle": "Goals",
+    "audienceTitle": "Who it's for",
+    "durationTitle": "Duration",
+    "sessionsTitle": "The eight sessions",
+    "sessionsIntro": "One session every month, live on Zoom. Open any session for its details.",
+    "registrationTitle": "Registration & follow-up",
+    "applyNow": "Apply to this program",
+    "registrationClosed": "Registration is currently closed",
+    "contactUs": "Contact us",
+    "deadline": "Registration deadline: {date}",
+    "sessionN": "Session {n}",
+    "instructor": "Instructor",
+    "noSessions": "Sessions for this program haven't been published yet.",
+    "backToPrograms": "All programs",
+    "seeSchedule": "This program's schedule",
+    "otherPrograms": "Other programs"
+  },
+  "programs": {
+    "title": "Training **programs**",
+    "intro": "Choose your track. Open Training for anyone ready to begin; directed programs for those who want to go deeper.",
+    "openTitle": "Open Training",
+    "openIntro": "An independent track for a wider audience: eight lectures per season, one each month from September to April.",
+    "directedTitle": "Directed programs",
+    "directedIntro": "Five programs, each with eight training sessions per season.",
+    "howItWorks": "How the programs work",
+    "step1": "Choose a program and submit your application.",
+    "step2": "You receive a confirmation, then the session link before each session.",
+    "step3": "One session a month, live on Zoom, September to April."
+  },
+  "about": {
+    "title": "About the **Academy**",
+    "intro": "About",
+    "visionTitle": "Vision",
+    "missionTitle": "Mission",
+    "goalsTitle": "Goals",
+    "structureTitle": "Structure, councils & teams",
+    "structureLink": "Structure",
+    "onThisPage": "On this page",
+    "council": "Council",
+    "team": "Team",
+    "committee": "Committee",
+    "members": "Members",
+    "structureEmpty": "The structure hasn't been published yet."
+  },
+  "session": {
+    "alQuds": "Al-Quds time",
+    "local": "Your time",
+    "join": "Join on Zoom",
+    "addToCalendar": "Add to calendar",
+    "minutes": "{n} min",
+    "details": "Details"
   }
 }

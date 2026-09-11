@@ -120,10 +120,10 @@ async function seed() {
         seasonStartMonth: 'sep',
         seasonEndMonth: 'apr',
         sessionsCount: 8,
-        goals: [1, 2, 3].map(() => ({ text: PLACEHOLDER.ar })),
       },
       {
         ar: {
+          goals: [1, 2, 3].map(() => ({ text: PLACEHOLDER.ar })),
           title: p.title.ar,
           shortDescription: PLACEHOLDER.ar,
           intro: paragraph(PLACEHOLDER.ar),

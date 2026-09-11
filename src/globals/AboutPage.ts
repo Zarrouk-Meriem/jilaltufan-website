@@ -1,6 +1,12 @@
 import type { GlobalConfig } from 'payload'
 import { anyone, staffOnly } from '@/access'
-import { localizedRichText, localizedText, localizedTextarea } from '@/fields'
+import {
+  localizedRichText,
+  localizedText,
+  localizedTextarea,
+  plainText,
+  plainTextarea,
+} from '@/fields'
 
 export const AboutPage: GlobalConfig = {
   slug: 'about-page',
@@ -31,11 +37,12 @@ export const AboutPage: GlobalConfig = {
             {
               name: 'pillars',
               type: 'array',
+              localized: true,
               label: { ar: 'الركائز', en: 'Pillars' },
               maxRows: 4,
               fields: [
-                localizedText('title', { ar: 'الركيزة', en: 'Pillar' }, { required: true }),
-                localizedTextarea('text', { ar: 'الشرح', en: 'Text' }),
+                plainText('title', { ar: 'الركيزة', en: 'Pillar' }, { required: true }),
+                plainTextarea('text', { ar: 'الشرح', en: 'Text' }),
               ],
             },
           ],
@@ -46,8 +53,9 @@ export const AboutPage: GlobalConfig = {
             {
               name: 'goals',
               type: 'array',
+              localized: true,
               label: { ar: 'الأهداف', en: 'Goals' },
-              fields: [localizedText('text', { ar: 'الهدف', en: 'Goal' }, { required: true })],
+              fields: [plainText('text', { ar: 'الهدف', en: 'Goal' }, { required: true })],
             },
           ],
         },
@@ -58,9 +66,10 @@ export const AboutPage: GlobalConfig = {
             {
               name: 'structure',
               type: 'array',
+              localized: true,
               label: { ar: 'المجالس والفرق', en: 'Councils & teams' },
               fields: [
-                localizedText('name', { ar: 'الاسم', en: 'Name' }, { required: true }),
+                plainText('name', { ar: 'الاسم', en: 'Name' }, { required: true }),
                 {
                   name: 'kind',
                   type: 'select',
@@ -72,7 +81,7 @@ export const AboutPage: GlobalConfig = {
                     { label: { ar: 'لجنة', en: 'Committee' }, value: 'committee' },
                   ],
                 },
-                localizedTextarea('description', { ar: 'الوصف', en: 'Description' }),
+                plainTextarea('description', { ar: 'الوصف', en: 'Description' }),
                 {
                   name: 'members',
                   type: 'array',
@@ -81,8 +90,8 @@ export const AboutPage: GlobalConfig = {
                     {
                       type: 'row',
                       fields: [
-                        localizedText('name', { ar: 'الاسم', en: 'Name' }, { required: true }),
-                        localizedText('role', { ar: 'الدور', en: 'Role' }),
+                        plainText('name', { ar: 'الاسم', en: 'Name' }, { required: true }),
+                        plainText('role', { ar: 'الدور', en: 'Role' }),
                       ],
                     },
                   ],
