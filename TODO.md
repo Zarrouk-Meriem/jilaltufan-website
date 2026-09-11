@@ -8,7 +8,7 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 
 ## Brand assets
 
-- [ ] **P1 — SVG logo files.** `_context/brand/logo-color.png` and `logo-on-dark.png` are raster exports. Request vector originals from the designer (Haythem Makhlouf). *Swap is a one-file change in `/public/brand/`.*
+- [ ] **P1 — SVG logo files.** `_context/brand/logo-color.png` and `logo-on-dark.png` are raster exports. Request vector originals from the designer (Haythem Makhlouf). _Swap is a one-file change in `/public/brand/`._
 - [ ] **P1 — English lockup.** Reference 03 shows `ACADEMY / FLOOD'S GENERATION` but no file was supplied. Until it arrives, `/en` uses the mark + type-set Poppins. Confirm this is acceptable, or send the file.
 - [ ] **P2 — Confirm the mark.** `mark.svg` is the Prop 1 arrow, not the inverted triangle described in the brief (see `PLAN.md` §2.1). Confirm the arrow is the intended standalone mark, or supply the triangle as a second asset.
 - [ ] **P3 — Mono / single-colour logo** for print and low-colour contexts (reference 03 shows a grey variant).
@@ -21,9 +21,9 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 ## Content the academy must supply
 
 - [ ] **P1 — About text** beyond the mission: نبذة عن الأكاديمية, الرؤية, الأهداف.
-- [ ] **P1 — Program content** for all six: التعريف, الأهداف, الفئة المستهدفة, المدة, and the eight session titles + summaries. *Seeded as `[نص مؤقت]` with `isPlaceholder: true`.*
-- [ ] **P1 — Real session dates and Zoom links** for the 2026/2027 season. *48 placeholder sessions exist, one per month Sep→Apr, with no Zoom URLs.*
-- [ ] **P1 — Instructors:** names, roles, short bios, photos. *Seeded as «[اسم المحاضر]», no photos, no invented biography. Sessions currently have no instructor attached — this is deliberate.*
+- [ ] **P1 — Program content** for all six: التعريف, الأهداف, الفئة المستهدفة, المدة, and the eight session titles + summaries. _Seeded as `[نص مؤقت]` with `isPlaceholder: true`._
+- [ ] **P1 — Real session dates and Zoom links** for the 2026/2027 season. _48 placeholder sessions exist, one per month Sep→Apr, with no Zoom URLs._
+- [ ] **P1 — Instructors:** names, roles, short bios, photos. _Seeded as «[اسم المحاضر]», no photos, no invented biography. Sessions currently have no instructor attached — this is deliberate._
 - [ ] **P1 — الهيكلة والمجالس والفرق** — council and team structure for `/about/structure`.
 - [ ] **P2 — مخيمات جيل الطوفان** — the camp's week programme, dates, location, and photos.
 - [ ] **P2 — المشاريع والمبادرات** — projects for `/projects`.
@@ -35,13 +35,13 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 
 ## Photography
 
-- [ ] **P1 — Hero image.** Jerusalem / Al-Aqsa, to be navy-duotoned as in reference 07. *Placeholder: navy gradient + keffiyeh texture, no stock faces.* Must be licensed or academy-owned.
+- [ ] **P1 — Hero image.** Jerusalem / Al-Aqsa, to be navy-duotoned as in reference 07. _Placeholder: navy gradient + keffiyeh texture, no stock faces._ Must be licensed or academy-owned.
 - [ ] **P2 — Instructor portraits**, shot or cropped consistently (reference 06 crops to a rectangle over a navy backdrop).
 - [ ] **P3 — Camp gallery** images (these render untreated, not duotoned).
 
 ## Decisions still with the client
 
-- [ ] **P1 — Final English name usage.** *"Academy · Flood's Generation"* per the brief vs *"Jeel Al-Toufan Academy"*. Currently both appear in different places; pick one for `/en`.
+- [ ] **P1 — Final English name usage.** _"Academy · Flood's Generation"_ per the brief vs _"Jeel Al-Toufan Academy"_. Currently both appear in different places; pick one for `/en`.
 - [ ] **P1 — Register `jilaltufan.com`** and confirm it's the production domain (`NEXT_PUBLIC_SITE_URL`).
 - [ ] **P1 — `contact@jilaltufan.com`** — create the mailbox; it receives application and contact notifications.
 - [ ] **P2 — Social links** (Instagram, X, YouTube, Telegram…) for the footer and JSON-LD `sameAs`.

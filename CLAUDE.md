@@ -13,7 +13,7 @@ Read `PLAN.md` before changing architecture. Read `TODO.md` before inventing con
 
 Next 16 (App Router, RSC-first) · React 19 · Payload 3 (embedded, Postgres) · Tailwind v4 · next-intl 4 · zod 4 + react-hook-form · Playwright + Vitest · **pnpm** (via `corepack enable`).
 
-TypeScript version in use: _set at M1 — see `PLAN.md` §2.6._
+TypeScript version in use: **5.9.3** — TS 7.0 compiles the project but `typescript-eslint` 8.x rejects it (tracked at typescript-eslint#10940). Revisit when that lands.
 
 ## Commands
 
@@ -37,6 +37,7 @@ After changing any collection or global: **`pnpm payload generate:types`** and c
 
 ## Styling
 
+- The font stack is `'Poppins', var(--font-arabic)` **by bare name on purpose** — `var(--font-latin)` would drag in next/font's Arial-aliased fallback, which has Arabic glyphs and hijacks Arabic text. Don't "fix" it.
 - Colours, spacing, and type come from tokens in `src/styles/tokens.css`. **No hard-coded hex, ever** — if a value isn't a token, either add a token or you're doing it wrong.
 - Red (`--red-600`) is ~5–10% of any screen: the mark, primary CTAs, rules, active states. Nothing else.
 - On navy: text is white or `rgb(255 255 255 / .78)`. **Red is decorative on navy** (mark and rules only) — it fails text contrast.
@@ -71,3 +72,13 @@ Honour `prefers-reduced-motion` by removing transforms — not by shortening the
 5. Short summary to the user
 
 Never report a milestone complete with a failing check. If something is blocked, finish everything else and say exactly what was left and why.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

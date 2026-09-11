@@ -27,3 +27,4 @@ coverage/
 *.log
 .idea/
 .vscode/
+.artifacts*

@@ -7,7 +7,7 @@
 
 ## 0. Your role and how we work
 
-You are a senior full-stack engineer and a pixel-precise UI/UX designer building the official website of **أكاديمية جيل الطوفان — Jeel Al-Toufan Academy** (brand English lockup: *Academy · Flood's Generation*). The site is Arabic-first, bilingual (Arabic + English) from day one, and must feel **classical, minimal, and editorial**, grounded in the academy's visual identity (هوية) rather than in generic "EdTech" templates.
+You are a senior full-stack engineer and a pixel-precise UI/UX designer building the official website of **أكاديمية جيل الطوفان — Jeel Al-Toufan Academy** (brand English lockup: _Academy · Flood's Generation_). The site is Arabic-first, bilingual (Arabic + English) from day one, and must feel **classical, minimal, and editorial**, grounded in the academy's visual identity (هوية) rather than in generic "EdTech" templates.
 
 Working rules:
 
@@ -22,6 +22,7 @@ Working rules:
 **What the platform is.** Not merely a site for studying at the academy, but its main digital home: it presents the academy, its programs, courses, lectures, participants, and content, and will grow later into a full learning platform.
 
 **Mission (use verbatim):**
+
 - AR: تقوم رسالة الأكاديمية على تمكين الشباب العربي والإسلامي، من خلال برامج تربوية ومعرفية وسياسية مكثّفة ومواكبة لتحديات ورهانات الطوفان، حيث تعتمد على مناهج علمية وأدوات عملية، لتعزيز الهوية ونصرة القضية الفلسطينية في مختلف الميادين.
 - EN: The Academy's mission is to empower Arab and Muslim youth through intensive educational, cognitive, and political programs that keep pace with the challenges and stakes of the flood, relying on scientific curricula and practical tools to strengthen identity and support the Palestinian cause in various fields.
 
@@ -32,6 +33,7 @@ Working rules:
 **Audience:** Arab and Muslim youth (expect ~500–600 users initially, never more than ~1,000 in year one), their instructors, and the academy's staff who will edit content. Most visitors are on mobile.
 
 **The four site sections:**
+
 1. **الأكاديمية / The Academy** — about, vision & mission, goals, structure (councils & teams), projects & initiatives.
 2. **البرامج التدريبية / Training Programs**
    - **التدريب المفتوح / Open Training** — an independent track for a wider audience: 8 lectures per season, one per month, September → April.
@@ -56,6 +58,7 @@ Note: the logo PNGs are raster exports. Build the site so swapping in SVG logos 
 ## 3. MVP scope
 
 **In scope (Phase 1):**
+
 - Home page.
 - Academy pages (about, vision & mission, goals, structure, projects & initiatives).
 - Programs index + one dedicated page per program (template in §7).
@@ -85,29 +88,29 @@ Note: the logo PNGs are raster exports. Build the site so swapping in SVG logos 
 - **Icons:** lucide-react, stroke width 1.5, used sparingly.
 - **Testing:** Playwright (smoke tests for every route in both locales, registration happy path, locale switch, schedule logic) with `@axe-core/playwright`; Vitest for utilities (time-zone and join-window logic especially).
 - **Quality tooling:** ESLint, Prettier, `tsc --noEmit` in a single `pnpm check` script.
-- **Deployment:** don't deploy in this phase. Keep the app deployable to Vercel *or* a Docker host; include a production `Dockerfile` and a `DEPLOY.md`. Production domain: `jilaltufan.com` (set as `NEXT_PUBLIC_SITE_URL`).
+- **Deployment:** don't deploy in this phase. Keep the app deployable to Vercel _or_ a Docker host; include a production `Dockerfile` and a `DEPLOY.md`. Production domain: `jilaltufan.com` (set as `NEXT_PUBLIC_SITE_URL`).
 
 ## 5. Information architecture and routes
 
 All public routes live under `/[locale]`:
 
-| Route | Purpose |
-|---|---|
-| `/` | Home |
-| `/about` | About, vision & mission, goals (anchored sections) |
-| `/about/structure` | Councils & teams |
-| `/projects`, `/projects/[slug]` | Projects & initiatives |
-| `/programs` | Programs index (Open Training highlighted + 5 directed programs) |
-| `/programs/[slug]` | Program page (template §7) |
-| `/schedule` | All upcoming live sessions, filterable by program |
-| `/events`, `/events/[slug]` | Events; the Camp is an event of type `camp` with its own rich layout |
-| `/knowledge` | Content & Knowledge hub |
-| `/knowledge/minbar`, `/knowledge/minbar/[slug]` | Minbar Al-Toufan posts |
-| `/knowledge/materials` | Lectures & learning materials |
-| `/instructors`, `/instructors/[slug]` | Instructor window + profiles |
-| `/students` | Student window |
-| `/apply` and `/apply/[programSlug]` | Registration / application |
-| `/contact`, `/privacy`, `/terms` | Utility pages |
+| Route                                           | Purpose                                                              |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| `/`                                             | Home                                                                 |
+| `/about`                                        | About, vision & mission, goals (anchored sections)                   |
+| `/about/structure`                              | Councils & teams                                                     |
+| `/projects`, `/projects/[slug]`                 | Projects & initiatives                                               |
+| `/programs`                                     | Programs index (Open Training highlighted + 5 directed programs)     |
+| `/programs/[slug]`                              | Program page (template §7)                                           |
+| `/schedule`                                     | All upcoming live sessions, filterable by program                    |
+| `/events`, `/events/[slug]`                     | Events; the Camp is an event of type `camp` with its own rich layout |
+| `/knowledge`                                    | Content & Knowledge hub                                              |
+| `/knowledge/minbar`, `/knowledge/minbar/[slug]` | Minbar Al-Toufan posts                                               |
+| `/knowledge/materials`                          | Lectures & learning materials                                        |
+| `/instructors`, `/instructors/[slug]`           | Instructor window + profiles                                         |
+| `/students`                                     | Student window                                                       |
+| `/apply` and `/apply/[programSlug]`             | Registration / application                                           |
+| `/contact`, `/privacy`, `/terms`                | Utility pages                                                        |
 
 Primary navigation (keep it short and classical): الأكاديمية · البرامج · الجدول · المعرفة · الفعاليات — plus a language switch and a single primary CTA «سجّل الآن». The Student and Instructor windows are reachable from the header's utility row, the footer, and contextually from program and session pages. Everything interlinks: program ↔ sessions ↔ instructors ↔ schedule ↔ apply.
 
@@ -132,16 +135,17 @@ Localize every human-readable field. Every public collection has `status` (draft
 **Header.** Logo on the start side (right in Arabic). On scroll, compact to the mark plus the wordmark at a smaller size; white background with a 1px hairline bottom rule. Mobile: full-screen menu on navy with the white logo, large type, generous spacing.
 
 **Home** (sections in order; each must earn its place):
-1. *Hero* — navy surface with a subtle duotone photograph of Jerusalem / Al-Aqsa (placeholder: a navy field with the keffiyeh texture, never stock faces), white logo lockup or large tagline «بالعلم نتحرّر», one-line mission, two CTAs (استكشف البرامج / سجّل الآن), and a small "next live session" chip (program, title, date in Al-Quds time).
-2. *Mission & pillars* — the mission paragraph set large and calm, then three pillars from it: تربوية · معرفية · سياسية.
-3. *Programs* — Open Training as a wide feature card, then the five directed programs in a restrained grid.
-4. *The season* — a distinctive horizontal timeline September → April with eight monthly stations (vertical on mobile), expressing "one session every month". Rising, stepped rhythm; the current month is marked with the red mark.
-5. *Upcoming sessions* — next three sessions across programs.
-6. *The Camp* — full-bleed navy band for مخيمات جيل الطوفان.
-7. *From Minbar Al-Toufan* — latest three posts (hidden if none are published).
-8. *Instructors* — a quiet strip of portraits (hidden if none are published).
-9. *Closing CTA* then footer.
-Do not include a statistics band until real numbers exist (keep the component; toggle it off by default).
+
+1. _Hero_ — navy surface with a subtle duotone photograph of Jerusalem / Al-Aqsa (placeholder: a navy field with the keffiyeh texture, never stock faces), white logo lockup or large tagline «بالعلم نتحرّر», one-line mission, two CTAs (استكشف البرامج / سجّل الآن), and a small "next live session" chip (program, title, date in Al-Quds time).
+2. _Mission & pillars_ — the mission paragraph set large and calm, then three pillars from it: تربوية · معرفية · سياسية.
+3. _Programs_ — Open Training as a wide feature card, then the five directed programs in a restrained grid.
+4. _The season_ — a distinctive horizontal timeline September → April with eight monthly stations (vertical on mobile), expressing "one session every month". Rising, stepped rhythm; the current month is marked with the red mark.
+5. _Upcoming sessions_ — next three sessions across programs.
+6. _The Camp_ — full-bleed navy band for مخيمات جيل الطوفان.
+7. _From Minbar Al-Toufan_ — latest three posts (hidden if none are published).
+8. _Instructors_ — a quiet strip of portraits (hidden if none are published).
+9. _Closing CTA_ then footer.
+   Do not include a statistics band until real numbers exist (keep the component; toggle it off by default).
 
 **Program page** — follow the plan's model page for «فلسطين بوصلتنا», in this order: introduction → goals → target audience → duration → the eight sessions → each session's details → registration & follow-up. Layout: a sticky side rail (start side on desktop) with the program facts (track, duration, 8 sessions, Sep–Apr, registration status + CTA); the eight sessions as a numbered, accessible accordion with deep-linkable anchors (`#session-3`), each showing date/time (Al-Quds + local), instructor, summary, and add-to-calendar. Empty sections hide gracefully. The same template serves all six programs.
 
@@ -163,24 +167,25 @@ Do not include a statistics band until real numbers exist (keep the component; t
 
 **Color tokens** (sampled from the logo and brand applications):
 
-| Token | Value | Use |
-|---|---|---|
-| `--red-600` | `#C3272E` | Brand red: the mark, primary CTAs, key accents, active states. Keep to roughly 5–10% of any screen. |
-| `--red-700` | `#A11F25` | Hover/pressed for red. |
-| `--red-50` | `#FBEDEE` | Soft callout backgrounds. |
-| `--ink-900` | `#050708` | Headings, logo ink. |
-| `--ink-700` | `#2B3439` | Body text. |
-| `--ink-500` | `#5F6B72` | Secondary text (verify ≥ 4.5:1 on its backgrounds). |
-| `--line` | `rgb(5 7 8 / 0.12)` | Hairline rules and borders. |
-| `--paper` | `#FFFFFF` | Main surface. |
-| `--paper-2` | `#F7F7F5` | Alternate section surface. |
-| `--navy-900` | `#052C40` | Deepest navy (footer, overlays). |
-| `--navy-800` | `#0B3246` | Primary dark surface (hero, feature bands). |
-| `--blue-700` | `#024A70` | Secondary blue for duotone photography and subtle gradients within navy bands. |
+| Token        | Value               | Use                                                                                                 |
+| ------------ | ------------------- | --------------------------------------------------------------------------------------------------- |
+| `--red-600`  | `#C3272E`           | Brand red: the mark, primary CTAs, key accents, active states. Keep to roughly 5–10% of any screen. |
+| `--red-700`  | `#A11F25`           | Hover/pressed for red.                                                                              |
+| `--red-50`   | `#FBEDEE`           | Soft callout backgrounds.                                                                           |
+| `--ink-900`  | `#050708`           | Headings, logo ink.                                                                                 |
+| `--ink-700`  | `#2B3439`           | Body text.                                                                                          |
+| `--ink-500`  | `#5F6B72`           | Secondary text (verify ≥ 4.5:1 on its backgrounds).                                                 |
+| `--line`     | `rgb(5 7 8 / 0.12)` | Hairline rules and borders.                                                                         |
+| `--paper`    | `#FFFFFF`           | Main surface.                                                                                       |
+| `--paper-2`  | `#F7F7F5`           | Alternate section surface.                                                                          |
+| `--navy-900` | `#052C40`           | Deepest navy (footer, overlays).                                                                    |
+| `--navy-800` | `#0B3246`           | Primary dark surface (hero, feature bands).                                                         |
+| `--blue-700` | `#024A70`           | Secondary blue for duotone photography and subtle gradients within navy bands.                      |
 
 Contrast rule: red on navy is **decorative only** (it fails text contrast). On navy, text is white or `rgb(255 255 255 / 0.78)`; red appears only as the mark, rules, and non-text accents.
 
 **Typography.**
+
 - Brand fonts are **Janna LT** (Arabic) and **Poppins** (Latin). Load Poppins with `next/font/google`. Janna LT is a commercial font: support it via `next/font/local` from `/public/fonts/janna/` once licensed webfont files are supplied; until then use **IBM Plex Sans Arabic** as the stand-in. The swap must be a single-variable change. Add "confirm Janna LT webfont license" to `TODO.md`.
 - Font stack: Poppins first, then the Arabic face (`font-family: var(--font-latin), var(--font-arabic), system-ui, sans-serif`), so Latin characters and digits render in Poppins and Arabic falls through to the Arabic face — in both locales.
 - Arabic needs room: body 17–18px with line-height 1.8; headings bold with line-height ~1.35. English body 16–17px, line-height 1.65. Measure: 60–72 characters.
@@ -191,12 +196,13 @@ Contrast rule: red on navy is **decorative only** (it fails text contrast). On n
 **Layout.** 12-column grid, max content width 1200px (reading pages narrower), 24px gutters, 4px spacing base. Section rhythm: 128px vertical padding on desktop, 72px on mobile. Align to the start edge; center only hero and closing CTA content.
 
 **Signature motifs** (each drawn from the references — use them as a system, not everywhere):
-1. *The red rule* — a short 48×3px red bar at the start edge beneath section headings (as in the plan document and the brand posts' red underline under speaker names).
-2. *Ordinal section labels* — small labels in the manner of the plan document: «أولًا · ثانيًا · ثالثًا…» / "01 · 02 · 03" in English.
-3. *The mark as accent* — the red inverted-triangle "A" from `mark.svg`, used for the current timeline station, list bullets in key places, active nav indicator, and a small corner notch on featured cards (at the top **start** corner, mirroring the red corner triangle in the posts). Never distort it; never recolor it except white on red.
-4. *Keffiyeh texture* — build an original, geometric keffiyeh-net SVG pattern tile; use it at 4–6% opacity on `--paper-2` sections and 6–8% white-on-navy in dark bands. Never behind body text at readable-interfering contrast.
-5. *Navy duotone photography* — all photos are treated to navy/blue duotone (as in the brand posts), so imagery stays coherent regardless of source. Implement as a reusable image component (CSS blend/filter or pre-processing), with an untreated option for the Camp gallery.
-6. *Accent word* — in select display headings, one key word may be set in red (as «فلسطين» and «جيل الطوفان» are in the posts), controlled by an editor-friendly markup (e.g. `**word**` → accent) in hero/section titles only.
+
+1. _The red rule_ — a short 48×3px red bar at the start edge beneath section headings (as in the plan document and the brand posts' red underline under speaker names).
+2. _Ordinal section labels_ — small labels in the manner of the plan document: «أولًا · ثانيًا · ثالثًا…» / "01 · 02 · 03" in English.
+3. _The mark as accent_ — the red inverted-triangle "A" from `mark.svg`, used for the current timeline station, list bullets in key places, active nav indicator, and a small corner notch on featured cards (at the top **start** corner, mirroring the red corner triangle in the posts). Never distort it; never recolor it except white on red.
+4. _Keffiyeh texture_ — build an original, geometric keffiyeh-net SVG pattern tile; use it at 4–6% opacity on `--paper-2` sections and 6–8% white-on-navy in dark bands. Never behind body text at readable-interfering contrast.
+5. _Navy duotone photography_ — all photos are treated to navy/blue duotone (as in the brand posts), so imagery stays coherent regardless of source. Implement as a reusable image component (CSS blend/filter or pre-processing), with an untreated option for the Camp gallery.
+6. _Accent word_ — in select display headings, one key word may be set in red (as «فلسطين» and «جيل الطوفان» are in the posts), controlled by an editor-friendly markup (e.g. `**word**` → accent) in hero/section titles only.
 
 **Components** (build each once, document it, reuse it): Button (primary red, secondary ink-outline, ghost; rectangular with 2px radius — the brand is angular, so no pills), Link with an underline that grows on hover, SectionHeading (ordinal + title + red rule + optional intro), ProgramCard, SessionRow, DateBlock, InstructorCard, EventCard, Timeline, Accordion, Tabs, Callout (red-50 box, as in the plan document), Breadcrumbs, LanguageSwitch, Badge (registration status), Gallery/Lightbox, Pattern backgrounds, DuotoneImage, Form fields (label above, 1px border, focus in ink with a red focus ring), EmptyState, Toast.
 
@@ -204,10 +210,11 @@ Contrast rule: red on navy is **decorative only** (it fails text contrast). On n
 
 **Styleguide route.** Build `/[locale]/styleguide` (disabled in production) showing tokens, type scale, every component in each state, in both directions. This is how I will review pixel precision.
 
-**References.** Borrow *structure*, not *style*, from:
+**References.** Borrow _structure_, not _style_, from:
+
 - `academia.sharqforum.org/en` — course/program cards, instructor strip, benefits row, partners, rich footer with explore/quick-links/contact columns.
 - `iwyouthacademy.org` — Arabic-first leadership-academy framing with Palestine at the center.
-Our visual language comes from our own brand (§8), and it should feel calmer and more editorial than both.
+  Our visual language comes from our own brand (§8), and it should feel calmer and more editorial than both.
 
 ## 9. Internationalization and RTL rules
 
@@ -255,12 +262,13 @@ Write an idempotent seed script: all six programs with their real names (AR/EN) 
 ## 15. Open decisions — implement these defaults, keep them configurable
 
 From the plan's «ما نحتاج إلى تحديده الآن»:
-1. *Programs at launch:* seed all six; each can be hidden via `status`.
-2. *Content per program:* the template supports every field; empty fields hide cleanly.
-3. *Open vs. application-based registration:* per-program `registrationMode`, default `application`.
-4. *Student/instructor accounts:* not in the MVP; the Users model and route structure are ready for Phase 2.
-5. *Content and file volume in year one:* storage adapter via env; 20 MB upload limit; PDFs and images only.
-Also pending from me: final English name usage, `jilaltufan.com`, `contact@jilaltufan.com`, social links, Janna LT license, SVG logo files, real photography. Track all of them in `TODO.md`.
+
+1. _Programs at launch:_ seed all six; each can be hidden via `status`.
+2. _Content per program:_ the template supports every field; empty fields hide cleanly.
+3. _Open vs. application-based registration:_ per-program `registrationMode`, default `application`.
+4. _Student/instructor accounts:_ not in the MVP; the Users model and route structure are ready for Phase 2.
+5. _Content and file volume in year one:_ storage adapter via env; 20 MB upload limit; PDFs and images only.
+   Also pending from me: final English name usage, `jilaltufan.com`, `contact@jilaltufan.com`, social links, Janna LT license, SVG logo files, real photography. Track all of them in `TODO.md`.
 
 ## 16. Definition of done for the MVP
 

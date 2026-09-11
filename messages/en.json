@@ -1,0 +1,100 @@
+{
+  "site": {
+    "name": "Jeel Al-Toufan Academy",
+    "nameShort": "Jeel Al-Toufan",
+    "tagline": "Through knowledge, we are liberated.",
+    "mission": "The Academy's mission is to empower Arab and Muslim youth through intensive educational, cognitive, and political programs that keep pace with the challenges and stakes of the flood, relying on scientific curricula and practical tools to strengthen identity and support the Palestinian cause in various fields.",
+    "description": "The digital home of Jeel Al-Toufan Academy: training programs, live sessions, content and knowledge, and events."
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "mainNavigation": "Main navigation",
+    "utilityNavigation": "Utility links",
+    "footerNavigation": "Footer links",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchLanguage": "Switch language",
+    "logoHome": "Jeel Al-Toufan Academy — Home",
+    "placeholderContent": "Placeholder content"
+  },
+  "nav": {
+    "academy": "The Academy",
+    "programs": "Programs",
+    "schedule": "Schedule",
+    "knowledge": "Knowledge",
+    "events": "Events",
+    "students": "Student window",
+    "instructors": "Instructor window",
+    "apply": "Apply now",
+    "contact": "Contact"
+  },
+  "footer": {
+    "explore": "Explore",
+    "quickLinks": "Quick links",
+    "contact": "Contact us",
+    "about": "About the Academy",
+    "structure": "Structure & councils",
+    "projects": "Projects & initiatives",
+    "minbar": "Minbar Al-Toufan",
+    "materials": "Lectures & materials",
+    "camp": "Jeel Al-Toufan Camp",
+    "privacy": "Privacy policy",
+    "terms": "Terms",
+    "rights": "© {year} Jeel Al-Toufan Academy. All rights reserved.",
+    "timeNote": "All times are Al-Quds time unless stated otherwise."
+  },
+  "language": {
+    "current": "English",
+    "other": "العربية",
+    "notice": "This page isn't translated yet; showing the Arabic version."
+  },
+  "common": {
+    "readMore": "Read more",
+    "viewAll": "View all",
+    "back": "Back",
+    "loading": "Loading…",
+    "placeholder": "[Placeholder]",
+    "comingSoon": "Coming soon",
+    "alQudsTime": "Al-Quds time",
+    "yourTime": "Your local time",
+    "sessions": "{count, plural, one {# session} other {# sessions}}",
+    "months": {
+      "sep": "September",
+      "oct": "October",
+      "nov": "November",
+      "dec": "December",
+      "jan": "January",
+      "feb": "February",
+      "mar": "March",
+      "apr": "April"
+    },
+    "ordinals": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"]
+  },
+  "home": {
+    "title": "Jeel Al-Toufan Academy",
+    "heroTitle": "Through knowledge, we are **liberated**",
+    "exploreCta": "Explore programs",
+    "applyCta": "Apply now",
+    "nextSession": "Next live session"
+  },
+  "status": {
+    "upcoming": "Upcoming",
+    "startingSoon": "Starting soon",
+    "live": "Live now",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "registrationOpen": "Registration open",
+    "registrationApplication": "By application",
+    "registrationClosed": "Registration closed"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page may have moved or is no longer available.",
+    "home": "Home",
+    "programs": "Training programs"
+  },
+  "styleguide": {
+    "title": "Styleguide",
+    "intro": "The site's visual reference: colour, type, and every component in every state."
+  }
+}

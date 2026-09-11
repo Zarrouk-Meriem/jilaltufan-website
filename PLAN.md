@@ -7,22 +7,22 @@
 
 ## 1. What I read
 
-| Source | What I took from it |
-|---|---|
-| `_context/docs/academy-website-plan.pdf` (6 pp., Arabic) | Scope, the four sections, the program model (8 sessions, Sep→Apr), the three build phases, the ≈$25/month operating target, the 500–600 (max ~1,000) user estimate, and the seven open decisions. It matches the brief in `PROMPT.md`; no contradictions found. |
-| `brand/logo-color.png`, `logo-on-dark.png` | Prop 1 lockup: red arrow mark + black (or white) calligraphic Arabic wordmark. In the Arabic lockup the mark sits at the **end** side of the wordmark. |
-| `brand/mark.svg`, `favicon.svg` | Single red polygon, `viewBox="0 0 675 814"`, fill `#C3272E`. |
-| `references/01-mission.jpg` | The editorial voice: enormous whitespace, a single justified text block placed off-centre, a tiny tracked-uppercase Latin label in the top corner. Arabic and English both justified. |
-| `references/02-logo-development.jpg` | Arrow → "A" → inverted → triangle. Keffiyeh net appears in the development stages. Concept: abstraction of the Latin "A" from *Academy*. |
-| `references/03-logo-variations.jpg` | Prop 1 (chosen) and Prop 2, plus mono/grey variants, a stacked variant, and a **Latin lockup** — small `ACADEMY` over bold `FLOOD'S GENERATION`. |
-| `references/04-profile-navy.jpg` | The navy surface is a soft gradient, roughly `#0B3246` → `#052C40`, not a flat fill. |
-| `references/05-post-lecture.jpg` | Session-poster grammar: thin eyebrow → heavy title → small date/time → speaker name → **short red rule** under the role. Western digits. Cut-out portrait on the end side. |
-| `references/06-post-light-keffiyeh.jpg` | The keffiyeh net on **light** paper: a large-scale, very low-contrast lattice of crossed diagonals with a square node at each intersection, tiled across the whole surface. Also: portraits cropped into a rectangle over a navy backdrop, name under, role in a red badge. |
-| `references/07-post-duotone.jpg` | The navy duotone treatment (Jerusalem, Al-Aqsa, figure in keffiyeh) and the **accent word** — «فلسطين» in red inside a dark-ink headline. |
-| `references/08-post-red-accent.jpg` | Accent word again — «جيل الطوفان» in red, this time **on a dark navy photograph**. |
-| `references/09-post-seminar.jpg` | «الساعة 16:00 **بتوقيت القدس**» — the academy's own time convention, in Western digits. A red rule under the CTA «بادر بالمشاركة». |
+| Source                                                   | What I took from it                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_context/docs/academy-website-plan.pdf` (6 pp., Arabic) | Scope, the four sections, the program model (8 sessions, Sep→Apr), the three build phases, the ≈$25/month operating target, the 500–600 (max ~1,000) user estimate, and the seven open decisions. It matches the brief in `PROMPT.md`; no contradictions found.             |
+| `brand/logo-color.png`, `logo-on-dark.png`               | Prop 1 lockup: red arrow mark + black (or white) calligraphic Arabic wordmark. In the Arabic lockup the mark sits at the **end** side of the wordmark.                                                                                                                      |
+| `brand/mark.svg`, `favicon.svg`                          | Single red polygon, `viewBox="0 0 675 814"`, fill `#C3272E`.                                                                                                                                                                                                                |
+| `references/01-mission.jpg`                              | The editorial voice: enormous whitespace, a single justified text block placed off-centre, a tiny tracked-uppercase Latin label in the top corner. Arabic and English both justified.                                                                                       |
+| `references/02-logo-development.jpg`                     | Arrow → "A" → inverted → triangle. Keffiyeh net appears in the development stages. Concept: abstraction of the Latin "A" from _Academy_.                                                                                                                                    |
+| `references/03-logo-variations.jpg`                      | Prop 1 (chosen) and Prop 2, plus mono/grey variants, a stacked variant, and a **Latin lockup** — small `ACADEMY` over bold `FLOOD'S GENERATION`.                                                                                                                            |
+| `references/04-profile-navy.jpg`                         | The navy surface is a soft gradient, roughly `#0B3246` → `#052C40`, not a flat fill.                                                                                                                                                                                        |
+| `references/05-post-lecture.jpg`                         | Session-poster grammar: thin eyebrow → heavy title → small date/time → speaker name → **short red rule** under the role. Western digits. Cut-out portrait on the end side.                                                                                                  |
+| `references/06-post-light-keffiyeh.jpg`                  | The keffiyeh net on **light** paper: a large-scale, very low-contrast lattice of crossed diagonals with a square node at each intersection, tiled across the whole surface. Also: portraits cropped into a rectangle over a navy backdrop, name under, role in a red badge. |
+| `references/07-post-duotone.jpg`                         | The navy duotone treatment (Jerusalem, Al-Aqsa, figure in keffiyeh) and the **accent word** — «فلسطين» in red inside a dark-ink headline.                                                                                                                                   |
+| `references/08-post-red-accent.jpg`                      | Accent word again — «جيل الطوفان» in red, this time **on a dark navy photograph**.                                                                                                                                                                                          |
+| `references/09-post-seminar.jpg`                         | «الساعة 16:00 **بتوقيت القدس**» — the academy's own time convention, in Western digits. A red rule under the CTA «بادر بالمشاركة».                                                                                                                                          |
 
-**Design conclusion.** The identity is *quiet surfaces, heavy type, one red gesture per view*. Red never fills an area larger than a button or a rule, except the mark itself. Every screen we build should pass this test: cover the red, and the layout should still read as finished.
+**Design conclusion.** The identity is _quiet surfaces, heavy type, one red gesture per view_. Red never fills an area larger than a button or a rule, except the mark itself. Every screen we build should pass this test: cover the red, and the layout should still read as finished.
 
 ---
 
@@ -30,13 +30,13 @@
 
 Per the working rules, these are the places where I am not silently following the brief.
 
-**2.1 `mark.svg` is not the inverted triangle.** §2 of the brief describes it as "the abstracted inverted-triangle 'A'". The file actually contains the Prop 1 arrow/chevron mark — the same shape as the lockup. Reference 02 shows the inverted triangle as the *end of a development study*, not as the delivered mark, and Prop 1 (the chosen lockup, per §2) uses the arrow. **I will use `mark.svg` as delivered** — it is the correct mark for the chosen lockup — and will not invent a triangle. If you want the inverted triangle as a secondary device, say so and I will add it as a second asset.
+**2.1 `mark.svg` is not the inverted triangle.** §2 of the brief describes it as "the abstracted inverted-triangle 'A'". The file actually contains the Prop 1 arrow/chevron mark — the same shape as the lockup. Reference 02 shows the inverted triangle as the _end of a development study_, not as the delivered mark, and Prop 1 (the chosen lockup, per §2) uses the arrow. **I will use `mark.svg` as delivered** — it is the correct mark for the chosen lockup — and will not invent a triangle. If you want the inverted triangle as a secondary device, say so and I will add it as a second asset.
 
-**2.2 Red display type on navy.** §8 forbids red on navy for anything but decoration, because it fails contrast (`#C3272E` on `#0B3246` ≈ 2.0:1). But references 07 and 08 *do* set the accent word in red on dark, and it is one of the most recognisable things the brand does. My resolution: **follow the brief on the site** — on navy the accent word is white and the red appears only as mark and rule — and **allow red display accent only inside generated OG images**, which are pictures, not text, and carry a full text alternative. I'd rather flag this than lose the brief's contrast rule. If you prefer brand fidelity over WCAG here for hero display type only, it's a one-token change and I'll make it.
+**2.2 Red display type on navy.** §8 forbids red on navy for anything but decoration, because it fails contrast (`#C3272E` on `#0B3246` ≈ 2.0:1). But references 07 and 08 _do_ set the accent word in red on dark, and it is one of the most recognisable things the brand does. My resolution: **follow the brief on the site** — on navy the accent word is white and the red appears only as mark and rule — and **allow red display accent only inside generated OG images**, which are pictures, not text, and carry a full text alternative. I'd rather flag this than lose the brief's contrast rule. If you prefer brand fidelity over WCAG here for hero display type only, it's a one-token change and I'll make it.
 
 **2.3 The English lockup is missing from `_context/`.** Reference 03 shows a Latin lockup (`ACADEMY` / `FLOOD'S GENERATION`) but no file was supplied. In `/en` I will use the mark plus type-set Poppins rather than fake the lockup. Added to `TODO.md`.
 
-**2.4 Applications must not be publicly creatable through the REST API.** §6 says "Public can create only". If I set Payload's `create` access to `true`, that also opens `POST /api/applications` to the internet, bypassing the honeypot and the rate limiter. Instead: **`create` access is staff-only**, and the public submission path is a server action that calls the Local API with `overrideAccess: true` *after* validation, honeypot, and rate-limit checks pass. Same outcome for editors, no open endpoint. Same for Contact messages.
+**2.4 Applications must not be publicly creatable through the REST API.** §6 says "Public can create only". If I set Payload's `create` access to `true`, that also opens `POST /api/applications` to the internet, bypassing the honeypot and the rate limiter. Instead: **`create` access is staff-only**, and the public submission path is a server action that calls the Local API with `overrideAccess: true` _after_ validation, honeypot, and rate-limit checks pass. Same outcome for editors, no open endpoint. Same for Contact messages.
 
 **2.5 Hosting economics.** The ≈$25/month target is comfortable, but not on Vercel: Vercel Pro alone is $20/seat before a database, and commercial use is outside the Hobby terms. A single small VPS (Hetzner CX22 or equivalent, ~$5–6) running the included `Dockerfile` + Postgres + a volume, with Cloudflare in front, lands around **$6–10/month all-in** and leaves headroom. I'll keep the app deployable both ways as instructed and document both in `DEPLOY.md` with real numbers, but my recommendation will be the VPS. No deployment happens this phase.
 
@@ -50,19 +50,19 @@ Per the working rules, these are the places where I am not silently following th
 
 Checked against the npm registry today, not from memory.
 
-| Package | Version | Note |
-|---|---|---|
-| `next` | 16.3.4 | |
-| `payload` + `@payloadcms/*` | 3.89.0 | `@payloadcms/next` declares `next: >=16.2.6 <17` — **compatible**. |
-| `react` | 19.3.0 | |
-| `tailwindcss` / `@tailwindcss/postcss` | 4.3.3 | |
-| `next-intl` | 4.14.3 | peer allows `next ^16` |
-| `zod` | 4.6.2 | v4 API |
-| `react-hook-form` | 7.87.0 | |
-| `@playwright/test` | 1.63.0 | + `@axe-core/playwright` 4.13.0 |
-| `vitest` | 5.0.0 | |
-| `lucide-react` | 1.44.0 | |
-| `typescript` | 7.0.2 | see 2.6 |
+| Package                                | Version | Note                                                               |
+| -------------------------------------- | ------- | ------------------------------------------------------------------ |
+| `next`                                 | 16.3.4  |                                                                    |
+| `payload` + `@payloadcms/*`            | 3.89.0  | `@payloadcms/next` declares `next: >=16.2.6 <17` — **compatible**. |
+| `react`                                | 19.3.0  |                                                                    |
+| `tailwindcss` / `@tailwindcss/postcss` | 4.3.3   |                                                                    |
+| `next-intl`                            | 4.14.3  | peer allows `next ^16`                                             |
+| `zod`                                  | 4.6.2   | v4 API                                                             |
+| `react-hook-form`                      | 7.87.0  |                                                                    |
+| `@playwright/test`                     | 1.63.0  | + `@axe-core/playwright` 4.13.0                                    |
+| `vitest`                               | 5.0.0   |                                                                    |
+| `lucide-react`                         | 1.44.0  |                                                                    |
+| `typescript`                           | 7.0.2   | see 2.6                                                            |
 
 Local toolchain: Node v22.16.0 ✓, Docker 28.4.0 ✓, git 2.49.0 ✓. **pnpm is not installed** — M1 starts by enabling it via `corepack`. No Postgres client locally; Docker Compose supplies the database, and `psql` isn't required.
 
@@ -128,25 +128,25 @@ Session states: `upcoming · starting-soon · live · completed · cancelled`, e
 
 All public routes under `/[locale]`. "Render" = caching strategy.
 
-| Route | Render | Notes |
-|---|---|---|
-| `/` | ISR 300s + 60s for the session strip | |
-| `/about` | ISR | anchored: intro · vision & mission · goals |
-| `/about/structure` | ISR | councils & teams |
-| `/projects` · `/projects/[slug]` | ISR + `generateStaticParams` | |
-| `/programs` | ISR | Open Training featured, then five directed |
-| `/programs/[slug]` | ISR 60s | six pages, one template |
-| `/schedule` | ISR 60s | `?program=` filter, shareable |
-| `/events` · `/events/[slug]` | ISR | camp gets the rich layout |
-| `/knowledge` · `/knowledge/minbar[/slug]` · `/knowledge/materials` | ISR | |
-| `/instructors` · `/instructors/[slug]` | ISR | |
-| `/students` | ISR | program picker is a client component |
-| `/apply` · `/apply/[programSlug]` | dynamic | |
-| `/contact` · `/privacy` · `/terms` | static | |
-| `/styleguide` | dynamic, **404s when `NODE_ENV === 'production'`** unless `ENABLE_STYLEGUIDE=1` | |
-| `not-found` | static | bilingual |
-| `/sitemap.xml` · `/robots.txt` | generated | both locales, `hreflang` alternates |
-| `/api/og/…` | edge-ish runtime | brand OG template |
+| Route                                                              | Render                                                                          | Notes                                      |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------ |
+| `/`                                                                | ISR 300s + 60s for the session strip                                            |                                            |
+| `/about`                                                           | ISR                                                                             | anchored: intro · vision & mission · goals |
+| `/about/structure`                                                 | ISR                                                                             | councils & teams                           |
+| `/projects` · `/projects/[slug]`                                   | ISR + `generateStaticParams`                                                    |                                            |
+| `/programs`                                                        | ISR                                                                             | Open Training featured, then five directed |
+| `/programs/[slug]`                                                 | ISR 60s                                                                         | six pages, one template                    |
+| `/schedule`                                                        | ISR 60s                                                                         | `?program=` filter, shareable              |
+| `/events` · `/events/[slug]`                                       | ISR                                                                             | camp gets the rich layout                  |
+| `/knowledge` · `/knowledge/minbar[/slug]` · `/knowledge/materials` | ISR                                                                             |                                            |
+| `/instructors` · `/instructors/[slug]`                             | ISR                                                                             |                                            |
+| `/students`                                                        | ISR                                                                             | program picker is a client component       |
+| `/apply` · `/apply/[programSlug]`                                  | dynamic                                                                         |                                            |
+| `/contact` · `/privacy` · `/terms`                                 | static                                                                          |                                            |
+| `/styleguide`                                                      | dynamic, **404s when `NODE_ENV === 'production'`** unless `ENABLE_STYLEGUIDE=1` |                                            |
+| `not-found`                                                        | static                                                                          | bilingual                                  |
+| `/sitemap.xml` · `/robots.txt`                                     | generated                                                                       | both locales, `hreflang` alternates        |
+| `/api/og/…`                                                        | edge-ish runtime                                                                | brand OG template                          |
 
 Primary nav stays five items: **الأكاديمية · البرامج · الجدول · المعرفة · الفعاليات** + language switch + «سجّل الآن». Student and Instructor windows live in the header utility row, the footer, and contextual links from program/session pages.
 
@@ -156,19 +156,19 @@ Primary nav stays five items: **الأكاديمية · البرامج · الج
 
 Every collection: `status` (draft|published), `slug`, SEO group (title, description, ogImage), `isPlaceholder`. Every human-readable field `localized: true`.
 
-| Collection | Key fields | Public access |
-|---|---|---|
-| **Programs** | title, track(`open`|`directed`), shortDescription, intro(RT), goals[], targetAudience(RT), durationSummary, season{startMonth,endMonth}, sessionsCount=8, coverImage, accentMotif, instructors↔, registrationMode(`open`|`application`|`closed`, default `application`), registrationDeadline, order, featured | read published |
-| **Sessions** | program↔, number 1–8, title, summary, details(RT), instructors↔, startsAt(UTC), durationMinutes, zoomJoinUrl, zoomMeetingId, **zoomPasscode (field-level staff-only read)**, status, materialsNote | read published, join fields gated §4.5 |
-| **Instructors** | name, role, shortBio, bio, photo, links[], programs (join) | read published |
-| **Events** | title, type(`camp`|`activity`|`seminar`), startDate, endDate, location/online, summary, body(RT), programme[day→items[]], gallery[], registrationLink/mode | read published |
-| **Projects** | title, summary, body, image, status | read published |
-| **MinbarPosts** | title, excerpt, body, cover, author(↔Instructors \| text), publishedAt, tags[] | read published |
-| **Materials** | title, program↔/session↔, type(`pdf`|`link`|`reading`), file\|url, description | read published |
-| **Applications** | program↔, fullName, email, phone, country, city, ageRange, motivation, hearAbout, consent, locale, status(`new`…`rejected`), notes | **none** — see 2.4; staff read/update; CSV export |
-| **ContactMessages** | name, email, subject, message, status | **none** |
-| **Users** | email, name, role(`admin`|`editor`) | staff only |
-| **Media** | alt **(required)**, focal point, sizes | read all |
+| Collection          | Key fields                                                                                                                                                                                         | Public access                                                                                                                                                                                        |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Programs**        | title, track(`open`                                                                                                                                                                                | `directed`), shortDescription, intro(RT), goals[], targetAudience(RT), durationSummary, season{startMonth,endMonth}, sessionsCount=8, coverImage, accentMotif, instructors↔, registrationMode(`open` | `application`                                                                                                                | `closed`, default `application`), registrationDeadline, order, featured | read published |
+| **Sessions**        | program↔, number 1–8, title, summary, details(RT), instructors↔, startsAt(UTC), durationMinutes, zoomJoinUrl, zoomMeetingId, **zoomPasscode (field-level staff-only read)**, status, materialsNote | read published, join fields gated §4.5                                                                                                                                                               |
+| **Instructors**     | name, role, shortBio, bio, photo, links[], programs (join)                                                                                                                                         | read published                                                                                                                                                                                       |
+| **Events**          | title, type(`camp`                                                                                                                                                                                 | `activity`                                                                                                                                                                                           | `seminar`), startDate, endDate, location/online, summary, body(RT), programme[day→items[]], gallery[], registrationLink/mode | read published                                                          |
+| **Projects**        | title, summary, body, image, status                                                                                                                                                                | read published                                                                                                                                                                                       |
+| **MinbarPosts**     | title, excerpt, body, cover, author(↔Instructors \| text), publishedAt, tags[]                                                                                                                     | read published                                                                                                                                                                                       |
+| **Materials**       | title, program↔/session↔, type(`pdf`                                                                                                                                                               | `link`                                                                                                                                                                                               | `reading`), file\|url, description                                                                                           | read published                                                          |
+| **Applications**    | program↔, fullName, email, phone, country, city, ageRange, motivation, hearAbout, consent, locale, status(`new`…`rejected`), notes                                                                 | **none** — see 2.4; staff read/update; CSV export                                                                                                                                                    |
+| **ContactMessages** | name, email, subject, message, status                                                                                                                                                              | **none**                                                                                                                                                                                             |
+| **Users**           | email, name, role(`admin`                                                                                                                                                                          | `editor`)                                                                                                                                                                                            | staff only                                                                                                                   |
+| **Media**           | alt **(required)**, focal point, sizes                                                                                                                                                             | read all                                                                                                                                                                                             |
 
 **Globals:** `SiteSettings` (contact email, socials, `academyTimeZone`, `joinLinkVisibility`, announcement bar), `HomePage` (hero copy + per-section toggles, stats band **off**), `AboutPage`, `Navigation`, `Footer`.
 
@@ -181,11 +181,13 @@ Uploads: PDF and image MIME types only, 20 MB cap, `alt` required.
 ## 7. Design system
 
 ### 7.1 Tokens
+
 Colour tokens exactly as §8 of the brief, declared as CSS custom properties in `src/styles/tokens.css` and exposed to Tailwind v4 via `@theme`. Contrast to be verified in the M7 axe pass; `--ink-500` on `--paper-2` is the one I expect to need checking.
 
 Navy surfaces use the **gradient** from reference 04 (`--navy-800` → `--navy-900`, ~160°), not a flat fill.
 
 ### 7.2 Type
+
 Poppins (`next/font/google`) + IBM Plex Sans Arabic (`next/font/google`) as the Janna LT stand-in. Single stack in both locales — `var(--font-latin), var(--font-arabic), system-ui, sans-serif` — so Latin glyphs and digits come from Poppins and Arabic falls through.
 
 Swapping to Janna LT = drop licensed files into `public/fonts/janna/` and change **one** `next/font/local` declaration in `src/styles/fonts.ts`.
@@ -193,6 +195,7 @@ Swapping to Janna LT = drop licensed files into `public/fonts/janna/` and change
 Fluid scale, ~1.25 ratio, `clamp()`-based, tokens only. Arabic body 17–18px / 1.8. English 16–17px / 1.65. Measure 60–72ch. **A lint rule and a styleguide check will guard against `letter-spacing` or `text-transform` landing on Arabic text.**
 
 ### 7.3 The six motifs
+
 1. **Red rule** — 48×3px at the start edge under section headings. (`<SectionHeading>`)
 2. **Ordinal labels** — «أولًا · ثانيًا…» / `01 · 02…`, tracked uppercase in Latin only.
 3. **The mark as accent** — current timeline station, active nav indicator, key list bullets, and a corner notch at the **top-start** of featured cards. Never distorted, never recoloured except white-on-red.
@@ -201,12 +204,14 @@ Fluid scale, ~1.25 ratio, `clamp()`-based, tokens only. Arabic body 17–18px / 
 6. **Accent word** — `**word**` in a title field renders red (ink-red on light; white on navy, per 2.2). A tiny parser in `src/lib/accent.ts`, applied only to hero and section titles.
 
 ### 7.4 Component inventory
+
 `Button` · `Link` · `SectionHeading` · `OrdinalLabel` · `ProgramCard` · `SessionRow` · `DateBlock` · `StatusBadge` · `InstructorCard` · `EventCard` · `SeasonTimeline` · `Accordion` · `Tabs` · `Callout` · `Breadcrumbs` · `LanguageSwitch` · `Gallery`+`Lightbox` · `Pattern` · `DuotoneImage` · `Field`/`Input`/`Textarea`/`Select`/`Checkbox` · `EmptyState` · `Toast` · `Logo` · `Mark` · `AddToCalendar` · `LocalTime` · `Prose`.
 
 Every one of them appears in `/styleguide`, in every state, in both directions. That page is the review surface.
 
 ### 7.5 Motion
-150–250ms ease-out on hover and disclosure; one 8px fade-up per element on first view via `IntersectionObserver`. No library. Full `prefers-reduced-motion` honour — reduced motion means *no* transform, not a shorter one.
+
+150–250ms ease-out on hover and disclosure; one 8px fade-up per element on first view via `IntersectionObserver`. No library. Full `prefers-reduced-motion` honour — reduced motion means _no_ transform, not a shorter one.
 
 ---
 
@@ -214,13 +219,13 @@ Every one of them appears in `/styleguide`, in every state, in both directions. 
 
 Idempotent (upsert by slug), safe to re-run.
 
-| Slug | AR | EN | Track |
-|---|---|---|---|
-| `open-training` | التدريب المفتوح | Open Training | open |
-| `palestine-our-compass` | فلسطين بوصلتنا | Palestine, Our Compass | directed |
-| `leaders-of-tomorrow` | قادة الغد | Leaders of Tomorrow | directed |
-| `impact-makers` | صنّاع الأثر | Impact Makers | directed |
-| `community-pioneers` | روّاد المجتمع | Community Pioneers | directed |
+| Slug                     | AR                 | EN                               | Track    |
+| ------------------------ | ------------------ | -------------------------------- | -------- |
+| `open-training`          | التدريب المفتوح    | Open Training                    | open     |
+| `palestine-our-compass`  | فلسطين بوصلتنا     | Palestine, Our Compass           | directed |
+| `leaders-of-tomorrow`    | قادة الغد          | Leaders of Tomorrow              | directed |
+| `impact-makers`          | صنّاع الأثر        | Impact Makers                    | directed |
+| `community-pioneers`     | روّاد المجتمع      | Community Pioneers               | directed |
 | `ambassadors-of-al-quds` | سفراء القدس الشريف | Ambassadors of Al-Quds Al-Sharif | directed |
 
 Slugs are English/transliterated and stable; the auto-transliteration utility exists for editor-created content, but these six are pinned.
@@ -243,17 +248,17 @@ Each program gets **8 sessions**, one per month Sep 2026 → Apr 2027, titled `[
 
 ### 9.1 Known risks
 
-| Risk | Mitigation |
-|---|---|
-| Payload admin + a strict CSP fight (inline styles, `unsafe-eval` in dev) | Separate header rules for `/admin` in `next.config.ts`; verified at M2, not M7. |
-| Tailwind v4 preflight leaking into `/admin` | No shared root layout (§4.1). Verified by an M1 Playwright screenshot of `/admin`. |
-| TS 7 immaturity | §2.6 — timeboxed at M1, documented fallback. |
-| `next-intl` middleware swallowing `/admin` | Explicit matcher exclusions; M1 smoke test hits `/admin` and `/api/health`. |
-| Arabic font fallback flashing / wrong metrics | `display: swap` + `adjustFontFallback`; visual check at M1 at all four widths. |
-| Duotone via CSS blend inconsistent across browsers | Feature-detect; plain photo fallback. Chromium/WebKit/Firefox screenshots at M3. |
-| Payload + Next 16 edge cases (new pairing) | Both pinned exactly; upgrade only deliberately. |
-| DST: Palestine transitions differ from Europe/US | Frozen-clock unit tests across both 2026 transitions. |
-| Editors publishing a session without a Zoom link | Admin validation + an `EmptyState` that says so plainly rather than rendering a dead button. |
+| Risk                                                                     | Mitigation                                                                                   |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Payload admin + a strict CSP fight (inline styles, `unsafe-eval` in dev) | Separate header rules for `/admin` in `next.config.ts`; verified at M2, not M7.              |
+| Tailwind v4 preflight leaking into `/admin`                              | No shared root layout (§4.1). Verified by an M1 Playwright screenshot of `/admin`.           |
+| TS 7 immaturity                                                          | §2.6 — timeboxed at M1, documented fallback.                                                 |
+| `next-intl` middleware swallowing `/admin`                               | Explicit matcher exclusions; M1 smoke test hits `/admin` and `/api/health`.                  |
+| Arabic font fallback flashing / wrong metrics                            | `display: swap` + `adjustFontFallback`; visual check at M1 at all four widths.               |
+| Duotone via CSS blend inconsistent across browsers                       | Feature-detect; plain photo fallback. Chromium/WebKit/Firefox screenshots at M3.             |
+| Payload + Next 16 edge cases (new pairing)                               | Both pinned exactly; upgrade only deliberately.                                              |
+| DST: Palestine transitions differ from Europe/US                         | Frozen-clock unit tests across both 2026 transitions.                                        |
+| Editors publishing a session without a Zoom link                         | Admin validation + an `EmptyState` that says so plainly rather than rendering a dead button. |
 
 ---
 
@@ -261,16 +266,16 @@ Each program gets **8 sessions**, one per month Sep 2026 → Apr 2027, titled `[
 
 Each ends with: `pnpm check` → Playwright screenshots (both locales × 4 widths) → honest comparison against the references → fixes → commit → short summary to you.
 
-| # | Scope | Done when |
-|---|---|---|
-| **M0** | `PLAN.md`, `CLAUDE.md`, `TODO.md` | **You approve this file.** |
+| #      | Scope                                                                                                                                                             | Done when                                                                                                                |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **M0** | `PLAN.md`, `CLAUDE.md`, `TODO.md`                                                                                                                                 | **You approve this file.**                                                                                               |
 | **M1** | pnpm via corepack, Next 16 + Payload 3 + Postgres in Docker, route groups, locale routing, tokens, fonts, header/footer shell, `/styleguide` with base components | `/ar` and `/en` render the shell; `/admin` loads unstyled-by-us; styleguide shows tokens + 10 components both directions |
-| **M2** | All collections, globals, access control, admin grouping in Arabic, seed script | An editor can log in, see Arabic grouped nav, and the six programs with 48 sessions exist |
-| **M3** | Home, About, Structure, Programs index, Program template | All six program pages render from one template; home has all nine sections with correct empty-state behaviour |
-| **M4** | Sessions, `/schedule` + filter, join-window logic + unit tests, `.ics` + Google Calendar, Events, Camp, Projects | Window logic proven by frozen-clock tests; no join URL in HTML outside the window |
-| **M5** | Apply flow, confirmation + notification emails, admin triage, CSV export, honeypot + rate limit | An application submitted in `/en` arrives in admin and both emails fire (console in dev) |
-| **M6** | Student window, Instructor window + profiles, Knowledge hub, Minbar, Materials, Contact, privacy, terms, 404 | Every route in §5 returns 200 in both locales |
-| **M7** | a11y pass, perf pass, SEO, full Playwright suite, `README.md` (<5 min setup), `DEPLOY.md`, final `TODO.md` | Zero serious/critical axe violations; Lighthouse ≥95×4 on `/` and a program page |
+| **M2** | All collections, globals, access control, admin grouping in Arabic, seed script                                                                                   | An editor can log in, see Arabic grouped nav, and the six programs with 48 sessions exist                                |
+| **M3** | Home, About, Structure, Programs index, Program template                                                                                                          | All six program pages render from one template; home has all nine sections with correct empty-state behaviour            |
+| **M4** | Sessions, `/schedule` + filter, join-window logic + unit tests, `.ics` + Google Calendar, Events, Camp, Projects                                                  | Window logic proven by frozen-clock tests; no join URL in HTML outside the window                                        |
+| **M5** | Apply flow, confirmation + notification emails, admin triage, CSV export, honeypot + rate limit                                                                   | An application submitted in `/en` arrives in admin and both emails fire (console in dev)                                 |
+| **M6** | Student window, Instructor window + profiles, Knowledge hub, Minbar, Materials, Contact, privacy, terms, 404                                                      | Every route in §5 returns 200 in both locales                                                                            |
+| **M7** | a11y pass, perf pass, SEO, full Playwright suite, `README.md` (<5 min setup), `DEPLOY.md`, final `TODO.md`                                                        | Zero serious/critical axe violations; Lighthouse ≥95×4 on `/` and a program page                                         |
 
 ---
 

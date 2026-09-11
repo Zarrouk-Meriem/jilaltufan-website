@@ -1,0 +1,14 @@
+/*
+ * Keffiyeh net — an original geometric tile: two crossed diagonal families with a
+ * square node at each intersection (see reference 06). Encoded as a data-URI so it
+ * costs no request. Two treatments only: faint ink on paper-2, faint white on navy.
+ */
+@utility pattern-keffiyeh-paper {
+  background-color: var(--paper-2);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'><g fill='none' stroke='%23050708' stroke-opacity='0.07' stroke-width='1.25'><path d='M0 48L48 0M48 96L96 48M0 48L48 96M48 0L96 48'/><path d='M-8 8L8 -8M88 104L104 88M-8 88L8 104M88 -8L104 8'/></g><g fill='%23050708' fill-opacity='0.05'><rect x='46' y='46' width='4' height='4' transform='rotate(45 48 48)'/><rect x='-2' y='-2' width='4' height='4' transform='rotate(45 0 0)'/><rect x='94' y='-2' width='4' height='4' transform='rotate(45 96 0)'/><rect x='-2' y='94' width='4' height='4' transform='rotate(45 0 96)'/><rect x='94' y='94' width='4' height='4' transform='rotate(45 96 96)'/></g></svg>");
+  background-size: 96px 96px;
+}
+@utility pattern-keffiyeh-navy {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'><g fill='none' stroke='%23ffffff' stroke-opacity='0.085' stroke-width='1.25'><path d='M0 48L48 0M48 96L96 48M0 48L48 96M48 0L96 48'/><path d='M-8 8L8 -8M88 104L104 88M-8 88L8 104M88 -8L104 8'/></g><g fill='%23ffffff' fill-opacity='0.07'><rect x='46' y='46' width='4' height='4' transform='rotate(45 48 48)'/><rect x='-2' y='-2' width='4' height='4' transform='rotate(45 0 0)'/><rect x='94' y='-2' width='4' height='4' transform='rotate(45 96 0)'/><rect x='-2' y='94' width='4' height='4' transform='rotate(45 0 96)'/><rect x='94' y='94' width='4' height='4' transform='rotate(45 96 96)'/></g></svg>");
+  background-size: 96px 96px;
+}
