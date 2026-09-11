@@ -58,3 +58,55 @@ export function installExtensionNoiseFilter(): void {
     },
   })
 }
+
+const EXTENSION_FRAME = /(chrome|moz|safari-web)-extension:\/\//
+
+/**
+ * True when an error originates entirely inside a browser extension's injected
+ * script: every stack frame is an extension URL (or, for `error` events, the
+ * reported filename is one). An error with even one frame of ours is NOT noise.
+ */
+export function isExtensionError(input: {
+  stack?: unknown
+  message?: unknown
+  filename?: unknown
+}): boolean {
+  if (typeof input.filename === 'string' && EXTENSION_FRAME.test(input.filename)) return true
+  const stack = typeof input.stack === 'string' ? input.stack : ''
+  const frames = stack.split('\n').filter((l) => /^\s*at\s|@/.test(l) && /:\d+/.test(l))
+  if (!frames.length) return false
+  return frames.every((f) => EXTENSION_FRAME.test(f))
+}
+
+/**
+ * Dev only. Registered before Next's overlay listeners (instrumentation-client
+ * runs first), so stopImmediatePropagation keeps extension-only failures out of
+ * the overlay while everything else propagates untouched.
+ */
+export function installExtensionErrorFilter(): void {
+  if (typeof window === 'undefined') return
+  const w = window as Window & { __jaaExtErrorFilter?: boolean }
+  if (w.__jaaExtErrorFilter) return
+  w.__jaaExtErrorFilter = true
+  window.addEventListener(
+    'unhandledrejection',
+    (e) => {
+      const r = e.reason as { stack?: unknown; message?: unknown } | undefined
+      if (r && typeof r === 'object' && isExtensionError(r)) {
+        e.preventDefault()
+        e.stopImmediatePropagation()
+      }
+    },
+    true,
+  )
+  window.addEventListener(
+    'error',
+    (e) => {
+      if (isExtensionError({ filename: e.filename, stack: e.error?.stack, message: e.message })) {
+        e.preventDefault()
+        e.stopImmediatePropagation()
+      }
+    },
+    true,
+  )
+}

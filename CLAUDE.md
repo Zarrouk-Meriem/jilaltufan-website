@@ -33,6 +33,10 @@ Payload CLI gotchas (learned the hard way):
 
 After changing any collection or global: **`pnpm generate:types`** (wraps Payload's generator directly — the CLI wrapper hangs here) and commit `src/payload-types.ts`.
 
+## Restarting the dev server
+
+Use `PORT=3001 scripts/dev-restart.sh [--clean]`. Never poll the server with requests while Turbopack is doing its first compile after a `.next` wipe — that corrupts its manifests and every route returns 500 with `SyntaxError: Unexpected non-whitespace character after JSON`. The script waits for the "Ready" line first.
+
 ## Layout rules — non-negotiable
 
 - **Logical properties only.** `ms-*` `me-*` `ps-*` `pe-*` `start-*` `end-*` `text-start` `border-s` `rounded-s-*`.
