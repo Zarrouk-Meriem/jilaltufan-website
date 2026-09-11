@@ -3,7 +3,6 @@
 import { Menu, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Logo } from '@/components/brand/Logo'
-import { Mark } from '@/components/brand/Mark'
 import { ButtonLink } from '@/components/ui/Button'
 import { Link, usePathname } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
@@ -121,22 +120,19 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
             {primary.map((item) => {
               const active = isActive(item.href)
               return (
-                <li key={item.href} className="relative">
+                <li key={item.href}>
                   <Link
                     href={item.href as never}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'link-grow relative block py-2 text-sm font-medium transition-colors',
-                      active ? 'text-ink-900' : 'text-ink-700 hover:text-ink-900',
+                      'link-grow relative block py-2 text-sm transition-colors',
+                      active
+                        ? 'font-semibold text-ink-900 after:w-full'
+                        : 'font-medium text-ink-700 hover:text-ink-900',
                     )}
                   >
                     {item.label}
                   </Link>
-                  {active ? (
-                    <span aria-hidden className="absolute start-0 -bottom-1">
-                      <Mark size={8} />
-                    </span>
-                  ) : null}
                 </li>
               )
             })}
@@ -189,9 +185,11 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
                 <Link
                   href={item.href as never}
                   aria-current={isActive(item.href) ? 'page' : undefined}
-                  className="flex items-center gap-3 py-5 text-2xl font-bold text-on-navy"
+                  className={cn(
+                    'block py-5 text-2xl font-bold',
+                    isActive(item.href) ? 'text-on-navy' : 'text-on-navy-muted',
+                  )}
                 >
-                  {isActive(item.href) ? <Mark size={14} /> : null}
                   {item.label}
                 </Link>
               </li>

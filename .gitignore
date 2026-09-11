@@ -28,3 +28,4 @@ coverage/
 .idea/
 .vscode/
 .artifacts*
+tsconfig.tsbuildinfo

@@ -27,6 +27,11 @@ export default defineConfig([
     },
   },
   {
+    // Payload's generated migration template declares unused `payload`/`req` args.
+    files: ['src/migrations/**/*.ts'],
+    rules: { '@typescript-eslint/no-unused-vars': 'off' },
+  },
+  {
     files: ['scripts/**/*.cjs'],
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },

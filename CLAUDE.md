@@ -25,6 +25,11 @@ pnpm seed         # idempotent seed
 pnpm payload      # Payload CLI (migrations, generate:types)
 ```
 
+Payload CLI gotchas (learned the hard way):
+
+- The CLI needs `PAYLOAD_CONFIG_PATH` or it **silently no-ops** — the scripts in `package.json` set it; don't call `payload` bare.
+- `payload run <script>` awaits the module import, not a dangling promise — scripts must use **top-level `await`** and `import 'dotenv/config'`.
+
 After changing any collection or global: **`pnpm payload generate:types`** and commit `src/payload-types.ts`.
 
 ## Layout rules — non-negotiable
@@ -41,6 +46,7 @@ After changing any collection or global: **`pnpm payload generate:types`** and c
 - Colours, spacing, and type come from tokens in `src/styles/tokens.css`. **No hard-coded hex, ever** — if a value isn't a token, either add a token or you're doing it wrong.
 - Red (`--red-600`) is ~5–10% of any screen: the mark, primary CTAs, rules, active states. Nothing else.
 - On navy: text is white or `rgb(255 255 255 / .78)`. **Red is decorative on navy** (mark and rules only) — it fails text contrast.
+- **The mark is never a small UI indicator** (nav, bullets, badges) — user feedback. It appears as logo, hero/timeline station, and card corner notch only. State is shown with weight, colour, or a hairline.
 - Buttons and badges: 2px radius. The brand is angular; no pills.
 - Section rhythm: 128px desktop / 72px mobile. Content max-width 1200px; reading pages narrower.
 

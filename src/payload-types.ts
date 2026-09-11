@@ -67,18 +67,47 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    programs: Program;
+    sessions: Session;
+    instructors: Instructor;
+    projects: Project;
+    'minbar-posts': MinbarPost;
+    materials: Material;
+    events: Event;
+    applications: Application;
+    'contact-messages': ContactMessage;
     users: User;
     media: Media;
+    exports: Export;
+    imports: Import;
     'payload-kv': PayloadKv;
+    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    instructors: {
+      programs: 'programs';
+      sessions: 'sessions';
+    };
+  };
   collectionsSelect: {
+    programs: ProgramsSelect<false> | ProgramsSelect<true>;
+    sessions: SessionsSelect<false> | SessionsSelect<true>;
+    instructors: InstructorsSelect<false> | InstructorsSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    'minbar-posts': MinbarPostsSelect<false> | MinbarPostsSelect<true>;
+    materials: MaterialsSelect<false> | MaterialsSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    applications: ApplicationsSelect<false> | ApplicationsSelect<true>;
+    'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    exports: ExportsSelect<false> | ExportsSelect<true>;
+    imports: ImportsSelect<false> | ImportsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -87,15 +116,34 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('ar' | 'en') | ('ar' | 'en')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'about-page': AboutPage;
+    'home-page': HomePage;
+    'site-settings': SiteSetting;
+    navigation: Navigation;
+    footer: Footer;
+  };
+  globalsSelect: {
+    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+  };
   locale: 'ar' | 'en';
   widgets: {
     collections: CollectionsWidget;
   };
   user: User;
   jobs: {
-    tasks: unknown;
+    tasks: {
+      createCollectionExport: TaskCreateCollectionExport;
+      createCollectionImport: TaskCreateCollectionImport;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
     workflows: unknown;
   };
 }
@@ -118,31 +166,173 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Open Training and the five directed programs. Each has its own page and eight sessions per season.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "programs".
  */
-export interface User {
+export interface Program {
   id: number;
-  name?: string | null;
-  role: 'admin' | 'editor';
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
+  title: string;
+  track: 'open' | 'directed';
+  /**
+   * Shown on cards and indexes. One or two sentences.
+   */
+  shortDescription?: string | null;
+  intro?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  goals?:
     | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
+        text: string;
+        id?: string | null;
       }[]
     | null;
-  password?: string | null;
-  collection: 'users';
+  targetAudience?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * e.g. 8 sessions, one per month from September to April
+   */
+  durationSummary?: string | null;
+  registrationNote?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  seasonStartMonth?:
+    ('sep' | 'oct' | 'nov' | 'dec' | 'jan' | 'feb' | 'mar' | 'apr' | 'may' | 'jun' | 'jul' | 'aug') | null;
+  seasonEndMonth?:
+    ('sep' | 'oct' | 'nov' | 'dec' | 'jan' | 'feb' | 'mar' | 'apr' | 'may' | 'jun' | 'jul' | 'aug') | null;
+  sessionsCount?: number | null;
+  instructors?: (number | Instructor)[] | null;
+  registrationMode: 'open' | 'application' | 'closed';
+  registrationDeadline?: string | null;
+  /**
+   * Optional. Falls back to the main title and description.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  coverImage?: (number | null) | Media;
+  accentMotif?: ('none' | 'keffiyeh' | 'mark') | null;
+  featured?: boolean | null;
+  order?: number | null;
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Generated from the Arabic title. Latin letters, digits, and dashes only.
+   */
+  slug: string;
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "instructors".
+ */
+export interface Instructor {
+  id: number;
+  name: string;
+  role?: string | null;
+  shortBio?: string | null;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  photo?: (number | null) | Media;
+  links?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  programs?: {
+    docs?: (number | Program)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  sessions?: {
+    docs?: (number | Session)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Optional. Falls back to the main title and description.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Generated from the Arabic title. Latin letters, digits, and dashes only.
+   */
+  slug: string;
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -193,6 +383,415 @@ export interface Media {
   };
 }
 /**
+ * Every session is live on Zoom. The join link appears to visitors according to the join-link policy in Site Settings.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sessions".
+ */
+export interface Session {
+  id: number;
+  program: number | Program;
+  number: number;
+  title: string;
+  summary?: string | null;
+  details?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  instructors?: (number | Instructor)[] | null;
+  /**
+   * Stored in UTC; shown to visitors in Al-Quds time and their local time.
+   */
+  startsAt: string;
+  durationMinutes?: number | null;
+  /**
+   * Visible to visitors only inside the join window (or per policy).
+   */
+  zoomJoinUrl?: string | null;
+  zoomMeetingId?: string | null;
+  /**
+   * Staff only — never rendered publicly.
+   */
+  zoomPasscode?: string | null;
+  materialsNote?: string | null;
+  sessionStatus: 'scheduled' | 'cancelled' | 'completed';
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  summary?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  image?: (number | null) | Media;
+  projectStatus?: ('ongoing' | 'upcoming' | 'completed') | null;
+  /**
+   * Optional. Falls back to the main title and description.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Generated from the Arabic title. Latin letters, digits, and dashes only.
+   */
+  slug: string;
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "minbar-posts".
+ */
+export interface MinbarPost {
+  id: number;
+  title: string;
+  excerpt?: string | null;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  cover?: (number | null) | Media;
+  author?: (number | null) | Instructor;
+  /**
+   * Used when the author is not an instructor.
+   */
+  authorName?: string | null;
+  publishedAt: string;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Falls back to the main title and description.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Generated from the Arabic title. Latin letters, digits, and dashes only.
+   */
+  slug: string;
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * PDFs, links, and readings tied to a program or session.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "materials".
+ */
+export interface Material {
+  id: number;
+  title: string;
+  program?: (number | null) | Program;
+  session?: (number | null) | Session;
+  type: 'pdf' | 'link' | 'reading';
+  file?: (number | null) | Media;
+  url?: string | null;
+  description?: string | null;
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * The Jeel Al-Toufan Camp (type "camp"), activities, and seminars.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  type: 'camp' | 'activity' | 'seminar';
+  startDate: string;
+  endDate?: string | null;
+  isOnline?: boolean | null;
+  location?: string | null;
+  summary?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  programme?:
+    | {
+        dayTitle: string;
+        date?: string | null;
+        items?:
+          | {
+              time?: string | null;
+              title: string;
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  gallery?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  registrationMode?: ('none' | 'link' | 'form') | null;
+  registrationLink?: string | null;
+  coverImage?: (number | null) | Media;
+  /**
+   * Optional. Falls back to the main title and description.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Generated from the Arabic title. Latin letters, digits, and dashes only.
+   */
+  slug: string;
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Submissions from the apply form. Filter by program and status; export CSV from the export button.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "applications".
+ */
+export interface Application {
+  id: number;
+  program: number | Program;
+  applicationStatus: 'new' | 'reviewing' | 'accepted' | 'waitlisted' | 'rejected';
+  fullName: string;
+  email: string;
+  phone?: string | null;
+  country?: string | null;
+  city?: string | null;
+  ageRange?: ('under-18' | '18-24' | '25-34' | '35-44' | '45-plus') | null;
+  motivation?: string | null;
+  hearAbout?: string | null;
+  consent: boolean;
+  locale?: ('ar' | 'en') | null;
+  /**
+   * Staff only.
+   */
+  internalNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-messages".
+ */
+export interface ContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  messageStatus: 'new' | 'replied' | 'archived';
+  locale?: ('ar' | 'en') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  role: 'admin' | 'editor';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exports".
+ */
+export interface Export {
+  id: number;
+  name?: string | null;
+  format: 'csv' | 'json';
+  limit?: number | null;
+  page?: number | null;
+  sort?: string | null;
+  sortOrder?: ('asc' | 'desc') | null;
+  locale?: ('all' | 'ar' | 'en') | null;
+  drafts?: ('yes' | 'no') | null;
+  selectionToUse?: ('currentSelection' | 'currentFilters' | 'all') | null;
+  fields?: string[] | null;
+  collectionSlug: string;
+  where?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "imports".
+ */
+export interface Import {
+  id: number;
+  collectionSlug: string;
+  importMode?: ('create' | 'update' | 'upsert') | null;
+  matchField?: string | null;
+  status?: ('pending' | 'completed' | 'partial' | 'failed') | null;
+  summary?: {
+    imported?: number | null;
+    updated?: number | null;
+    total?: number | null;
+    issues?: number | null;
+    issueDetails?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -211,11 +810,139 @@ export interface PayloadKv {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: number;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'createCollectionExport' | 'createCollectionImport';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  taskSlug?: ('inline' | 'createCollectionExport' | 'createCollectionImport') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
   id: number;
   document?:
+    | ({
+        relationTo: 'programs';
+        value: number | Program;
+      } | null)
+    | ({
+        relationTo: 'sessions';
+        value: number | Session;
+      } | null)
+    | ({
+        relationTo: 'instructors';
+        value: number | Instructor;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'minbar-posts';
+        value: number | MinbarPost;
+      } | null)
+    | ({
+        relationTo: 'materials';
+        value: number | Material;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'applications';
+        value: number | Application;
+      } | null)
+    | ({
+        relationTo: 'contact-messages';
+        value: number | ContactMessage;
+      } | null)
     | ({
         relationTo: 'users';
         value: number | User;
@@ -265,6 +992,258 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programs_select".
+ */
+export interface ProgramsSelect<T extends boolean = true> {
+  title?: T;
+  track?: T;
+  shortDescription?: T;
+  intro?: T;
+  goals?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  targetAudience?: T;
+  durationSummary?: T;
+  registrationNote?: T;
+  seasonStartMonth?: T;
+  seasonEndMonth?: T;
+  sessionsCount?: T;
+  instructors?: T;
+  registrationMode?: T;
+  registrationDeadline?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        ogImage?: T;
+      };
+  coverImage?: T;
+  accentMotif?: T;
+  featured?: T;
+  order?: T;
+  status?: T;
+  slug?: T;
+  isPlaceholder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sessions_select".
+ */
+export interface SessionsSelect<T extends boolean = true> {
+  program?: T;
+  number?: T;
+  title?: T;
+  summary?: T;
+  details?: T;
+  instructors?: T;
+  startsAt?: T;
+  durationMinutes?: T;
+  zoomJoinUrl?: T;
+  zoomMeetingId?: T;
+  zoomPasscode?: T;
+  materialsNote?: T;
+  sessionStatus?: T;
+  status?: T;
+  isPlaceholder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "instructors_select".
+ */
+export interface InstructorsSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  shortBio?: T;
+  bio?: T;
+  photo?: T;
+  links?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  programs?: T;
+  sessions?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        ogImage?: T;
+      };
+  status?: T;
+  slug?: T;
+  isPlaceholder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  summary?: T;
+  body?: T;
+  image?: T;
+  projectStatus?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        ogImage?: T;
+      };
+  status?: T;
+  slug?: T;
+  isPlaceholder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "minbar-posts_select".
+ */
+export interface MinbarPostsSelect<T extends boolean = true> {
+  title?: T;
+  excerpt?: T;
+  body?: T;
+  cover?: T;
+  author?: T;
+  authorName?: T;
+  publishedAt?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        ogImage?: T;
+      };
+  status?: T;
+  slug?: T;
+  isPlaceholder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "materials_select".
+ */
+export interface MaterialsSelect<T extends boolean = true> {
+  title?: T;
+  program?: T;
+  session?: T;
+  type?: T;
+  file?: T;
+  url?: T;
+  description?: T;
+  status?: T;
+  isPlaceholder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  type?: T;
+  startDate?: T;
+  endDate?: T;
+  isOnline?: T;
+  location?: T;
+  summary?: T;
+  body?: T;
+  programme?:
+    | T
+    | {
+        dayTitle?: T;
+        date?: T;
+        items?:
+          | T
+          | {
+              time?: T;
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  gallery?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  registrationMode?: T;
+  registrationLink?: T;
+  coverImage?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        ogImage?: T;
+      };
+  status?: T;
+  slug?: T;
+  isPlaceholder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "applications_select".
+ */
+export interface ApplicationsSelect<T extends boolean = true> {
+  program?: T;
+  applicationStatus?: T;
+  fullName?: T;
+  email?: T;
+  phone?: T;
+  country?: T;
+  city?: T;
+  ageRange?: T;
+  motivation?: T;
+  hearAbout?: T;
+  consent?: T;
+  locale?: T;
+  internalNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-messages_select".
+ */
+export interface ContactMessagesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  subject?: T;
+  message?: T;
+  messageStatus?: T;
+  locale?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -344,11 +1323,101 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exports_select".
+ */
+export interface ExportsSelect<T extends boolean = true> {
+  name?: T;
+  format?: T;
+  limit?: T;
+  page?: T;
+  sort?: T;
+  sortOrder?: T;
+  locale?: T;
+  drafts?: T;
+  selectionToUse?: T;
+  fields?: T;
+  collectionSlug?: T;
+  where?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "imports_select".
+ */
+export interface ImportsSelect<T extends boolean = true> {
+  collectionSlug?: T;
+  importMode?: T;
+  matchField?: T;
+  status?: T;
+  summary?:
+    | T
+    | {
+        imported?: T;
+        updated?: T;
+        total?: T;
+        issues?: T;
+        issueDetails?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -384,6 +1453,365 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page".
+ */
+export interface AboutPage {
+  id: number;
+  title?: string | null;
+  intro?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  vision?: string | null;
+  mission?: string | null;
+  pillars?:
+    | {
+        title: string;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  goals?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  structureIntro?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  structure?:
+    | {
+        name: string;
+        kind?: ('council' | 'team' | 'committee') | null;
+        description?: string | null;
+        members?:
+          | {
+              name: string;
+              role?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: number;
+  /**
+   * Wrap the accent word in double stars: **liberated**
+   */
+  heroTitle?: string | null;
+  heroSubtitle?: string | null;
+  heroImage?: (number | null) | Media;
+  primaryCtaLabel?: string | null;
+  secondaryCtaLabel?: string | null;
+  showNextSession?: boolean | null;
+  showMission?: boolean | null;
+  showPrograms?: boolean | null;
+  showSeason?: boolean | null;
+  showUpcoming?: boolean | null;
+  showCamp?: boolean | null;
+  showMinbar?: boolean | null;
+  showInstructors?: boolean | null;
+  showStats?: boolean | null;
+  closingTitle?: string | null;
+  closingText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Receives application and contact notifications.
+   */
+  contactEmail: string;
+  whatsapp?: string | null;
+  /**
+   * IANA name. Shown to visitors as "Al-Quds time".
+   */
+  academyTimeZone: string;
+  socials?:
+    | {
+        platform: 'instagram' | 'x' | 'facebook' | 'youtube' | 'telegram' | 'tiktok' | 'linkedin' | 'other';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  joinLinkVisibility: 'always' | 'window' | 'email-only';
+  joinWindowMinutes?: number | null;
+  announcementEnabled?: boolean | null;
+  announcementText?: string | null;
+  announcementLink?: string | null;
+  /**
+   * Keep off until real numbers exist.
+   */
+  statsEnabled?: boolean | null;
+  stats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Leave empty to use the default menu.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  primary?:
+    | {
+        label: string;
+        /**
+         * Internal path like /programs, or a full URL.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  utility?:
+    | {
+        label: string;
+        /**
+         * Internal path like /programs, or a full URL.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  cta: {
+    label: string;
+    /**
+     * Internal path like /programs, or a full URL.
+     */
+    href: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  /**
+   * Leave empty to show the mission.
+   */
+  blurb?: string | null;
+  columns?:
+    | {
+        title: string;
+        links?:
+          | {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Default: "All times are Al-Quds time…"
+   */
+  note?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  title?: T;
+  intro?: T;
+  vision?: T;
+  mission?: T;
+  pillars?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  goals?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  structureIntro?: T;
+  structure?:
+    | T
+    | {
+        name?: T;
+        kind?: T;
+        description?: T;
+        members?:
+          | T
+          | {
+              name?: T;
+              role?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  heroTitle?: T;
+  heroSubtitle?: T;
+  heroImage?: T;
+  primaryCtaLabel?: T;
+  secondaryCtaLabel?: T;
+  showNextSession?: T;
+  showMission?: T;
+  showPrograms?: T;
+  showSeason?: T;
+  showUpcoming?: T;
+  showCamp?: T;
+  showMinbar?: T;
+  showInstructors?: T;
+  showStats?: T;
+  closingTitle?: T;
+  closingText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  contactEmail?: T;
+  whatsapp?: T;
+  academyTimeZone?: T;
+  socials?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  joinLinkVisibility?: T;
+  joinWindowMinutes?: T;
+  announcementEnabled?: T;
+  announcementText?: T;
+  announcementLink?: T;
+  statsEnabled?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  primary?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  utility?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  blurb?: T;
+  columns?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections_widget".
  */
 export interface CollectionsWidget {
@@ -391,6 +1819,69 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskCreateCollectionExport".
+ */
+export interface TaskCreateCollectionExport {
+  input: {
+    id: string;
+    name: string;
+    batchSize?: number | null;
+    collectionSlug:
+      | 'programs'
+      | 'sessions'
+      | 'instructors'
+      | 'projects'
+      | 'minbar-posts'
+      | 'materials'
+      | 'events'
+      | 'applications'
+      | 'contact-messages'
+      | 'users'
+      | 'media'
+      | 'exports'
+      | 'imports';
+    drafts?: ('yes' | 'no') | null;
+    exportCollection: string;
+    fields?: string[] | null;
+    format: 'csv' | 'json';
+    limit?: number | null;
+    locale?: string | null;
+    maxLimit?: number | null;
+    page?: number | null;
+    sort?: string | null;
+    userCollection?: string | null;
+    userID?: string | null;
+    where?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskCreateCollectionImport".
+ */
+export interface TaskCreateCollectionImport {
+  input: {
+    importId: string;
+    importCollection: string;
+    userID?: string | null;
+    userCollection?: string | null;
+    batchSize?: number | null;
+    debug?: boolean | null;
+    defaultVersionStatus?: ('draft' | 'published') | null;
+    maxLimit?: number | null;
+  };
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
