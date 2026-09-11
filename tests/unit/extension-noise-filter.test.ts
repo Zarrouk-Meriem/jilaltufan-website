@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isExtensionError, isNoise } from '@/lib/dev/extension-noise-filter'
+import { isExtensionError, isNoise, unmatchedLines } from '@/lib/dev/extension-noise-filter'
 
 const report = (diff: string) => [
   "%s A tree hydrated but some attributes of the server rendered HTML didn't match the client properties.",
@@ -43,6 +43,82 @@ describe('extension noise filter', () => {
   })
   it('does not treat the prose bullets as diff lines', () => {
     expect(isNoise(report(''))).toBe(false)
+  })
+})
+
+describe('Bitdefender attribute family', () => {
+  it('drops reports with bis_size / bis_id / __processed__ lines', () => {
+    const diff = [
+      '-        bis_skin_checked="1"',
+      '-        bis_size="{&quot;x&quot;:0,&quot;y&quot;:0}"',
+      '-        bis_id="abc123"',
+      '-        __processed_9f8e7d__="true"',
+    ].join('\n')
+    expect(isNoise(report(diff))).toBe(true)
+  })
+  it('reports exactly which lines are unmatched', () => {
+    const diff = ['-        bis_skin_checked="1"', '-        data-foo="1"', '+        <span>'].join(
+      '\n',
+    )
+    expect(unmatchedLines(report(diff))).toEqual(['-        data-foo="1"', '+        <span>'])
+  })
+})
+
+describe('Dark Reader', () => {
+  const captured = [
+    '-                             data-darkreader-scheme="dark"',
+    '-                             data-darkreader-proxy-injected="true"',
+    '+                                                   color: "transparent"',
+    '-                                                   color: "transparent"',
+    '+                                                   height: 48',
+    '-                                                   height: "48px"',
+    '+                                                   width: "auto"',
+    '-                                                   width: "auto"',
+    '-                                                   --darkreader-inline-color: "transparent"',
+    '-                                                 data-darkreader-inline-color=""',
+    '-                                               data-darkreader-inline-stroke=""',
+    '-                                               style={{--darkreader-inline-stroke:"currentColor"}}',
+  ].join('\n')
+  it('drops the report captured from the real extension', () => {
+    expect(isNoise(report(captured))).toBe(true)
+  })
+  it('drops a mixed Bitdefender + Dark Reader report', () => {
+    expect(isNoise(report('-        bis_skin_checked="1"\n' + captured))).toBe(true)
+  })
+  it('keeps a real style difference', () => {
+    expect(
+      isNoise(report(captured + '\n+                height: 48\n-                height: "64px"')),
+    ).toBe(false)
+  })
+  it('keeps a real attribute next to Dark Reader noise', () => {
+    expect(unmatchedLines(report(captured + '\n-        class="a"'))).toEqual([
+      '-        class="a"'.trim(),
+    ])
+  })
+})
+
+describe('captured from the real profile: two logos + LocatorJS + Bitdefender uuid', () => {
+  const captured = [
+    '-                             data-locator-client-url="chrome-extension://npbfdllefekhdplbkdigpncggmojpefi/client.bund..."',
+    '-                             data-darkreader-mode="dynamic"',
+    '-                               __processed_69bb2573-db79-47f6-8d68-42d5bfa7d82a__="true"',
+    '+                                                     height: 48',
+    '-                                                     height: "48px"',
+    '+                                                     width: "auto"',
+    '-                                                     width: "auto"',
+    '+                                                     height: 34',
+    '-                                                     height: "34px"',
+    '+                                                 height: 44',
+    '-                                                 height: "44px"',
+    '-                                                 data-darkreader-inline-stroke=""',
+  ].join('\n')
+  it('is all noise', () => expect(unmatchedLines(report(captured))).toEqual([]))
+  it('a genuinely different height still surfaces', () => {
+    const real = captured + '\n+                height: 48\n-                height: "64px"'
+    expect(unmatchedLines(report(real))).toEqual([
+      '+                height: 48'.trim(),
+      '-                height: "64px"'.trim(),
+    ])
   })
 })
 

@@ -14,7 +14,18 @@ async function simulateExtension(context: BrowserContext, attr: string) {
   await context.addInitScript((a: string) => {
     const stamp = (n: Node) => {
       const el = n as Element
-      if (el.nodeType === 1 && el.tagName === 'DIV' && !el.hasAttribute(a)) el.setAttribute(a, '1')
+      if (el.nodeType === 1 && el.tagName === 'DIV' && !el.hasAttribute(a)) {
+        el.setAttribute(a, '1')
+        if (a === 'bis_skin_checked') {
+          // Bitdefender writes the whole family, not just the flag.
+          el.setAttribute(
+            'bis_size',
+            JSON.stringify({ x: 0, y: 0, w: 10, h: 10, abs_x: 0, abs_y: 0 }),
+          )
+          el.setAttribute('bis_id', 'b' + Math.random().toString(36).slice(2, 10))
+          el.setAttribute('__processed_1a2b3c__', 'true')
+        }
+      }
     }
     const sweep = (r: Node) => (r as Element).querySelectorAll?.('div').forEach(stamp)
     new MutationObserver((ms) => {

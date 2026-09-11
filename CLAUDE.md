@@ -81,12 +81,14 @@ If a console error, overlay, or warning shows up — in the user's browser or ou
 
 ## Milestone checklist
 
-1. `pnpm check` clean
-2. `pnpm test:e2e` green — including `console.spec.ts` (zero console errors **or warnings** on every route, both locales, and after client-side navigation) and `hydration.spec.ts`
-3. Playwright screenshots of every touched page, **both locales**, at 375 / 768 / 1280 / 1440 → `.artifacts/screens/<milestone>/`
-4. Compare honestly against `_context/brand/references/`; fix what's off; say what's still off
-5. Commit with a clear message
-6. Short summary to the user
+1. `pnpm verify` green — it runs everything below in order; nothing is reported as done before it passes
+2. `pnpm check` clean
+3. `pnpm test:e2e` green — including `console.spec.ts` (zero console errors **or warnings** on every route, both locales, and after client-side navigation) and `hydration.spec.ts`
+4. `node scripts/sim-extension.cjs` (Bitdefender's DOM stamping, simulated) and `node scripts/real-extensions.cjs` (the user's real Chrome extensions loaded from the local profile) — both must keep the dev overlay closed
+5. Playwright screenshots of every touched page, **both locales**, at 375 / 768 / 1280 / 1440 → `.artifacts/screens/<milestone>/`
+6. Compare honestly against `_context/brand/references/`; fix what's off; say what's still off
+7. Commit with a clear message
+8. Short summary to the user
 
 Never report a milestone complete with a failing check. If something is blocked, finish everything else and say exactly what was left and why.
 

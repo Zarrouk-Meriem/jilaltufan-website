@@ -27,7 +27,8 @@
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:unit",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate:create",
-    "payload:tsx": "node --import tsx/esm scripts/payload-cli.mjs"
+    "payload:tsx": "node --import tsx/esm scripts/payload-cli.mjs",
+    "verify": "scripts/verify.sh"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",

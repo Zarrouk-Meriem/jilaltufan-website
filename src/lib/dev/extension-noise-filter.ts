@@ -18,16 +18,82 @@
  * Guarded by tests/unit/extension-noise-filter.test.ts and tests/e2e/hydration.spec.ts.
  */
 const DIFF_LINE = /^[+-]\s{2,}/
-const CLIENT_ATTR_OR_TAG = /^\+\s+(<|[\w-]+=)/
+// A client-only line that is a tag, an attribute, or a style entry (key: value) is a real difference;
+// anything else on a '+' line is text React prints as context under a stamped element.
+const CLIENT_ATTR_OR_TAG = /^\+\s+(<|[\w-]+=|[\w-]+: )/
+/**
+ * Attributes written into the DOM by Bitdefender's desktop browser integration
+ * (not an extension — it cannot be loaded into a test browser, only simulated):
+ * bis_skin_checked, bis_size (JSON), bis_id, bis_register, __processed_<hash>__.
+ */
+export const STAMPED_ATTR =
+  /^-\s+(bis_skin_checked|bis_size|bis_id|bis_register|__processed_[\w-]+__|data-darkreader-[\w-]*|data-locator-[\w-]*)=|^-\s+[\w-]+="(chrome|moz|safari-web)-extension:\/\//
 
 export function isNoise(args: ArrayLike<unknown>): boolean {
   const s = Array.from(args, (a) => (typeof a === 'string' ? a : '')).join('\n')
   if (!/hydrat/i.test(s)) return false
   const diff = s.split('\n').filter((l) => DIFF_LINE.test(l))
   if (!diff.length) return false
-  return diff.every(
-    (l) => /bis_skin_checked=/.test(l) || (l.startsWith('+') && !CLIENT_ATTR_OR_TAG.test(l)),
-  )
+  return unmatchedLines(args).length === 0
+}
+
+/**
+ * Dark Reader rewrites inline styles, so React prints the whole style object of
+ * an element as +/- pairs even where values are equal in effect (48 vs "48px").
+ * A pair is noise when both sides normalise to the same value.
+ */
+const STYLE_ENTRY = /^([+-])\s+([\w-]+):\s+(.+)$/
+const normaliseStyleValue = (v: string) =>
+  v
+    .trim()
+    .replace(/^"(.*)"$/, '$1')
+    .replace(/^(-?\d+(?:\.\d+)?)px$/, '$1')
+
+function styleNoiseLines(diff: string[]): Set<string> {
+  const noise = new Set<string>()
+  const entries = diff
+    .map((l) => ({ l, m: STYLE_ENTRY.exec(l) }))
+    .filter((e): e is { l: string; m: RegExpExecArray } => !!e.m && !/=/.test(e.m[2]!))
+  for (let i = 0; i < entries.length; i++) {
+    const a = entries[i]!
+    if (a.m[2]!.startsWith('--darkreader-')) {
+      noise.add(a.l)
+      continue
+    }
+    const b = entries[i + 1]
+    // React prints the client value (+) and the server value (-) as adjacent lines for one key.
+    if (
+      b &&
+      b.m[2] === a.m[2] &&
+      b.m[1] !== a.m[1] &&
+      normaliseStyleValue(a.m[3]!) === normaliseStyleValue(b.m[3]!)
+    ) {
+      noise.add(a.l)
+      noise.add(b.l)
+      i++
+    }
+  }
+  return noise
+}
+
+const DARKREADER_ATTR = /^-\s+(data-darkreader-[\w-]*=|style=\{\{--darkreader-)/
+
+/** The differing lines that stopped a report from classifying as noise (for diagnosis). */
+export function unmatchedLines(args: ArrayLike<unknown>): string[] {
+  const s = Array.from(args, (a) => (typeof a === 'string' ? a : '')).join('\n')
+  const diff = s.split('\n').filter((l) => DIFF_LINE.test(l))
+  const styleNoise = styleNoiseLines(diff)
+  return diff
+    .filter(
+      (l) =>
+        !(
+          STAMPED_ATTR.test(l) ||
+          DARKREADER_ATTR.test(l) ||
+          styleNoise.has(l) ||
+          (l.startsWith('+') && !CLIENT_ATTR_OR_TAG.test(l))
+        ),
+    )
+    .map((l) => l.trim())
 }
 
 export function installExtensionNoiseFilter(): void {
@@ -42,6 +108,17 @@ export function installExtensionNoiseFilter(): void {
   function filtered(this: unknown, ...args: unknown[]) {
     if (depth > 0) return native.apply(console, args)
     if (isNoise(args)) return
+    // A hydration report that mentions Bitdefender's attributes but still has other
+    // differing lines: print just those lines so the classifier can be fixed from a
+    // screenshot instead of guesswork.
+    if (/hydrat/i.test(String(args[0]))) {
+      const lines = unmatchedLines(args)
+      if (lines.length)
+        console.warn(
+          '[jaa] hydration report NOT filtered — unmatched diff lines:\n' +
+            lines.slice(0, 12).join('\n'),
+        )
+    }
     depth++
     try {
       return inner.apply(console, args)
