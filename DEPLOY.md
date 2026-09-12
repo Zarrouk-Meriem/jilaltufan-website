@@ -22,11 +22,13 @@ Decided 2026-09-12: the site goes up on Vercel's free tier first so it can be re
 **Order matters — the build itself queries the database to prerender pages, so the database must exist and be migrated before the first Vercel build.**
 
 1. **Neon** (free Postgres) — create a project, copy the pooled connection string; it ends in `?sslmode=require`, which `pg` honours as is.
-2. **Migrate and seed from this machine** against it (never via the Vercel build):
+2. **Migrate and seed from this machine** against it (never via the Vercel build). Put the URL in `.env.neon` (git-ignored) rather than on the command line, and run both in **production mode** — in dev mode Payload _pushes_ the schema on startup instead of migrating, which leaves a `dev` marker and no recorded migration:
    ```bash
-   DATABASE_URL='<neon url>' pnpm migrate
-   DATABASE_URL='<neon url>' pnpm seed
+   export DATABASE_URL="$(grep '^DATABASE_URL=' .env.neon | cut -d= -f2-)"
+   NODE_ENV=production pnpm payload:tsx migrate   # the plain `pnpm migrate` CLI can go silent
+   NODE_ENV=production pnpm seed
    ```
+   Check: `payload_migrations` holds `20260911_112709_initial`, not `dev`.
    Then create the first admin at the preview's `/admin` once deployed (the first account is always admin).
 3. **Cloudflare R2** — a bucket for media (Vercel has no writable disk). Create an API token with object read/write; the endpoint is `https://<account-id>.r2.cloudflarestorage.com`, region `auto`.
 4. **Vercel** — import the Git repository. Framework: Next.js (auto). Node 22 (Project → Settings → General). pnpm is picked up from `packageManager`; the `patches/` directory applies during install.
