@@ -19,6 +19,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: process.env.DOCKER_BUILD ? 'standalone' : undefined,
+  // `next dev` and `next start` both default to the same `.next/` output directory —
+  // running a local production server for manual testing alongside the dev server (or
+  // wiping `.next` for a dev restart) corrupts whichever one isn't currently rebuilding.
+  // NEXT_DIST_DIR lets a local production check use its own directory instead.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   images: {
     formats: ['image/avif', 'image/webp'],
     localPatterns: [{ pathname: '/api/media/file/**' }, { pathname: '/brand/**' }],

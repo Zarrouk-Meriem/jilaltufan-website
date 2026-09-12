@@ -2,6 +2,6 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3
   /\/$/,
   '',
 )
-export const SITE_DOMAIN = 'jilaltufan.com'
+export const SITE_DOMAIN = 'jilaltufan.org'
 export const STYLEGUIDE_ENABLED =
   process.env.NODE_ENV !== 'production' || process.env.ENABLE_STYLEGUIDE === '1'

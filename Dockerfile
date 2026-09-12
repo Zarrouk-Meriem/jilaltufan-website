@@ -14,7 +14,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV DOCKER_BUILD=1 NEXT_TELEMETRY_DISABLED=1
 # NEXT_PUBLIC_SITE_URL must be present at build time (it is inlined into the client bundle).
-ARG NEXT_PUBLIC_SITE_URL=https://jilaltufan.com
+ARG NEXT_PUBLIC_SITE_URL=https://jilaltufan.org
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 RUN pnpm build
 

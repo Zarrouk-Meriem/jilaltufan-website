@@ -1,7 +1,7 @@
 'use client'
 
 import { Menu, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { ButtonLink } from '@/components/ui/Button'
 import { Link, usePathname } from '@/i18n/navigation'
@@ -79,12 +79,18 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
         )}
       >
         <Link href="/" aria-label={labels.logoHome} className="flex shrink-0 items-center">
-          <span className={cn('block transition-[opacity] duration-150', compact && 'md:hidden')}>
+          {/* One logo, scaled down (not swapped) when compact, so it shrinks in step with
+              the header's height instead of popping to a second image mid-transition. */}
+          <span
+            className={cn(
+              // Tailwind's scale-* utility sets the standalone `scale` property, not
+              // `transform` — `transition-transform` alone would leave it unanimated.
+              'block transition-[scale] duration-200 ease-brand',
+              compact && 'md:scale-[var(--logo-compact-scale)]',
+            )}
+            style={{ '--logo-compact-scale': locale === 'ar' ? 34 / 48 : 28 / 40 } as CSSProperties}
+          >
             <Logo locale={locale} height={locale === 'ar' ? 48 : 40} priority />
-          </span>
-          {/* Compact: the mark + a smaller wordmark */}
-          <span className={cn('hidden items-center gap-2', compact && 'md:flex')}>
-            <Logo locale={locale} height={locale === 'ar' ? 34 : 28} />
           </span>
         </Link>
 

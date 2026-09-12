@@ -223,7 +223,7 @@ async function seed() {
     slug: 'site-settings',
     overrideAccess: true,
     data: {
-      contactEmail: 'contact@jilaltufan.com',
+      contactEmail: 'contact@jilaltufan.org',
       academyTimeZone: 'Asia/Hebron',
       joinLinkVisibility: 'window',
       joinWindowMinutes: 30,

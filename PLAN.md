@@ -242,7 +242,7 @@ Each program gets **8 sessions**, one per month Sep 2026 → Apr 2027, titled `[
 
 - **a11y:** WCAG 2.2 AA; axe on every route in both locales, zero serious/critical. Keyboard paths for accordion, mobile menu, lightbox, language switch, and the apply form are explicit Playwright tests, not spot checks.
 - **perf:** Lighthouse mobile ≥95 across all four categories on `/` and a program page. The main risks are the hero image and font loading; both are budgeted for from the start rather than optimised at M7.
-- **SEO:** localized `generateMetadata`, canonicals on `https://jilaltufan.com`, sitemap (both locales), `hreflang`, JSON-LD (`EducationalOrganization` sitewide, `Course` per program, `Event` per session/event), OG images from the brand template.
+- **SEO:** localized `generateMetadata`, canonicals on `https://jilaltufan.org`, sitemap (both locales), `hreflang`, JSON-LD (`EducationalOrganization` sitewide, `Course` per program, `Event` per session/event), OG images from the brand template.
 - **security:** CSP with per-request nonce, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, frame-ancestors. Payload's admin needs its own relaxed CSP branch — noted as a known friction point (9.1 below).
 - **screenshots:** Playwright captures every touched page, both locales, at 375 / 768 / 1280 / 1440, written to `.artifacts/screens/<milestone>/`. I compare them against `_context/brand/references/` and report honestly, including what still looks wrong.
 
@@ -287,7 +287,7 @@ Each ends with: `pnpm check` → Playwright screenshots (both locales × 4 width
 4. **Accounts** — not in MVP; `Users` + `/students` + `/instructors` are the Phase 2 seam.
 5. **Volume** — env-driven storage adapter, 20 MB cap, PDF + images only.
 
-Still yours to decide (tracked in `TODO.md`): the English name usage, `jilaltufan.com` registration, `contact@jilaltufan.com`, social links, the Janna LT licence, SVG logo files, the English lockup, and real photography.
+Still yours to decide (tracked in `TODO.md`): the English name usage, `jilaltufan.org` registration, `contact@jilaltufan.org`, social links, the Janna LT licence, SVG logo files, the English lockup, and real photography.
 
 ---
 

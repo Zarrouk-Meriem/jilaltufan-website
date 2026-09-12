@@ -2,7 +2,7 @@ import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { resendAdapter } from '@payloadcms/email-resend'
 
 const from = {
-  defaultFromAddress: process.env.EMAIL_FROM_ADDRESS ?? 'no-reply@jilaltufan.com',
+  defaultFromAddress: process.env.EMAIL_FROM_ADDRESS ?? 'no-reply@jilaltufan.org',
   defaultFromName: process.env.EMAIL_FROM_NAME ?? 'أكاديمية جيل الطوفان',
 }
 

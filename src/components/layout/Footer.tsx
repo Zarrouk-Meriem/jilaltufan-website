@@ -78,11 +78,11 @@ export async function Footer({ locale }: { locale: string }) {
               </li>
               <li>
                 <a
-                  href="mailto:contact@jilaltufan.com"
+                  href="mailto:contact@jilaltufan.org"
                   className="link-grow relative hover:text-on-navy"
                   dir="ltr"
                 >
-                  contact@jilaltufan.com
+                  contact@jilaltufan.org
                 </a>
               </li>
             </ul>

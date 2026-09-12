@@ -4,6 +4,7 @@ node_modules/
 
 # next
 .next/
+.next-prod/
 out/
 next-env.d.ts
 

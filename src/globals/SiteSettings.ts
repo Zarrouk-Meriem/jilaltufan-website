@@ -18,7 +18,7 @@ export const SiteSettings: GlobalConfig = {
               name: 'contactEmail',
               type: 'email',
               required: true,
-              defaultValue: 'contact@jilaltufan.com',
+              defaultValue: 'contact@jilaltufan.org',
               label: { ar: 'بريد التواصل', en: 'Contact email' },
               admin: {
                 description: {

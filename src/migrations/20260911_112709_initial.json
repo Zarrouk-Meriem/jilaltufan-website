@@ -6403,7 +6403,7 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": true,
-          "default": "'contact@jilaltufan.com'"
+          "default": "'contact@jilaltufan.org'"
         },
         "whatsapp": {
           "name": "whatsapp",

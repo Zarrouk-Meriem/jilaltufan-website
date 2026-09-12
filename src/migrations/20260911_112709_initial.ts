@@ -625,7 +625,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "site_settings" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"contact_email" varchar DEFAULT 'contact@jilaltufan.com' NOT NULL,
+  	"contact_email" varchar DEFAULT 'contact@jilaltufan.org' NOT NULL,
   	"whatsapp" varchar,
   	"academy_time_zone" varchar DEFAULT 'Asia/Hebron' NOT NULL,
   	"join_link_visibility" "enum_site_settings_join_link_visibility" DEFAULT 'window' NOT NULL,

@@ -36,7 +36,7 @@ function fold(line: string): string {
 
 export function buildIcs(
   e: CalendarEvent,
-  prodId = '-//Jeel Al-Toufan Academy//jilaltufan.com//AR',
+  prodId = '-//Jeel Al-Toufan Academy//jilaltufan.org//AR',
 ): string {
   const lines = [
     'BEGIN:VCALENDAR',

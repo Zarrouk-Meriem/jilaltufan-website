@@ -44,8 +44,8 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 ## Decisions still with the client
 
 - [ ] **P1 — Final English name usage.** _"Academy · Flood's Generation"_ per the brief vs _"Jeel Al-Toufan Academy"_. Currently both appear in different places; pick one for `/en`.
-- [ ] **P1 — Register `jilaltufan.com`** and confirm it's the production domain (`NEXT_PUBLIC_SITE_URL`).
-- [ ] **P1 — `contact@jilaltufan.com`** — create the mailbox; it receives application and contact notifications.
+- [x] **Domain: `jilaltufan.org`** is the official one (non-profit); `.com` is registered too and should 301 to `.org` at the DNS/CDN layer.
+- [x] **Mail:** `admin@jilaltufan.org` is the official mailbox; `contact@jilaltufan.org` (alias) receives application and contact notifications; `no-reply@jilaltufan.org` sends — needs the domain verified in Resend (SPF + DKIM) before launch.
 - [ ] **P2 — Social links** (Instagram, X, YouTube, Telegram…) for the footer and JSON-LD `sameAs`.
 - [ ] **P2 — Registration mode per program.** Default is `application` for all six. Confirm, or mark specific programs `open`.
 - [ ] **P2 — Join-link policy.** Default is `window` (link appears 30 min before start). Alternatives: `always`, `email-only`. _Enforced in the query layer: the Zoom URL is not in the HTML outside the window._

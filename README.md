@@ -48,6 +48,15 @@ scripts/                       verify.sh, dev-restart.sh, real-extensions.cjs, s
 
 Conventions future work must follow are in `CLAUDE.md`. Open content and decisions are in `TODO.md`. The original plan is `PLAN.md`.
 
+## Checking a production build locally
+
+`next dev` and `next start` share the same `.next/` folder by default, so running both at once corrupts whichever isn't currently rebuilding. To keep a production check running alongside `pnpm dev`, give it its own output directory:
+
+```bash
+NEXT_DIST_DIR=.next-prod NEXT_PUBLIC_SITE_URL=http://localhost:3002 pnpm build
+NEXT_DIST_DIR=.next-prod PORT=3002 pnpm start
+```
+
 ## Editors
 
 Everything public is edited at `/admin` in Arabic: programs and their eight sessions (with Zoom links, shown to visitors only inside the join window), events and the camp, Minbar posts, materials, applications (with CSV export), and site settings (contact email, time zone, join-link policy). Only records with status **منشور / Published** are visible on the site.
