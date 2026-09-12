@@ -1,12 +1,17 @@
 import type { MetadataRoute } from 'next'
-import { SITE_URL } from '@/lib/site'
+import { SITE_NOINDEX, SITE_URL } from '@/lib/site'
 
-export default function robots(): MetadataRoute.Robots {
+export function robotsFor(noindex: boolean, siteUrl: string): MetadataRoute.Robots {
+  if (noindex) return { rules: [{ userAgent: '*', disallow: '/' }] }
   return {
     rules: [
       { userAgent: '*', allow: '/', disallow: ['/admin', '/api/', '/*/apply/', '/*/styleguide'] },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
+    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
   }
+}
+
+export default function robots(): MetadataRoute.Robots {
+  return robotsFor(SITE_NOINDEX, SITE_URL)
 }

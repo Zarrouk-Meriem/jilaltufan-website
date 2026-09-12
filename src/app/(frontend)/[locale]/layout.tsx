@@ -8,7 +8,7 @@ import { SkipLink } from '@/components/layout/SkipLink'
 import { localeMeta, routing, type Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/queries'
 import { alternatesFor, ogImageFor, organizationJsonLd } from '@/lib/seo'
-import { SITE_URL } from '@/lib/site'
+import { SITE_NOINDEX, SITE_URL } from '@/lib/site'
 import { JsonLd } from '@/components/content/JsonLd'
 import { fontVariables } from '@/styles/fonts'
 import '@/styles/globals.css'
@@ -30,6 +30,7 @@ export async function generateMetadata({
     title: { default: t('name'), template: `%s — ${t('name')}` },
     description: t('description'),
     icons: { icon: '/brand/favicon.svg' },
+    robots: SITE_NOINDEX ? { index: false, follow: false } : undefined,
     twitter: { card: 'summary_large_image' },
     openGraph: {
       siteName: t('name'),

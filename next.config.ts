@@ -24,6 +24,11 @@ const nextConfig: NextConfig = {
   // wiping `.next` for a dev restart) corrupts whichever one isn't currently rebuilding.
   // NEXT_DIST_DIR lets a local production check use its own directory instead.
   distDir: process.env.NEXT_DIST_DIR || '.next',
+  // The OG image route reads its font files with fs at request time; serverless hosts
+  // (Vercel) only bundle what static analysis can trace, so include them explicitly.
+  outputFileTracingIncludes: {
+    '/api/og': ['./src/app/(frontend)/api/og/fonts/**'],
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     localPatterns: [{ pathname: '/api/media/file/**' }, { pathname: '/brand/**' }],
