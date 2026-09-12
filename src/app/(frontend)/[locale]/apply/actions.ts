@@ -88,14 +88,17 @@ export async function submitApplication(
     })
     // Emails must not fail the submission — the record is what matters; failures are logged.
     await Promise.allSettled([
+      // The sender is a no-reply mailbox; replies must still reach a person.
       payload.sendEmail({
         to: data.email,
+        replyTo: settings.contactEmail,
         subject: applicant.subject,
         text: applicant.text,
         html: applicant.html,
       }),
       payload.sendEmail({
         to: settings.contactEmail,
+        replyTo: data.email,
         subject: notify.subject,
         text: notify.text,
         html: notify.html,
