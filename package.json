@@ -15,7 +15,7 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload",
     "generate:types": "node --import tsx/esm scripts/generate-types.mjs",
-    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:importmap",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation S3_BUCKET=importmap S3_ACCESS_KEY_ID=importmap S3_SECRET_ACCESS_KEY=importmap S3_ENDPOINT=https://importmap.invalid node --import tsx/esm scripts/generate-importmap.mjs",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload run src/seed/index.ts",
     "typecheck": "tsc --noEmit",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",

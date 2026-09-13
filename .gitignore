@@ -3,8 +3,7 @@ node_modules/
 .pnpm-store/
 
 # next
-.next/
-.next-prod/
+.next*/
 out/
 next-env.d.ts
 

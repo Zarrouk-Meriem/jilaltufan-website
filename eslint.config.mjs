@@ -5,11 +5,10 @@ import noPhysicalDirection from './eslint-rules/no-physical-direction.mjs'
 
 export default defineConfig([
   globalIgnores([
-    '.next/**',
-    // Only ever exists locally (NEXT_DIST_DIR for an isolated production check — see
-    // CLAUDE.md); Next's typegen still appends it to tsconfig's `include`, which without
-    // this pulls its generated files into typescript-eslint's project and floods errors.
-    '.next-prod/**',
+    // `.next/` and any NEXT_DIST_DIR sibling (`.next-prod/`, `.next-vercel/` — local
+    // production checks, see CLAUDE.md). Next's typegen appends them to tsconfig's
+    // `include`; unignored, their generated files flood typescript-eslint with errors.
+    '.next*/**',
     'node_modules/**',
     'src/payload-types.ts',
     'src/app/(payload)/admin/importMap.js',

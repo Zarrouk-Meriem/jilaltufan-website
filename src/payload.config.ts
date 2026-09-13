@@ -34,6 +34,16 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
+    // The S3 storage plugin is enabled only when S3_* is set, so its client component
+    // would be absent from an import map generated in an environment without it — and
+    // Payload then renders the whole admin blank wherever the plugin *is* active (first
+    // Vercel deploy). Pinning it here keeps the generated map identical in every env.
+    dependencies: {
+      s3ClientUploadHandler: {
+        path: '@payloadcms/storage-s3/client#S3ClientUploadHandler',
+        type: 'component',
+      },
+    },
     meta: {
       titleSuffix: ' — أكاديمية جيل الطوفان',
       icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/brand/favicon.svg' }],
@@ -87,12 +97,14 @@ export default buildConfig({
   upload: { limits: { fileSize: 20 * 1024 * 1024 } },
   sharp,
   plugins: [
-    ...storagePlugins(),
     importExportPlugin({
       collections: [
         { slug: 'applications', import: false },
         { slug: 'contact-messages', import: false },
       ],
     }),
+    // After the import/export plugin, so its `exports`/`imports` upload collections exist
+    // when the storage adapter attaches (it silently skips collections it cannot find).
+    ...storagePlugins(),
   ],
 })

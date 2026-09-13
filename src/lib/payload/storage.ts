@@ -6,7 +6,13 @@ export function storagePlugins() {
   if (!S3_BUCKET || !S3_ACCESS_KEY_ID || !S3_SECRET_ACCESS_KEY) return []
   return [
     s3Storage({
-      collections: { media: true },
+      // `exports`/`imports` belong to the CSV import/export plugin; on a serverless host
+      // (read-only filesystem) they need remote storage just like media.
+      collections: {
+        media: { prefix: 'media' },
+        exports: { prefix: 'exports' },
+        imports: { prefix: 'imports' },
+      },
       bucket: S3_BUCKET,
       config: {
         region: S3_REGION ?? 'auto',

@@ -45,6 +45,8 @@ Decided 2026-09-12: the site goes up on Vercel's free tier first so it can be re
 
 6. Deploy. Check: `/robots.txt` says `Disallow: /`, `/ar` renders, `/admin` shows the create-first-user form, an upload lands in R2, and a "forgot password" email arrives.
 
+First-deploy lesson (2026-09-13): the admin rendered blank on Vercel while the site worked — the import map lacked the S3 plugin's client component because it had been generated on a machine without `S3_*`. Fixed for good via `admin.dependencies` (CLAUDE.md). If an admin page is ever blank with no console error, check the function logs for `PayloadComponent not found in importMap`.
+
 What is different on Vercel and why it is fine for a preview: the Next image-optimizer patch is irrelevant there (Vercel runs its own optimizer); the in-process rate limiter is per function instance (weaker, acceptable for a preview); Payload's admin is noticeably slower on serverless cold starts.
 
 **Moving to the VPS later** is: build the Docker image, `pg_dump` Neon → restore on the VPS, point DNS. Media stays on R2 and email stays on Zoho, so neither moves. Half a day, no code changes.
