@@ -1,6 +1,8 @@
 import { ArrowUpLeft } from 'lucide-react'
 import { Mark } from '@/components/brand/Mark'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
+import { DuotoneImage } from '@/components/ui/DuotoneImage'
+import type { ImageSource } from '@/lib/media'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 
@@ -14,6 +16,8 @@ type Props = {
   sessionsLabel: string
   seasonLabel: string
   motif?: 'none' | 'keffiyeh' | 'mark' | null
+  /** Cover image, navy-duotoned; the card stays typographic without one. */
+  image?: ImageSource | null
   /** Wide, editorial feature card for the open track. */
   featured?: boolean
   featuredCta?: string
@@ -23,7 +27,8 @@ type Props = {
 /**
  * A program as a quiet, editorial card: ordinal, title, one-line description,
  * three facts, registration badge. The whole card is the link; the arrow and
- * the underline answer hover. No imagery until the academy supplies it.
+ * the underline answer hover. A cover image, when the academy supplies one, sits
+ * on top as a navy duotone so the card stays on-brand whatever the photo.
  */
 export function ProgramCard({
   href,
@@ -35,6 +40,7 @@ export function ProgramCard({
   sessionsLabel,
   seasonLabel,
   motif,
+  image,
   featured,
   featuredCta,
   className,
@@ -52,6 +58,20 @@ export function ProgramCard({
         className,
       )}
     >
+      {image ? (
+        <DuotoneImage
+          {...image}
+          sizes={featured ? '(min-width: 1280px) 1200px, 100vw' : '(min-width: 768px) 33vw, 100vw'}
+          // No width utility: as a block with negative horizontal margins it stretches
+          // across the card's padding on its own (`w-full` would pin it to the content box).
+          className={cn(
+            'mb-7 aspect-[3/2] rounded-brand rounded-b-none',
+            featured
+              ? '-mx-8 -mt-8 md:-mx-12 md:-mt-12 md:aspect-[21/9]'
+              : '-mx-7 -mt-7 md:-mx-8 md:-mt-8',
+          )}
+        />
+      ) : null}
       {motif === 'mark' && !featured ? (
         <span
           aria-hidden

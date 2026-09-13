@@ -8,6 +8,7 @@ import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { listPrograms } from '@/lib/queries'
 import { registrationBadge } from '@/lib/view'
+import { mediaImage } from '@/lib/media'
 
 export const revalidate = 300
 
@@ -46,6 +47,7 @@ export default async function ApplyIndexPage({ params }: PageProps<'/[locale]/ap
                 key={p.id}
                 href={`/apply/${p.slug}`}
                 title={p.title}
+                image={mediaImage(p.coverImage, 'card')}
                 description={p.shortDescription}
                 ordinal={String(i + 1).padStart(2, '0')}
                 trackLabel={

@@ -17,6 +17,8 @@ import { getEventBySlug, getSiteSettings, listEventSlugs } from '@/lib/queries'
 import { rel } from '@/lib/relations'
 import { formatInZone } from '@/lib/time'
 import { ordinalFor } from '@/lib/view'
+import { mediaImage } from '@/lib/media'
+import { DuotoneImage } from '@/components/ui/DuotoneImage'
 
 export const revalidate = 300
 
@@ -110,6 +112,18 @@ export default async function EventPage({ params }: PageProps<'/[locale]/events/
               </dd>
             </div>
           </dl>
+          {(() => {
+            const cover = mediaImage(event.coverImage, 'hero')
+            return cover ? (
+              <DuotoneImage
+                {...cover}
+                dim={isCamp ? 0 : 0.08}
+                priority
+                sizes="(min-width: 1280px) 1200px, 100vw"
+                className="mt-10 aspect-[16/9] w-full rounded-brand md:mt-14 md:aspect-[21/9]"
+              />
+            ) : null
+          })()}
           <div className="mt-10 flex flex-wrap items-center gap-4">
             {event.registrationMode === 'link' && event.registrationLink ? (
               <ButtonLink

@@ -26,6 +26,7 @@ import {
 import { rels } from '@/lib/relations'
 import { formatInZone } from '@/lib/time'
 import { nextBoundaryMs, ordinalFor, registrationBadge, sessionView } from '@/lib/view'
+import { mediaImage } from '@/lib/media'
 
 export const revalidate = 60
 
@@ -155,6 +156,7 @@ export default async function ProgramPage({ params }: PageProps<'/[locale]/progr
         title={program.title}
         intro={program.shortDescription}
         ordinal={trackLabel}
+        cover={mediaImage(program.coverImage, 'hero')}
         crumbLabel={t('common.breadcrumb')}
         crumbs={[{ label: t('nav.programs'), href: '/programs' }, { label: program.title }]}
       >

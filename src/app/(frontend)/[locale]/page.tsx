@@ -26,6 +26,7 @@ import {
 } from '@/lib/queries'
 import { currentSeasonStartYear, formatInZone, monthKeyInZone, seasonMonthKeys } from '@/lib/time'
 import { ordinalFor, registrationBadge, sessionView } from '@/lib/view'
+import { mediaImage } from '@/lib/media'
 
 export const revalidate = 60
 
@@ -215,6 +216,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                   featured
                   href={`/programs/${p.slug}`}
                   title={p.title}
+                  image={mediaImage(p.coverImage, 'card')}
                   description={p.shortDescription}
                   trackLabel={t('home.openTrackLabel')}
                   registration={registrationBadge(p.registrationMode, t)}
@@ -229,6 +231,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                     key={p.id}
                     href={`/programs/${p.slug}`}
                     title={p.title}
+                    image={mediaImage(p.coverImage, 'card')}
                     description={p.shortDescription}
                     ordinal={String(i + 1).padStart(2, '0')}
                     trackLabel={t('home.directedTrackLabel')}
