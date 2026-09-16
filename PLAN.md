@@ -174,6 +174,8 @@ Every collection: `status` (draft|published), `slug`, SEO group (title, descript
 
 Uploads: PDF and image MIME types only, 20 MB cap, `alt` required.
 
+**Globals wired to the interface** (every field falls back to `messages/*.json` while empty): `SiteSettings` (contact email, WhatsApp, socials, time zone, join-link policy, announcement bar, statistics), `HomePage` (hero copy + background photo, section toggles, closing CTA), `Navigation` (primary, utility, CTA), `Footer` (blurb, columns, bottom note), `AboutPage`, `StudentsPage` (intro, how live sessions work, how to join, code of conduct, FAQ, account-card toggle), `InstructorsPage` (intro, guidelines, materials, my-sessions copy).
+
 **Phase 2 seam:** `Users` is already an auth collection with a `role` field and a `staffOnly` access helper. Adding `Students`/`Instructors` auth collections later means new collections + new role checks — no migration of existing data, no route restructuring, because `/students` and `/instructors` already exist as routes.
 
 ---

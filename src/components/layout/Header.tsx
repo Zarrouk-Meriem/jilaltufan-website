@@ -124,7 +124,7 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
             tone="muted"
             className="hidden md:inline-flex"
           />
-          <ButtonLink href={apply.href as never} size="md" className="hidden sm:inline-flex">
+          <ButtonLink href={apply.href as never} size="md" className="max-sm:hidden">
             {apply.label}
           </ButtonLink>
           <button

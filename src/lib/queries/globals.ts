@@ -23,3 +23,23 @@ export const getAboutPage = cache(async (locale: Locale) => {
   const payload = await getClient()
   return payload.findGlobal({ slug: 'about-page', ...publicBase(locale) })
 })
+
+export const getStudentsPage = cache(async (locale: Locale) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'students-page', ...publicBase(locale), depth: 0 })
+})
+
+export const getInstructorsPage = cache(async (locale: Locale) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'instructors-page', ...publicBase(locale), depth: 0 })
+})
+
+export const getNavigation = cache(async (locale: Locale) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'navigation', ...publicBase(locale), depth: 0 })
+})
+
+export const getFooter = cache(async (locale: Locale) => {
+  const payload = await getClient()
+  return payload.findGlobal({ slug: 'footer', ...publicBase(locale), depth: 0 })
+})

@@ -8,7 +8,8 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
-import { listInstructors } from '@/lib/queries'
+import { listOr, textOr } from '@/lib/cms'
+import { getInstructorsPage, listInstructors } from '@/lib/queries'
 import { rel } from '@/lib/relations'
 import { ordinalFor } from '@/lib/view'
 
@@ -18,11 +19,14 @@ export async function generateMetadata({
   params,
 }: PageProps<'/[locale]/instructors'>): Promise<Metadata> {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'instructors' })
+  const [t, cms] = await Promise.all([
+    getTranslations({ locale, namespace: 'instructors' }),
+    getInstructorsPage(locale as Locale),
+  ])
   return {
     alternates: alternatesFor(locale as Locale, '/instructors'),
     title: stripAccent(t('title')),
-    description: t('intro'),
+    description: textOr(cms.intro, t('intro')),
   }
 }
 
@@ -31,7 +35,15 @@ export default async function InstructorsPage({ params }: PageProps<'/[locale]/i
   const locale = raw as Locale
   setRequestLocale(locale)
   const t = await getTranslations()
-  const instructors = await listInstructors(locale)
+  const [instructors, cms] = await Promise.all([
+    listInstructors(locale),
+    getInstructorsPage(locale),
+  ])
+  // Editors own the panel in Payload (Windows → Instructor window); messages are the fallback.
+  const guidelines = listOr(
+    cms.guidelines?.map((g) => g.text),
+    t.raw('instructors.guidelines') as string[],
+  )
   const list = (items: string[]) => (
     <ol className="flex flex-col divide-y divide-line border-y border-line">
       {items.map((x, i) => (
@@ -49,7 +61,7 @@ export default async function InstructorsPage({ params }: PageProps<'/[locale]/i
       <PageIntro
         locale={locale}
         title={t('instructors.title')}
-        intro={t('instructors.intro')}
+        intro={textOr(cms.intro, t('instructors.intro'))}
         ordinal={t('nav.instructors')}
       />
       <div className="container-site flex flex-col gap-20 py-14 md:py-20">
@@ -103,15 +115,19 @@ export default async function InstructorsPage({ params }: PageProps<'/[locale]/i
           <div className="flex flex-col gap-12 md:col-span-8">
             <div>
               <h3 className="text-lg">{t('instructors.guidelinesTitle')}</h3>
-              <div className="mt-4">{list(t.raw('instructors.guidelines') as string[])}</div>
+              <div className="mt-4">{list(guidelines)}</div>
             </div>
             <div>
               <h3 className="text-lg">{t('instructors.materialsTitle')}</h3>
-              <p className="mt-3 measure text-ink-700">{t('instructors.materialsBody')}</p>
+              <p className="mt-3 measure text-ink-700">
+                {textOr(cms.materialsBody, t('instructors.materialsBody'))}
+              </p>
             </div>
             <div>
               <h3 className="text-lg">{t('instructors.scheduleTitle')}</h3>
-              <p className="mt-3 measure text-ink-700">{t('instructors.scheduleBody')}</p>
+              <p className="mt-3 measure text-ink-700">
+                {textOr(cms.scheduleBody, t('instructors.scheduleBody'))}
+              </p>
             </div>
             <div>
               <h3 className="text-lg">{t('instructors.contactTitle')}</h3>

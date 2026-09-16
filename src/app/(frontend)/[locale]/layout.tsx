@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Footer } from '@/components/layout/Footer'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { SkipLink } from '@/components/layout/SkipLink'
@@ -71,6 +72,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           />
           <SkipLink label={t('skipToContent')} />
           <SiteHeader locale={locale} />
+          <AnnouncementBar locale={locale} />
           <main id="main" className="flex-1">
             {children}
           </main>

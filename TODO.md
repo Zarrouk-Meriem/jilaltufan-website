@@ -30,14 +30,14 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 - [ ] **P2 — مخيمات جيل الطوفان** — the camp's week programme, dates, location, and photos. _The Camp page renders programme-by-day, details, and a lightbox gallery as soon as they are entered; all three sections hide until then._
 - [ ] **P2 — المشاريع والمبادرات** — projects for `/projects`.
 - [ ] **P2 — منبر الطوفان** — at least three posts, or the home section stays hidden (by design).
-- [ ] **P2 — Code of conduct** and the student FAQ for `/students`.
-- [ ] **P2 — Instructor guidelines** for `/instructors`.
+- [ ] **P2 — Code of conduct** and the student FAQ for `/students`. _Editable in admin → Windows → Student window (seeded with the built-in copy; the conduct line is a marked placeholder)._
+- [ ] **P2 — Instructor guidelines** for `/instructors`. _Editable in admin → Windows → Instructor window._
 - [ ] **P2 — Privacy policy and terms.** Drafts will describe exactly what the application form collects and why; **the academy must review and approve the final text.**
-- [ ] **P3 — Statistics.** The stats band is built but **toggled off**. Turn it on only when real numbers exist.
+- [ ] **P3 — Statistics.** The stats band is built but **toggled off**. Turn it on only when real numbers exist: figures + switch in Site settings → Statistics, then Home page → Statistics band.
 
 ## Photography
 
-- [ ] **P1 — Hero image.** Jerusalem / Al-Aqsa, to be navy-duotoned as in reference 07. _Placeholder: navy gradient + keffiyeh texture, no stock faces._ Must be licensed or academy-owned.
+- [ ] **P1 — Hero image.** Jerusalem / Al-Aqsa, to be navy-duotoned as in reference 07. _Placeholder: navy gradient + keffiyeh texture, no stock faces._ Must be licensed or academy-owned. _Upload in admin → Home page → Background photo; the duotone is applied on render._
 - [ ] **P2 — Instructor portraits**, shot or cropped consistently (reference 06 crops to a rectangle over a navy backdrop).
 - [ ] **P3 — Camp gallery** images (these render untreated, not duotoned).
 
@@ -46,7 +46,7 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 - [ ] **P1 — Final English name usage.** _"Academy · Flood's Generation"_ per the brief vs _"Jeel Al-Toufan Academy"_. Currently both appear in different places; pick one for `/en`.
 - [x] **Domain: `jilaltufan.org`** is the official one (non-profit); `.com` is registered too and should 301 to `.org` at the DNS/CDN layer.
 - [x] **Mail:** `admin@jilaltufan.org` is the official mailbox; `contact@jilaltufan.org` (alias) receives application and contact notifications; `no-reply@jilaltufan.org` sends — needs the domain verified in Resend (SPF + DKIM) before launch.
-- [ ] **P2 — Social links** (Instagram, X, YouTube, Telegram…) for the footer and JSON-LD `sameAs`.
+- [ ] **P2 — Social links** (Instagram, X, YouTube, Telegram…) for the footer and JSON-LD `sameAs`. _Enter in admin → Site settings → Social links; WhatsApp number in the same tab._
 - [ ] **P2 — Registration mode per program.** Default is `application` for all six. Confirm, or mark specific programs `open`.
 - [ ] **P2 — Join-link policy.** Default is `window` (link appears 30 min before start). Alternatives: `always`, `email-only`. _Enforced in the query layer: the Zoom URL is not in the HTML outside the window._
 - [ ] **P2 — Academy time zone.** Default `Asia/Hebron`, labelled «بتوقيت القدس». Confirm.

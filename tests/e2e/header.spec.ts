@@ -56,3 +56,28 @@ test.describe('header shrink-on-scroll', () => {
     expect(await logoWrap.evaluate((el) => getComputedStyle(el).scale)).toBe('none')
   })
 })
+
+/**
+ * Regression guard: the header CTA used to carry `hidden sm:inline-flex` on top of the
+ * button's own `inline-flex`. Tailwind v4 emits `inline-flex` after `hidden`, so the CTA
+ * never hid on phones; with the wide English wordmark the row overflowed and the menu
+ * button sat off-screen at x≈379 on a 375px viewport. `max-sm:hidden` is a variant and
+ * always sorts after the base utility.
+ */
+test.describe('header on a 375px phone', () => {
+  for (const locale of ['ar', 'en']) {
+    test(`${locale}: no horizontal overflow, menu button on-screen, CTA hidden`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 375, height: 800 })
+      await page.goto(`/${locale}/students`, { waitUntil: 'networkidle' })
+      const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth)
+      expect(scrollWidth).toBeLessThanOrEqual(375)
+      const menu = page.locator('header button[aria-controls="mobile-menu"]')
+      await expect(menu).toBeVisible()
+      const box = (await menu.boundingBox())!
+      expect(box.x + box.width).toBeLessThanOrEqual(375)
+      await expect(page.locator('header > div > div > a[href*="apply"]')).toBeHidden()
+    })
+  }
+})

@@ -6,6 +6,7 @@ import { ProgramCard } from '@/components/sections/ProgramCard'
 import { SeasonTimeline, type Station } from '@/components/sections/SeasonTimeline'
 import { SessionRow } from '@/components/sections/SessionRow'
 import { ButtonLink } from '@/components/ui/Button'
+import { DuotoneImage } from '@/components/ui/DuotoneImage'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Reveal } from '@/components/ui/Reveal'
 import { SectionHeading } from '@/components/ui/SectionHeading'
@@ -87,11 +88,29 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const next = upcoming[0] ? sessionView(upcoming[0], locale, tz, win, t, now) : null
   const heroTitle = home.heroTitle || t('home.heroTitle')
   const hero = parseAccent(heroTitle)
+  const heroImage = mediaImage(home.heroImage, 'hero')
+  // Two switches on purpose: Site settings holds the figures and the master toggle
+  // ("keep off until real numbers exist"); the home page decides whether to show the band.
+  const stats = (settings.stats ?? []).filter((s) => s.value?.trim() && s.label?.trim())
+  const showStats = !!home.showStats && !!settings.statsEnabled && stats.length > 0
 
   return (
     <>
       {/* 1 · Hero */}
       <section className="relative overflow-hidden pattern-keffiyeh-navy surface-navy-blue">
+        {heroImage ? (
+          <div aria-hidden className="absolute inset-0">
+            <DuotoneImage
+              src={heroImage.src}
+              alt=""
+              fill
+              priority
+              dim={0.45}
+              sizes="100vw"
+              className="h-full w-full"
+            />
+          </div>
+        ) : null}
         <div className="relative container-site flex min-h-[78vh] flex-col justify-end py-16 md:py-24">
           <div className="max-w-4xl">
             <p className="text-sm font-medium text-on-navy-muted">{t('site.name')}</p>
@@ -190,6 +209,25 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 ))}
               </ul>
             </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* 2b · Statistics band — off until real figures exist (Site settings → Statistics) */}
+      {showStats ? (
+        <section className="pattern-keffiyeh-navy surface-navy">
+          <div className="container-site py-14 md:py-20">
+            <h2 className="sr-only">{t('home.statsTitle')}</h2>
+            <dl className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
+              {stats.map((s, i) => (
+                <div key={s.id ?? i} className="border-t border-on-navy-line pt-5">
+                  <dd className="text-3xl font-bold text-on-navy tabular-nums" dir="ltr">
+                    {s.value}
+                  </dd>
+                  <dt className="mt-2 text-sm text-on-navy-muted">{s.label}</dt>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
       ) : null}

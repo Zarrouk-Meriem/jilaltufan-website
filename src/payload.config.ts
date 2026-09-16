@@ -22,8 +22,10 @@ import { Users } from './collections/Users'
 import { AboutPage } from './globals/AboutPage'
 import { Footer } from './globals/Footer'
 import { HomePage } from './globals/HomePage'
+import { InstructorsPage } from './globals/InstructorsPage'
 import { Navigation } from './globals/Navigation'
 import { SiteSettings } from './globals/SiteSettings'
+import { StudentsPage } from './globals/StudentsPage'
 import { emailAdapter } from './lib/payload/email'
 import { storagePlugins } from './lib/payload/storage'
 
@@ -85,7 +87,7 @@ export default buildConfig({
     Users,
     Media,
   ],
-  globals: [AboutPage, HomePage, SiteSettings, Navigation, Footer],
+  globals: [AboutPage, HomePage, StudentsPage, InstructorsPage, SiteSettings, Navigation, Footer],
   editor: lexicalEditor(),
   email: emailAdapter(),
   secret: process.env.PAYLOAD_SECRET || '',

@@ -14,7 +14,14 @@ import { SectionHeading } from '@/components/ui/SectionHeading'
 import { TextLink } from '@/components/ui/TextLink'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
-import { getSiteSettings, listMaterials, listPrograms, listSchedule } from '@/lib/queries'
+import { listOr, textOr } from '@/lib/cms'
+import {
+  getSiteSettings,
+  getStudentsPage,
+  listMaterials,
+  listPrograms,
+  listSchedule,
+} from '@/lib/queries'
 import { rel } from '@/lib/relations'
 import { ordinalFor, sessionView } from '@/lib/view'
 
@@ -24,11 +31,14 @@ export async function generateMetadata({
   params,
 }: PageProps<'/[locale]/students'>): Promise<Metadata> {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'students' })
+  const [t, cms] = await Promise.all([
+    getTranslations({ locale, namespace: 'students' }),
+    getStudentsPage(locale as Locale),
+  ])
   return {
     alternates: alternatesFor(locale as Locale, '/students'),
     title: stripAccent(t('title')),
-    description: t('intro'),
+    description: textOr(cms.intro, t('intro')),
   }
 }
 
@@ -43,7 +53,11 @@ export default async function StudentsPage({
   const programSlug = typeof sp.program === 'string' ? sp.program : undefined
   const t = await getTranslations()
   const now = new Date()
-  const [settings, programs] = await Promise.all([getSiteSettings(locale), listPrograms(locale)])
+  const [settings, programs, cms] = await Promise.all([
+    getSiteSettings(locale),
+    listPrograms(locale),
+    getStudentsPage(locale),
+  ])
   const tz = settings.academyTimeZone
   const win = settings.joinWindowMinutes
   const chosen = programSlug ? programs.find((p) => p.slug === programSlug) : undefined
@@ -58,7 +72,19 @@ export default async function StudentsPage({
       (s) => new Date(s.startsAt).getTime() + (s.durationMinutes ?? 90) * 60_000 >= now.getTime(),
     )
     .slice(0, 4)
-  const faq = t.raw('students.faq') as { q: string; a: string }[]
+  // Editors own these in Payload (Windows → Student window); messages are the fallback.
+  const points = (rows: { text: string }[] | null | undefined, key: string) =>
+    listOr(
+      rows?.map((r) => r.text),
+      t.raw(key) as string[],
+    )
+  const how = points(cms.howSteps, 'students.how').map((x) => x.replace('{minutes}', String(win)))
+  const join = points(cms.joinSteps, 'students.join')
+  const conduct = points(cms.conduct, 'students.conduct')
+  const faq = listOr(
+    cms.faq?.map((f) => ({ q: f.question, a: f.answer })),
+    t.raw('students.faq') as { q: string; a: string }[],
+  )
   const list = (items: string[]) => (
     <ol className="flex flex-col divide-y divide-line border-y border-line">
       {items.map((x, i) => (
@@ -77,7 +103,7 @@ export default async function StudentsPage({
       <PageIntro
         locale={locale}
         title={t('students.title')}
-        intro={t('students.intro')}
+        intro={textOr(cms.intro, t('students.intro'))}
         ordinal={t('nav.students')}
       />
       <div className="container-site grid gap-12 py-14 md:grid-cols-12 md:py-20">
@@ -89,11 +115,7 @@ export default async function StudentsPage({
               ordinal={ordinalFor(0, t)}
               title={t('students.howTitle')}
             />
-            <div className="mt-8">
-              {list(
-                (t.raw('students.how') as string[]).map((s) => s.replace('{minutes}', String(win))),
-              )}
-            </div>
+            <div className="mt-8">{list(how)}</div>
           </section>
           <section>
             <SectionHeading
@@ -102,7 +124,7 @@ export default async function StudentsPage({
               ordinal={ordinalFor(1, t)}
               title={t('students.joinTitle')}
             />
-            <div className="mt-8">{list(t.raw('students.join') as string[])}</div>
+            <div className="mt-8">{list(join)}</div>
           </section>
 
           <section id="my-program" className="scroll-mt-28">
@@ -193,7 +215,7 @@ export default async function StudentsPage({
               ordinal={ordinalFor(3, t)}
               title={t('students.conductTitle')}
             />
-            <div className="mt-8">{list(t.raw('students.conduct') as string[])}</div>
+            <div className="mt-8">{list(conduct)}</div>
           </section>
           <section>
             <SectionHeading
@@ -215,16 +237,18 @@ export default async function StudentsPage({
         </div>
 
         <aside className="flex flex-col gap-4 md:col-span-4">
-          <div className="rounded-brand border border-line bg-paper-2 p-6" aria-disabled="true">
-            <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2 text-md font-semibold text-ink-900">
-                <Lock aria-hidden strokeWidth={1.5} className="size-4 text-ink-500" />
-                {t('students.accountTitle')}
-              </span>
-              <Badge tone="muted">{t('students.accountSoon')}</Badge>
+          {cms.showAccountCard !== false ? (
+            <div className="rounded-brand border border-line bg-paper-2 p-6" aria-disabled="true">
+              <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex items-center gap-2 text-md font-semibold text-ink-900">
+                  <Lock aria-hidden strokeWidth={1.5} className="size-4 text-ink-500" />
+                  {t('students.accountTitle')}
+                </span>
+                <Badge tone="muted">{t('students.accountSoon')}</Badge>
+              </div>
+              <p className="mt-3 text-sm text-ink-700">{t('students.accountBody')}</p>
             </div>
-            <p className="mt-3 text-sm text-ink-700">{t('students.accountBody')}</p>
-          </div>
+          ) : null}
           <div className="rounded-brand border border-line p-6">
             <h2 className="text-md">{t('students.contactTitle')}</h2>
             <p className="mt-2 text-sm text-ink-700">{t('students.contactBody')}</p>

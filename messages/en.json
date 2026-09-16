@@ -15,7 +15,8 @@
     "closeMenu": "Close menu",
     "switchLanguage": "Switch language",
     "logoHome": "Jeel Al-Toufan Academy — Home",
-    "placeholderContent": "Placeholder content"
+    "placeholderContent": "Placeholder content",
+    "announcement": "Announcement"
   },
   "nav": {
     "academy": "The Academy",
@@ -43,7 +44,9 @@
     "privacy": "Privacy policy",
     "terms": "Terms",
     "rights": "© {year} Jeel Al-Toufan Academy. All rights reserved.",
-    "timeNote": "All times are Al-Quds time unless stated otherwise."
+    "timeNote": "All times are Al-Quds time unless stated otherwise.",
+    "follow": "Follow us",
+    "whatsapp": "WhatsApp"
   },
   "language": {
     "current": "English",
@@ -112,7 +115,8 @@
     "closingText": "Apply to the program that fits you and begin your season with Jeel Al-Toufan.",
     "viewSchedule": "Full schedule",
     "allPrograms": "All programs",
-    "nextSessionEmpty": "The session schedule hasn't been published yet."
+    "nextSessionEmpty": "The session schedule hasn't been published yet.",
+    "statsTitle": "In numbers"
   },
   "status": {
     "upcoming": "Upcoming",
@@ -519,5 +523,15 @@
         ]
       }
     ]
+  },
+  "social": {
+    "instagram": "Instagram",
+    "x": "X",
+    "facebook": "Facebook",
+    "youtube": "YouTube",
+    "telegram": "Telegram",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn",
+    "other": "Link"
   }
 }

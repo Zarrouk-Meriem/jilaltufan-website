@@ -9,7 +9,7 @@ import { getPayload, type Payload, type Where } from 'payload'
 import type { AboutPage } from '@/payload-types'
 
 type RichText = NonNullable<AboutPage['intro']>
-import { MISSION, PILLARS, PLACEHOLDER, PROGRAMS, SEASON, SEASON_MONTHS } from './data'
+import { MISSION, PILLARS, PLACEHOLDER, PROGRAMS, SEASON, SEASON_MONTHS, WINDOWS } from './data'
 
 type Locale = 'ar' | 'en'
 
@@ -217,6 +217,51 @@ async function seed() {
     })
   }
   log('about page')
+
+  // ── Student / instructor windows: built-in copy, only while an editor has not filled them ──
+  const students = await payload.findGlobal({
+    slug: 'students-page',
+    overrideAccess: true,
+    depth: 0,
+  })
+  if (!students.howSteps?.length && !students.faq?.length) {
+    for (const locale of ['ar', 'en'] as const) {
+      const w = WINDOWS[locale]
+      await payload.updateGlobal({
+        slug: 'students-page',
+        locale,
+        overrideAccess: true,
+        data: {
+          howSteps: w.how.map((text) => ({ text })),
+          joinSteps: w.join.map((text) => ({ text })),
+          conduct: w.conduct.map((text) => ({ text })),
+          faq: w.faq.map(([question, answer]) => ({ question, answer })),
+        },
+      })
+    }
+    log('students window')
+  } else log('skip students window (editor-owned)')
+  const instructorsPage = await payload.findGlobal({
+    slug: 'instructors-page',
+    overrideAccess: true,
+    depth: 0,
+  })
+  if (!instructorsPage.guidelines?.length) {
+    for (const locale of ['ar', 'en'] as const) {
+      const w = WINDOWS[locale]
+      await payload.updateGlobal({
+        slug: 'instructors-page',
+        locale,
+        overrideAccess: true,
+        data: {
+          guidelines: w.guidelines.map((text) => ({ text })),
+          materialsBody: w.materialsBody,
+          scheduleBody: w.scheduleBody,
+        },
+      })
+    }
+    log('instructors window')
+  } else log('skip instructors window (editor-owned)')
 
   // ── Site settings + home page defaults ──
   await payload.updateGlobal({

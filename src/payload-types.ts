@@ -119,6 +119,8 @@ export interface Config {
   globals: {
     'about-page': AboutPage;
     'home-page': HomePage;
+    'students-page': StudentsPage;
+    'instructors-page': InstructorsPage;
     'site-settings': SiteSetting;
     navigation: Navigation;
     footer: Footer;
@@ -126,6 +128,8 @@ export interface Config {
   globalsSelect: {
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'students-page': StudentsPageSelect<false> | StudentsPageSelect<true>;
+    'instructors-page': InstructorsPageSelect<false> | InstructorsPageSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
@@ -1543,9 +1547,73 @@ export interface HomePage {
   showCamp?: boolean | null;
   showMinbar?: boolean | null;
   showInstructors?: boolean | null;
+  /**
+   * Shows only when Site settings → Statistics is on and has figures.
+   */
   showStats?: boolean | null;
   closingTitle?: string | null;
   closingText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Anything left empty here falls back to the default copy.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "students-page".
+ */
+export interface StudentsPage {
+  id: number;
+  intro?: string | null;
+  showAccountCard?: boolean | null;
+  /**
+   * Write {minutes} where the join window from Site settings should appear.
+   */
+  howSteps?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  joinSteps?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  conduct?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  faq?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Anything left empty here falls back to the default copy. Instructors themselves are added under "Instructors".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "instructors-page".
+ */
+export interface InstructorsPage {
+  id: number;
+  intro?: string | null;
+  guidelines?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  materialsBody?: string | null;
+  scheduleBody?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1618,12 +1686,15 @@ export interface Navigation {
         id?: string | null;
       }[]
     | null;
-  cta: {
-    label: string;
+  /**
+   * Leave empty to show "Apply now".
+   */
+  cta?: {
+    label?: string | null;
     /**
      * Internal path like /programs, or a full URL.
      */
-    href: string;
+    href?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1721,6 +1792,60 @@ export interface HomePageSelect<T extends boolean = true> {
   showStats?: T;
   closingTitle?: T;
   closingText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "students-page_select".
+ */
+export interface StudentsPageSelect<T extends boolean = true> {
+  intro?: T;
+  showAccountCard?: T;
+  howSteps?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  joinSteps?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  conduct?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  faq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "instructors-page_select".
+ */
+export interface InstructorsPageSelect<T extends boolean = true> {
+  intro?: T;
+  guidelines?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  materialsBody?: T;
+  scheduleBody?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -66,7 +66,15 @@ export const HomePage: GlobalConfig = {
             toggle('showCamp', { ar: 'المخيم', en: 'Camp band' }),
             toggle('showMinbar', { ar: 'من منبر الطوفان', en: 'From Minbar' }),
             toggle('showInstructors', { ar: 'المحاضرون', en: 'Instructors' }),
-            toggle('showStats', { ar: 'شريط الإحصاءات', en: 'Statistics band' }, false),
+            {
+              ...toggle('showStats', { ar: 'شريط الإحصاءات', en: 'Statistics band' }, false),
+              admin: {
+                description: {
+                  ar: 'يظهر فقط إذا فُعّلت الإحصاءات وأُدخلت أرقام في إعدادات الموقع → الإحصاءات.',
+                  en: 'Shows only when Site settings → Statistics is on and has figures.',
+                },
+              },
+            },
             localizedText('closingTitle', { ar: 'عنوان الدعوة الختامية', en: 'Closing CTA title' }),
             localizedTextarea('closingText', { ar: 'نص الدعوة الختامية', en: 'Closing CTA text' }),
           ],
