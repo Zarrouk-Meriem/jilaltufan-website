@@ -32,6 +32,8 @@ const routes = [
   '/terms',
   '/styleguide',
   '/this-page-does-not-exist',
+  // An unknown slug under a segment with a loading boundary must stay a hard 404.
+  '/programs/this-program-does-not-exist',
 ]
 
 for (const { code, dir } of locales) {

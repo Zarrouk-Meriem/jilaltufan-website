@@ -6,6 +6,7 @@ import { useActionState, useEffect, useRef, useState, useTransition } from 'reac
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/Button'
+import { Loader } from '@/components/ui/Loader'
 import { Callout } from '@/components/ui/Callout'
 import { Input, Textarea } from '@/components/ui/Field'
 import { SectionHeading } from '@/components/ui/SectionHeading'
@@ -126,6 +127,7 @@ export function ContactForm({
       />
       <div>
         <Button type="submit" size="lg" disabled={pending}>
+          {pending ? <Loader size="sm" tone="white" /> : null}
           {pending ? t('submitting') : t('submit')}
         </Button>
       </div>

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useActionState, useEffect, useRef, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/Button'
+import { Loader } from '@/components/ui/Loader'
 import { Callout } from '@/components/ui/Callout'
 import { Checkbox, Input, Select, Textarea } from '@/components/ui/Field'
 import { Link } from '@/i18n/navigation'
@@ -189,6 +190,7 @@ export function ApplyForm({ programSlug, mode, action, turnstileSiteKey }: Props
       ) : null}
       <div>
         <Button type="submit" size="lg" disabled={pending}>
+          {pending ? <Loader size="sm" tone="white" /> : null}
           {pending ? t('submitting') : mode === 'open' ? t('submitOpen') : t('submit')}
         </Button>
       </div>

@@ -10,6 +10,7 @@ import { Callout } from '@/components/ui/Callout'
 import { DateBlock } from '@/components/ui/DateBlock'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Checkbox, Input, Select, Textarea } from '@/components/ui/Field'
+import { Loader } from '@/components/ui/Loader'
 import { OrdinalLabel } from '@/components/ui/OrdinalLabel'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { TextLink } from '@/components/ui/TextLink'
@@ -195,7 +196,10 @@ export default async function StyleguidePage({ params }: PageProps<'/[locale]/st
           <Button>{t('nav.apply')}</Button>
           <Button variant="secondary">{t('home.exploreCta')}</Button>
           <Button variant="ghost">{t('common.readMore')}</Button>
-          <Button disabled>{t('common.loading')}</Button>
+          <Button disabled>
+            <Loader size="sm" tone="white" />
+            {t('common.loading')}
+          </Button>
           <Button size="sm">{t('common.viewAll')}</Button>
           <Button size="lg">{t('nav.apply')}</Button>
         </div>
@@ -211,6 +215,19 @@ export default async function StyleguidePage({ params }: PageProps<'/[locale]/st
             {t('nav.schedule')}
           </TextLink>
         </p>
+      </Block>
+
+      <Block id="loader" title={ar ? 'المُحمِّل' : 'Loader'}>
+        <div className="flex flex-wrap items-center gap-10">
+          <Loader size="sm" label={t('common.loading')} />
+          <Loader size="md" label={t('common.loading')} />
+          <Loader size="lg" label={t('common.loading')} />
+          <Loader size="md" tone="ink" label={t('common.loading')} />
+        </div>
+        <div className="mt-4 flex items-center gap-10 rounded-brand p-6 surface-navy">
+          <Loader size="md" tone="white" label={t('common.loading')} />
+          <Loader size="md" tone="red" label={t('common.loading')} />
+        </div>
       </Block>
 
       <Block id="badges" title={ar ? 'الحالات' : 'Status badges'}>

@@ -199,6 +199,30 @@
       animation: none;
     }
   }
+
+  /* The loader turns a third of a revolution per beat, settling between beats,
+     and breathes as it turns. Under reduced motion the transform goes away and
+     only a slow opacity pulse remains. */
+  .loader-triangle {
+    transform-origin: 50% 50%;
+    animation: loader-turn 1.5s var(--ease-in-out) infinite;
+  }
+  @keyframes loader-turn {
+    0% {
+      transform: rotate(0turn) scale(1);
+    }
+    50% {
+      transform: rotate(0.1667turn) scale(0.72);
+    }
+    100% {
+      transform: rotate(0.3333turn) scale(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .loader-triangle {
+      animation: live-pulse 1.6s ease-in-out infinite;
+    }
+  }
 }
 
 /* Editorial rich text ------------------------------------------------- */

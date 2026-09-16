@@ -207,7 +207,7 @@ Fluid scale, ~1.25 ratio, `clamp()`-based, tokens only. Arabic body 17–18px / 
 
 ### 7.4 Component inventory
 
-`Button` · `Link` · `SectionHeading` · `OrdinalLabel` · `ProgramCard` · `SessionRow` · `DateBlock` · `StatusBadge` · `InstructorCard` · `EventCard` · `SeasonTimeline` · `Accordion` · `Tabs` · `Callout` · `Breadcrumbs` · `LanguageSwitch` · `Gallery`+`Lightbox` · `Pattern` · `DuotoneImage` · `Field`/`Input`/`Textarea`/`Select`/`Checkbox` · `EmptyState` · `Toast` · `Logo` · `Mark` · `AddToCalendar` · `LocalTime` · `Prose`.
+`Button` · `Link` · `SectionHeading` · `OrdinalLabel` · `ProgramCard` · `SessionRow` · `DateBlock` · `StatusBadge` · `InstructorCard` · `EventCard` · `SeasonTimeline` · `Accordion` · `Tabs` · `Callout` · `Breadcrumbs` · `LanguageSwitch` · `Gallery`+`Lightbox` · `Pattern` · `DuotoneImage` · `Field`/`Input`/`Textarea`/`Select`/`Checkbox` · `EmptyState` · `Loader` · `Toast` · `Logo` · `Mark` · `AddToCalendar` · `LocalTime` · `Prose`.
 
 Every one of them appears in `/styleguide`, in every state, in both directions. That page is the review surface.
 
