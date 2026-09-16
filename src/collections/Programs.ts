@@ -59,6 +59,7 @@ export const Programs: CollectionConfig = {
       options: [
         { label: { ar: 'التدريب المفتوح', en: 'Open Training' }, value: 'open' },
         { label: { ar: 'برنامج موجّه', en: 'Directed program' }, value: 'directed' },
+        { label: { ar: 'مشروع استراتيجي', en: 'Strategic project' }, value: 'projects' },
       ],
       admin: { position: 'sidebar' },
     },
@@ -100,8 +101,8 @@ export const Programs: CollectionConfig = {
               {
                 admin: {
                   description: {
-                    ar: 'مثال: 8 حصص، حصة واحدة شهريًا من سبتمبر إلى أبريل',
-                    en: 'e.g. 8 sessions, one per month from September to April',
+                    ar: 'مثال: 6 حصص، حصة واحدة شهريًا من يناير إلى يونيو',
+                    en: 'e.g. 6 sessions, one per month from January to June',
                   },
                 },
               },
@@ -121,14 +122,14 @@ export const Programs: CollectionConfig = {
                 {
                   name: 'seasonStartMonth',
                   type: 'select',
-                  defaultValue: 'sep',
+                  defaultValue: 'oct',
                   options: monthOptions,
                   label: { ar: 'شهر البداية', en: 'Start month' },
                 },
                 {
                   name: 'seasonEndMonth',
                   type: 'select',
-                  defaultValue: 'apr',
+                  defaultValue: 'may',
                   options: monthOptions,
                   label: { ar: 'شهر النهاية', en: 'End month' },
                 },
@@ -136,7 +137,7 @@ export const Programs: CollectionConfig = {
                   name: 'sessionsCount',
                   type: 'number',
                   defaultValue: 8,
-                  min: 1,
+                  min: 0,
                   max: 24,
                   label: { ar: 'عدد الحصص', en: 'Sessions' },
                 },

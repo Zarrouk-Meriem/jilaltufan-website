@@ -27,6 +27,7 @@ import { rels } from '@/lib/relations'
 import { formatInZone } from '@/lib/time'
 import { nextBoundaryMs, ordinalFor, registrationBadge, sessionView } from '@/lib/view'
 import { mediaImage } from '@/lib/media'
+import { seasonRange, sessionsCountLabel } from '@/lib/program'
 
 export const revalidate = 60
 
@@ -65,13 +66,18 @@ export default async function ProgramPage({ params }: PageProps<'/[locale]/progr
   const badge = registrationBadge(program.registrationMode, t)
   const instructors = rels(program.instructors)
   const others = all.filter((p) => p.id !== program.id).slice(0, 3)
-  const trackLabel = program.track === 'open' ? t('program.open') : t('program.directed')
+  const trackLabel =
+    program.track === 'open'
+      ? t('program.open')
+      : program.track === 'projects'
+        ? t('program.projects')
+        : t('program.directed')
   const canApply = program.registrationMode !== 'closed'
 
   const facts = [
     { k: t('program.track'), v: trackLabel },
-    { k: t('program.sessions'), v: t('common.sessions', { count: program.sessionsCount ?? 8 }) },
-    { k: t('program.season'), v: t('program.sepToApr') },
+    { k: t('program.sessions'), v: sessionsCountLabel(program, t) },
+    { k: t('program.season'), v: seasonRange(program, t) },
     { k: t('program.duration'), v: program.durationSummary || t('program.oneMonthly') },
   ]
 

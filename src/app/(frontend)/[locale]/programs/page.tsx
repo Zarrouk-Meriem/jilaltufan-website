@@ -10,6 +10,7 @@ import { stripAccent } from '@/lib/accent'
 import { listPrograms } from '@/lib/queries'
 import { ordinalFor, registrationBadge } from '@/lib/view'
 import { mediaImage } from '@/lib/media'
+import { seasonRange, sessionsCountLabel, trackLabel } from '@/lib/program'
 
 export const revalidate = 300
 
@@ -33,6 +34,7 @@ export default async function ProgramsPage({ params }: PageProps<'/[locale]/prog
   const programs = await listPrograms(locale)
   const open = programs.filter((p) => p.track === 'open')
   const directed = programs.filter((p) => p.track === 'directed')
+  const projects = programs.filter((p) => p.track === 'projects')
 
   return (
     <>
@@ -63,8 +65,8 @@ export default async function ProgramsPage({ params }: PageProps<'/[locale]/prog
                 description={p.shortDescription}
                 trackLabel={t('home.openTrackLabel')}
                 registration={registrationBadge(p.registrationMode, t)}
-                sessionsLabel={t('program.sessionsCount')}
-                seasonLabel={t('program.sepToApr')}
+                sessionsLabel={sessionsCountLabel(p, t)}
+                seasonLabel={seasonRange(p, t)}
                 featuredCta={t('common.readMore')}
               />
             ))}
@@ -82,7 +84,7 @@ export default async function ProgramsPage({ params }: PageProps<'/[locale]/prog
             intro={t('programs.directedIntro')}
           />
           {directed.length ? (
-            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+            <div className="mt-10 grid gap-4 md:grid-cols-2">
               {directed.map((p, i) => (
                 <ProgramCard
                   key={p.id}
@@ -93,10 +95,9 @@ export default async function ProgramsPage({ params }: PageProps<'/[locale]/prog
                   ordinal={String(i + 1).padStart(2, '0')}
                   trackLabel={t('home.directedTrackLabel')}
                   registration={registrationBadge(p.registrationMode, t)}
-                  sessionsLabel={t('program.sessionsCount')}
-                  seasonLabel={t('program.sepToApr')}
+                  sessionsLabel={sessionsCountLabel(p, t)}
+                  seasonLabel={seasonRange(p, t)}
                   motif={p.accentMotif}
-                  className={i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'}
                 />
               ))}
             </div>
@@ -106,11 +107,39 @@ export default async function ProgramsPage({ params }: PageProps<'/[locale]/prog
         </div>
       </section>
 
-      <section className="container-site py-14 md:py-20">
+      {projects.length ? (
+        <section className="container-site py-14 md:py-20">
+          <SectionHeading
+            locale={locale}
+            size="md"
+            ordinal={ordinalFor(2, t)}
+            title={t('programs.projectsTitle')}
+            intro={t('programs.projectsIntro')}
+          />
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
+            {projects.map((p) => (
+              <ProgramCard
+                key={p.id}
+                href={`/programs/${p.slug}`}
+                title={p.title}
+                image={mediaImage(p.coverImage, 'card')}
+                description={p.shortDescription}
+                trackLabel={trackLabel(p.track, t)}
+                registration={registrationBadge(p.registrationMode, t)}
+                sessionsLabel={sessionsCountLabel(p, t)}
+                seasonLabel={seasonRange(p, t)}
+                motif={p.accentMotif}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="container-site py-14 hairline-t md:py-20">
         <SectionHeading
           locale={locale}
           size="md"
-          ordinal={ordinalFor(2, t)}
+          ordinal={ordinalFor(projects.length ? 3 : 2, t)}
           title={t('programs.howItWorks')}
         />
         <ol className="mt-10 grid gap-8 md:grid-cols-3">

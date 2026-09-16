@@ -28,6 +28,7 @@ import {
 import { currentSeasonStartYear, formatInZone, monthKeyInZone, seasonMonthKeys } from '@/lib/time'
 import { ordinalFor, registrationBadge, sessionView } from '@/lib/view'
 import { mediaImage } from '@/lib/media'
+import { seasonRange, sessionsCountLabel, trackLabel } from '@/lib/program'
 
 export const revalidate = 60
 
@@ -84,7 +85,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   }))
 
   const open = programs.filter((p) => p.track === 'open')
-  const directed = programs.filter((p) => p.track === 'directed')
+  const directed = programs.filter((p) => p.track !== 'open')
   const next = upcoming[0] ? sessionView(upcoming[0], locale, tz, win, t, now) : null
   const heroTitle = home.heroTitle || t('home.heroTitle')
   const hero = parseAccent(heroTitle)
@@ -258,8 +259,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                   description={p.shortDescription}
                   trackLabel={t('home.openTrackLabel')}
                   registration={registrationBadge(p.registrationMode, t)}
-                  sessionsLabel={t('program.sessionsCount')}
-                  seasonLabel={t('program.sepToApr')}
+                  sessionsLabel={sessionsCountLabel(p, t)}
+                  seasonLabel={seasonRange(p, t)}
                   featuredCta={t('common.readMore')}
                 />
               ))}
@@ -272,10 +273,10 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                     image={mediaImage(p.coverImage, 'card')}
                     description={p.shortDescription}
                     ordinal={String(i + 1).padStart(2, '0')}
-                    trackLabel={t('home.directedTrackLabel')}
+                    trackLabel={trackLabel(p.track, t)}
                     registration={registrationBadge(p.registrationMode, t)}
-                    sessionsLabel={t('program.sessionsCount')}
-                    seasonLabel={t('program.sepToApr')}
+                    sessionsLabel={sessionsCountLabel(p, t)}
+                    seasonLabel={seasonRange(p, t)}
                     motif={p.accentMotif}
                     className={i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'}
                   />

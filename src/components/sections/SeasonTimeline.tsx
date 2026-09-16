@@ -10,7 +10,7 @@ export type Station = {
 }
 
 /**
- * September → April as eight stations on a rising, stepped rhythm: each station
+ * The season's months as stations on a rising, stepped rhythm: each station
  * is a vertical stem from a shared baseline, one step taller than the last, with
  * a short cap. Past and current stations are ink, future ones hairline, and the
  * current station's stem is red with the mark at its foot — the one place on the
@@ -25,8 +25,19 @@ export function SeasonTimeline({
 }) {
   const step = 14
   const base = 28
+  // Tailwind needs literal class names; the season is 8–12 stations long.
+  const cols: Record<number, string> = {
+    8: 'md:grid-cols-8',
+    9: 'md:grid-cols-9',
+    10: 'md:grid-cols-10',
+    11: 'md:grid-cols-11',
+    12: 'md:grid-cols-12',
+  }
   return (
-    <ol className="relative grid md:grid-cols-8 md:items-end" aria-label="season">
+    <ol
+      className={cn('relative grid md:items-end', cols[stations.length] ?? 'md:grid-cols-9')}
+      aria-label="season"
+    >
       {stations.map((s, i) => {
         const height = base + i * step
         const stem = s.isCurrent ? 'bg-red-600' : s.isPast ? 'bg-ink-900' : 'bg-line-strong'

@@ -41,6 +41,8 @@ After changing any collection or global: **`pnpm generate:types`** (wraps Payloa
 
 Use `PORT=3001 scripts/dev-restart.sh [--clean]`. Never poll the server with requests while Turbopack is doing its first compile after a `.next` wipe — that corrupts its manifests and every route returns 500 with `SyntaxError: Unexpected non-whitespace character after JSON`. The script waits for the "Ready" line first.
 
+**Restart clean before any Playwright run that follows a source edit.** After Fast Refresh has replaced server modules, a loaded dev server intermittently answers 500 with `Error: No intl context found` from `usePathname()` in the Header (the refreshed client module and the provider hold different context objects). Seen twice on 2026-09-15/16, 47 × 500 in one run; gone every time after `scripts/dev-restart.sh --clean`. Production builds are unaffected. Also never run two Playwright suites against the dev server at once.
+
 ## Layout rules — non-negotiable
 
 - **Logical properties only.** `ms-*` `me-*` `ps-*` `pe-*` `start-*` `end-*` `text-start` `border-s` `rounded-s-*`.

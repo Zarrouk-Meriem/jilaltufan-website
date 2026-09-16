@@ -128,25 +128,25 @@ Session states: `upcoming · starting-soon · live · completed · cancelled`, e
 
 All public routes under `/[locale]`. "Render" = caching strategy.
 
-| Route                                                              | Render                                                                          | Notes                                      |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------ |
-| `/`                                                                | ISR 300s + 60s for the session strip                                            |                                            |
-| `/about`                                                           | ISR                                                                             | anchored: intro · vision & mission · goals |
-| `/about/structure`                                                 | ISR                                                                             | councils & teams                           |
-| `/projects` · `/projects/[slug]`                                   | ISR + `generateStaticParams`                                                    |                                            |
-| `/programs`                                                        | ISR                                                                             | Open Training featured, then five directed |
-| `/programs/[slug]`                                                 | ISR 60s                                                                         | six pages, one template                    |
-| `/schedule`                                                        | ISR 60s                                                                         | `?program=` filter, shareable              |
-| `/events` · `/events/[slug]`                                       | ISR                                                                             | camp gets the rich layout                  |
-| `/knowledge` · `/knowledge/minbar[/slug]` · `/knowledge/materials` | ISR                                                                             |                                            |
-| `/instructors` · `/instructors/[slug]`                             | ISR                                                                             |                                            |
-| `/students`                                                        | ISR                                                                             | program picker is a client component       |
-| `/apply` · `/apply/[programSlug]`                                  | dynamic                                                                         |                                            |
-| `/contact` · `/privacy` · `/terms`                                 | static                                                                          |                                            |
-| `/styleguide`                                                      | dynamic, **404s when `NODE_ENV === 'production'`** unless `ENABLE_STYLEGUIDE=1` |                                            |
-| `not-found`                                                        | static                                                                          | bilingual                                  |
-| `/sitemap.xml` · `/robots.txt`                                     | generated                                                                       | both locales, `hreflang` alternates        |
-| `/api/og/…`                                                        | edge-ish runtime                                                                | brand OG template                          |
+| Route                                                              | Render                                                                          | Notes                                                     |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `/`                                                                | ISR 300s + 60s for the session strip                                            |                                                           |
+| `/about`                                                           | ISR                                                                             | anchored: intro · vision & mission · goals                |
+| `/about/structure`                                                 | ISR                                                                             | councils & teams                                          |
+| `/projects` · `/projects/[slug]`                                   | ISR + `generateStaticParams`                                                    |                                                           |
+| `/programs`                                                        | ISR                                                                             | Open Training featured, four directed, strategic projects |
+| `/programs/[slug]`                                                 | ISR 60s                                                                         | six pages, one template                                   |
+| `/schedule`                                                        | ISR 60s                                                                         | `?program=` filter, shareable                             |
+| `/events` · `/events/[slug]`                                       | ISR                                                                             | camp gets the rich layout                                 |
+| `/knowledge` · `/knowledge/minbar[/slug]` · `/knowledge/materials` | ISR                                                                             |                                                           |
+| `/instructors` · `/instructors/[slug]`                             | ISR                                                                             |                                                           |
+| `/students`                                                        | ISR                                                                             | program picker is a client component                      |
+| `/apply` · `/apply/[programSlug]`                                  | dynamic                                                                         |                                                           |
+| `/contact` · `/privacy` · `/terms`                                 | static                                                                          |                                                           |
+| `/styleguide`                                                      | dynamic, **404s when `NODE_ENV === 'production'`** unless `ENABLE_STYLEGUIDE=1` |                                                           |
+| `not-found`                                                        | static                                                                          | bilingual                                                 |
+| `/sitemap.xml` · `/robots.txt`                                     | generated                                                                       | both locales, `hreflang` alternates                       |
+| `/api/og/…`                                                        | edge-ish runtime                                                                | brand OG template                                         |
 
 Primary nav stays five items: **الأكاديمية · البرامج · الجدول · المعرفة · الفعاليات** + language switch + «سجّل الآن». Student and Instructor windows live in the header utility row, the footer, and contextual links from program/session pages.
 
@@ -300,3 +300,5 @@ An editor publishes a program with eight sessions and Zoom links, publishes an e
 ---
 
 **→ Awaiting your approval before M1.** Corrections to any of §2 are welcome; I'd rather change the plan than the code.
+
+**Season (revised Sep 2026 from the founding paper):** the academy year runs October → June for the timeline; open training is 8 lectures Oct → May, the four directed programs are 6 sessions Jan → Jun, graduation projects and the camp fall in September. Between July and September the home timeline shows the coming season. Season labels on cards come from each program's own fields (`src/lib/program.ts`), never from a fixed string.

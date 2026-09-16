@@ -22,13 +22,13 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 
 ## Content the academy must supply
 
-- [ ] **P1 — About text** beyond the mission: نبذة عن الأكاديمية, الرؤية, الأهداف.
-- [ ] **P1 — Program content** for all six: التعريف, الأهداف, الفئة المستهدفة, المدة, and the eight session titles + summaries. _Seeded as `[نص مؤقت]` with `isPlaceholder: true`._
-- [ ] **P1 — Real session dates and Zoom links** for the 2026/2027 season. _48 placeholder sessions exist, one per month Sep→Apr, with no Zoom URLs._
+- [x] **About text** — intro, founding philosophy, vision, values, and the eight goals are seeded from «الورقة التأسيسية» (10 June 2026).
+- [ ] **P1 — Session titles and summaries.** Program definitions, target audience, the four competencies, duration, and admission/continuation/graduation criteria are seeded from the founding paper; open training is 8 lectures Oct → May, the four directed programs are 6 sessions Jan → Jun. Sessions themselves are still `[الحصة الأولى]`… placeholders. «سفراء القدس الشريف» was replaced by «المشاريع الاستراتيجية» (Sep 2026); its own projects are still to be listed.
+- [ ] **P1 — Real session dates and Zoom links** for the 2026/2027 season. _32 placeholder sessions exist (8 open Oct→May, 4 × 6 directed Jan→Jun), with no Zoom URLs._
 - [ ] **P1 — Instructors:** names, roles, short bios, photos. _Seeded as «[اسم المحاضر]», no photos, no invented biography. Sessions currently have no instructor attached — this is deliberate._
-- [ ] **P1 — الهيكلة والمجالس والفرق** — council and team structure for `/about/structure`.
-- [ ] **P2 — مخيمات جيل الطوفان** — the camp's week programme, dates, location, and photos. _The Camp page renders programme-by-day, details, and a lightbox gallery as soon as they are entered; all three sections hide until then._
-- [ ] **P2 — المشاريع والمبادرات** — projects for `/projects`.
+- [ ] **P2 — Structure follow-ups.** The three councils and their members are seeded from «دليل المؤسسات» (proposed composition). Still needed: the three vacant board seats (Iraq, Egypt, Indonesia), the Scientific Council's member list, and **confirmation of the English spellings of every name** (transliterated by us).
+- [ ] **P2 — مخيمات جيل الطوفان** — the camp's week programme, exact September dates, location, and photos. _Description seeded from the founding paper._ _The Camp page renders programme-by-day, details, and a lightbox gallery as soon as they are entered; all three sections hide until then._
+- [ ] **P2 — المشاريع والمبادرات** — actual graduation projects and incubator picks for `/projects` (the page intro now describes the graduation-project rule and the incubator). Also the strategic projects list for `/programs/strategic-projects`.
 - [ ] **P2 — منبر الطوفان** — at least three posts, or the home section stays hidden (by design).
 - [ ] **P2 — Code of conduct** and the student FAQ for `/students`. _Editable in admin → Windows → Student window (seeded with the built-in copy; the conduct line is a marked placeholder)._
 - [ ] **P2 — Instructor guidelines** for `/instructors`. _Editable in admin → Windows → Instructor window._

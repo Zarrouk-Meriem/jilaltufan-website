@@ -9,33 +9,74 @@ import { getPayload, type Payload, type Where } from 'payload'
 import type { AboutPage } from '@/payload-types'
 
 type RichText = NonNullable<AboutPage['intro']>
-import { MISSION, PILLARS, PLACEHOLDER, PROGRAMS, SEASON, SEASON_MONTHS, WINDOWS } from './data'
+import {
+  ABOUT_INTRO,
+  AUDIENCE,
+  type Block,
+  CAMP,
+  COMPETENCIES,
+  GOALS,
+  PROGRAM_CONTENT,
+  REGISTRATION_NOTE,
+  STRUCTURE,
+  STRUCTURE_INTRO,
+  VALUES,
+  VISION,
+} from './content'
+import {
+  MISSION,
+  PLACEHOLDER,
+  PROGRAMS,
+  RENAMED_PROGRAMS,
+  SEASON,
+  seasonMonths,
+  WINDOWS,
+} from './data'
 
 type Locale = 'ar' | 'en'
 
-/** Minimal Lexical document with one paragraph. */
-const paragraph = (text: string): RichText =>
+const textNode = (text: string) => ({
+  type: 'text',
+  version: 1,
+  text,
+  format: 0,
+  style: '',
+  mode: 'normal',
+  detail: 0,
+})
+const common = { format: '', indent: 0, version: 1, direction: null }
+
+/** Lexical document from headings, paragraphs, and bullet lists. */
+const richText = (blocks: Block[]): RichText =>
   ({
     root: {
       type: 'root',
-      format: '',
-      indent: 0,
-      version: 1,
-      direction: null,
-      children: [
-        {
+      ...common,
+      children: blocks.map((b) => {
+        if (b.type === 'h')
+          return { type: 'heading', tag: 'h2', ...common, children: [textNode(b.text)] }
+        if (b.type === 'ul')
+          return {
+            type: 'list',
+            listType: 'bullet',
+            tag: 'ul',
+            start: 1,
+            ...common,
+            children: b.items.map((item, i) => ({
+              type: 'listitem',
+              value: i + 1,
+              ...common,
+              children: [textNode(item)],
+            })),
+          }
+        return {
           type: 'paragraph',
-          format: '',
-          indent: 0,
-          version: 1,
-          direction: null,
           textFormat: 0,
           textStyle: '',
-          children: [
-            { type: 'text', version: 1, text, format: 0, style: '', mode: 'normal', detail: 0 },
-          ],
-        },
-      ],
+          ...common,
+          children: [textNode(b.text)],
+        }
+      }),
     },
   }) as unknown as RichText
 
@@ -104,8 +145,29 @@ async function seed() {
   )
   log(`instructor ${instructor.id}`)
 
-  // ── Programs + 8 sessions each ──
+  // ── Programs: content from the founding paper; placeholder sessions per season ──
+  for (const r of RENAMED_PROGRAMS) {
+    const old = await payload.find({
+      collection: 'programs',
+      where: { slug: { equals: r.from } },
+      limit: 1,
+      overrideAccess: true,
+    })
+    const doc = old.docs[0]
+    if (doc && doc.isPlaceholder !== false) {
+      await payload.update({
+        collection: 'programs',
+        id: doc.id,
+        data: { slug: r.to },
+        overrideAccess: true,
+      })
+      log(`program ${r.from} → ${r.to} (renamed)`)
+    }
+  }
   for (const p of PROGRAMS) {
+    const c = PROGRAM_CONTENT[p.slug]
+    if (!c) throw new Error(`no content for ${p.slug}`)
+    const directed = p.track === 'directed'
     const program = await upsert(
       payload,
       'programs',
@@ -116,36 +178,41 @@ async function seed() {
         order: p.order,
         featured: p.featured ?? false,
         status: 'published',
-        registrationMode: 'application',
-        seasonStartMonth: 'sep',
-        seasonEndMonth: 'apr',
-        sessionsCount: 8,
+        registrationMode: p.registrationMode,
+        seasonStartMonth: p.season.start,
+        seasonEndMonth: p.season.end,
+        sessionsCount: p.season.count,
       },
       {
         ar: {
-          goals: [1, 2, 3].map(() => ({ text: PLACEHOLDER.ar })),
           title: p.title.ar,
-          shortDescription: PLACEHOLDER.ar,
-          intro: paragraph(PLACEHOLDER.ar),
-          targetAudience: paragraph(PLACEHOLDER.ar),
-          durationSummary: '8 حصص — حصة واحدة شهريًا من سبتمبر إلى أبريل',
-          registrationNote: paragraph(PLACEHOLDER.ar),
+          shortDescription: c.short.ar,
+          intro: richText(c.intro.ar),
+          goals: (directed ? COMPETENCIES.ar : []).map((text) => ({ text })),
+          targetAudience: richText(AUDIENCE.ar),
+          durationSummary: c.duration.ar,
+          registrationNote: richText(
+            directed ? REGISTRATION_NOTE.ar : [{ type: 'p', text: PLACEHOLDER.ar }],
+          ),
         },
         en: {
           title: p.title.en,
-          shortDescription: PLACEHOLDER.en,
-          intro: paragraph(PLACEHOLDER.en),
-          targetAudience: paragraph(PLACEHOLDER.en),
-          durationSummary: '8 sessions — one per month, September to April',
-          registrationNote: paragraph(PLACEHOLDER.en),
-          goals: [1, 2, 3].map(() => ({ text: PLACEHOLDER.en })),
+          shortDescription: c.short.en,
+          intro: richText(c.intro.en),
+          goals: (directed ? COMPETENCIES.en : []).map((text) => ({ text })),
+          targetAudience: richText(AUDIENCE.en),
+          durationSummary: c.duration.en,
+          registrationNote: richText(
+            directed ? REGISTRATION_NOTE.en : [{ type: 'p', text: PLACEHOLDER.en }],
+          ),
         },
       },
     )
     log(`program ${p.slug} → ${program.id}`)
 
-    for (let i = 0; i < SEASON_MONTHS.length; i++) {
-      const mo = SEASON_MONTHS[i]!
+    const months = seasonMonths(p.season)
+    for (let i = 0; i < months.length; i++) {
+      const mo = months[i]!
       const number = i + 1
       await upsert(
         payload,
@@ -165,7 +232,24 @@ async function seed() {
         },
       )
     }
-    log(`  8 sessions for ${p.slug}`)
+    // Placeholder sessions beyond the program's count (an earlier seed, or a renamed program).
+    const extra = await payload.find({
+      collection: 'sessions',
+      where: {
+        and: [
+          { program: { equals: program.id } },
+          { number: { greater_than: months.length } },
+          { isPlaceholder: { equals: true } },
+        ],
+      },
+      limit: 50,
+      overrideAccess: true,
+    })
+    for (const x of extra.docs)
+      await payload.delete({ collection: 'sessions', id: x.id, overrideAccess: true })
+    log(
+      `  ${months.length} sessions for ${p.slug}${extra.docs.length ? ` (removed ${extra.docs.length} extra)` : ''}`,
+    )
   }
 
   // ── The Camp (dates unknown → placeholder in the season summer; flagged) ──
@@ -179,27 +263,28 @@ async function seed() {
       status: 'published',
       isOnline: false,
       registrationMode: 'none',
-      startDate: new Date(Date.UTC(SEASON.endYear, 6, 1, 6)).toISOString(),
-      endDate: new Date(Date.UTC(SEASON.endYear, 6, 7, 18)).toISOString(),
+      // The founding paper: the camp closes the season in September; exact days unknown.
+      startDate: new Date(Date.UTC(SEASON.endYear, 8, 1, 6)).toISOString(),
+      endDate: new Date(Date.UTC(SEASON.endYear, 8, 7, 18)).toISOString(),
     },
     {
       ar: {
         title: 'مخيمات جيل الطوفان',
-        summary: 'نشاط سنوي مدته أسبوع كامل. [التواريخ والمكان والبرنامج مؤقتة]',
-        body: paragraph(PLACEHOLDER.ar),
+        summary: CAMP.summary.ar,
+        body: richText(CAMP.body.ar),
         location: '[المكان]',
       },
       en: {
         title: 'Jeel Al-Toufan Camp',
-        summary: 'An annual, week-long activity. [Dates, location, and programme are placeholders]',
-        body: paragraph(PLACEHOLDER.en),
+        summary: CAMP.summary.en,
+        body: richText(CAMP.body.en),
         location: '[Location]',
       },
     },
   )
   log('camp event')
 
-  // ── About page: real mission text, verbatim ──
+  // ── About page: the founding paper and the institutions guide ──
   for (const locale of ['ar', 'en'] as const) {
     await payload.updateGlobal({
       slug: 'about-page',
@@ -207,12 +292,18 @@ async function seed() {
       overrideAccess: true,
       data: {
         title: locale === 'ar' ? 'عن الأكاديمية' : 'About the Academy',
-        intro: paragraph(PLACEHOLDER[locale]),
-        vision: PLACEHOLDER[locale],
+        intro: richText(ABOUT_INTRO[locale]),
+        vision: VISION[locale],
         mission: MISSION[locale],
-        pillars: PILLARS.map((p) => ({ title: p.title[locale], text: PLACEHOLDER[locale] })),
-        goals: [1, 2, 3].map(() => ({ text: PLACEHOLDER[locale] })),
-        structureIntro: paragraph(PLACEHOLDER[locale]),
+        pillars: VALUES.map((v) => ({ title: v.title[locale], text: v.text[locale] })),
+        goals: GOALS[locale].map((text) => ({ text })),
+        structureIntro: richText(STRUCTURE_INTRO[locale]),
+        structure: STRUCTURE.map((u) => ({
+          name: u.name[locale],
+          kind: u.kind,
+          description: u.description[locale],
+          members: u.members.map((m) => ({ name: m.name[locale], role: m.role[locale] })),
+        })),
       },
     })
   }

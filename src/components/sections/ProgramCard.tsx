@@ -13,8 +13,8 @@ type Props = {
   ordinal?: string
   trackLabel: string
   registration: { label: string; tone: BadgeTone }
-  sessionsLabel: string
-  seasonLabel: string
+  sessionsLabel?: string | null
+  seasonLabel?: string | null
   motif?: 'none' | 'keffiyeh' | 'mark' | null
   /** Cover image, navy-duotoned; the card stays typographic without one. */
   image?: ImageSource | null
@@ -119,9 +119,11 @@ export function ProgramCard({
           featured ? 'text-on-navy-muted' : 'text-ink-500',
         )}
       >
-        <span>{sessionsLabel}</span>
-        <span aria-hidden className={cn('h-3 w-px', featured ? 'bg-on-navy-line' : 'bg-line')} />
-        <span>{seasonLabel}</span>
+        {sessionsLabel ? <span>{sessionsLabel}</span> : null}
+        {sessionsLabel && seasonLabel ? (
+          <span aria-hidden className={cn('h-3 w-px', featured ? 'bg-on-navy-line' : 'bg-line')} />
+        ) : null}
+        {seasonLabel ? <span>{seasonLabel}</span> : null}
         <span
           className={cn(
             'ms-auto inline-flex items-center gap-1.5 font-medium',

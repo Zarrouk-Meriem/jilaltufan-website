@@ -73,9 +73,8 @@ describe('season helpers', () => {
     // 30 Sep 23:30Z is already 1 Oct 02:30 in Hebron
     expect(monthKeyInZone('2026-09-30T23:30:00Z')).toBe('2026-10')
   })
-  it('season keys run Sep → Apr', () => {
+  it('season keys run Oct → Jun (founding paper: open Oct–May, directed Jan–Jun)', () => {
     expect(seasonMonthKeys(2026)).toEqual([
-      '2026-09',
       '2026-10',
       '2026-11',
       '2026-12',
@@ -83,12 +82,16 @@ describe('season helpers', () => {
       '2027-02',
       '2027-03',
       '2027-04',
+      '2027-05',
+      '2027-06',
     ])
   })
-  it('current season start year', () => {
-    expect(currentSeasonStartYear(new Date('2026-09-11T00:00:00Z'))).toBe(2026)
+  it('current season start year: Oct–Jun is the season; Jul–Sep shows the coming one', () => {
+    expect(currentSeasonStartYear(new Date('2026-10-01T12:00:00Z'))).toBe(2026)
     expect(currentSeasonStartYear(new Date('2027-03-01T00:00:00Z'))).toBe(2026)
-    expect(currentSeasonStartYear(new Date('2027-08-31T00:00:00Z'))).toBe(2026)
-    expect(currentSeasonStartYear(new Date('2027-09-01T12:00:00Z'))).toBe(2027)
+    expect(currentSeasonStartYear(new Date('2027-06-30T12:00:00Z'))).toBe(2026)
+    expect(currentSeasonStartYear(new Date('2027-07-15T12:00:00Z'))).toBe(2027)
+    expect(currentSeasonStartYear(new Date('2026-09-16T12:00:00Z'))).toBe(2026)
+    expect(currentSeasonStartYear(new Date('2027-09-30T20:00:00Z'))).toBe(2027)
   })
 })

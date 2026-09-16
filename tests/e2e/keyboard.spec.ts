@@ -15,8 +15,11 @@ test('program accordion is keyboard-complete: arrows move, Enter toggles, deep l
     'aria-expanded',
     'true',
   )
+  // The directed programs have six sessions (founding paper); count rather than assume.
+  const count = await page.locator('[id^="session-"] button[aria-expanded]').count()
+  expect(count).toBeGreaterThan(2)
   await page.keyboard.press('End')
-  await expect(page.locator('#session-8 button[aria-expanded]')).toBeFocused()
+  await expect(page.locator(`#session-${count} button[aria-expanded]`)).toBeFocused()
 })
 
 test('language switch and skip link are reachable by keyboard', async ({ page }) => {

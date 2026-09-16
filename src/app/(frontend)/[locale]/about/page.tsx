@@ -79,7 +79,9 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                 ordinal={ordinalFor(0, t)}
                 title={t('about.visionTitle')}
               />
-              <p className="mt-8 measure text-md text-ink-900">{about.vision}</p>
+              <p className="mt-8 measure text-md whitespace-pre-line text-ink-900">
+                {about.vision}
+              </p>
             </section>
           ) : null}
 

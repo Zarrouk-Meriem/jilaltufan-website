@@ -101,7 +101,19 @@ export function monthKeyInZone(d: string | Date, timeZone: string = DEFAULT_TZ):
 }
 
 /** The eight season months (Sep → Apr) as YYYY-MM keys for a season starting in `startYear`. */
-export function seasonMonthKeys(startYear: number, startMonth = 9, count = 8): string[] {
+/**
+ * The academy year per the founding paper: open training October → May, directed
+ * programs January → June, graduation projects and the camp in September.
+ */
+export const SEASON_START_MONTH = 10
+export const SEASON_END_MONTH = 6
+export const SEASON_LENGTH = 9
+
+export function seasonMonthKeys(
+  startYear: number,
+  startMonth = SEASON_START_MONTH,
+  count = SEASON_LENGTH,
+): string[] {
   return Array.from({ length: count }, (_, i) => {
     const m0 = startMonth - 1 + i
     const y = startYear + Math.floor(m0 / 12)
@@ -114,8 +126,10 @@ export function seasonMonthKeys(startYear: number, startMonth = 9, count = 8): s
 export function currentSeasonStartYear(
   now: Date = new Date(),
   timeZone: string = DEFAULT_TZ,
-  startMonth = 9,
+  startMonth = SEASON_START_MONTH,
+  endMonth = SEASON_END_MONTH,
 ): number {
   const [y, m] = monthKeyInZone(now, timeZone).split('-').map(Number) as [number, number]
-  return m >= startMonth ? y : y - 1
+  // After the season ends (July → September) the coming season is the one to show.
+  return m >= startMonth || m > endMonth ? y : y - 1
 }

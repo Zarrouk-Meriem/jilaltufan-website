@@ -9,6 +9,7 @@ import { stripAccent } from '@/lib/accent'
 import { listPrograms } from '@/lib/queries'
 import { registrationBadge } from '@/lib/view'
 import { mediaImage } from '@/lib/media'
+import { seasonRange, sessionsCountLabel, trackLabel } from '@/lib/program'
 
 export const revalidate = 300
 
@@ -50,12 +51,10 @@ export default async function ApplyIndexPage({ params }: PageProps<'/[locale]/ap
                 image={mediaImage(p.coverImage, 'card')}
                 description={p.shortDescription}
                 ordinal={String(i + 1).padStart(2, '0')}
-                trackLabel={
-                  p.track === 'open' ? t('home.openTrackLabel') : t('home.directedTrackLabel')
-                }
+                trackLabel={trackLabel(p.track, t)}
                 registration={registrationBadge(p.registrationMode, t)}
-                sessionsLabel={t('program.sessionsCount')}
-                seasonLabel={t('program.sepToApr')}
+                sessionsLabel={sessionsCountLabel(p, t)}
+                seasonLabel={seasonRange(p, t)}
               />
             ))}
           </div>

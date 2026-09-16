@@ -178,7 +178,7 @@ export interface UserAuthOperations {
 export interface Program {
   id: number;
   title: string;
-  track: 'open' | 'directed';
+  track: 'open' | 'directed' | 'projects';
   /**
    * Shown on cards and indexes. One or two sentences.
    */
@@ -220,7 +220,7 @@ export interface Program {
     [k: string]: unknown;
   } | null;
   /**
-   * e.g. 8 sessions, one per month from September to April
+   * e.g. 6 sessions, one per month from January to June
    */
   durationSummary?: string | null;
   registrationNote?: {

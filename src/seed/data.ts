@@ -9,12 +9,21 @@ export const PLACEHOLDER = { ar: '[نص مؤقت]', en: '[Placeholder]' }
 
 export type ProgramSeed = {
   slug: string
-  track: 'open' | 'directed'
+  track: 'open' | 'directed' | 'projects'
   order: number
   featured?: boolean
   title: { ar: string; en: string }
+  /** Months are Payload keys; count 0 = no sessions (strategic projects). */
+  season: { start: string; end: string; count: number }
+  registrationMode: 'open' | 'application' | 'closed'
 }
 
+/**
+ * The founding paper: one open track (Oct → May, eight lectures), four directed
+ * programs (Jan → Jun, six sessions each, two theoretical and two applied), and the
+ * strategic projects that accompany them. «سفراء القدس الشريف» was replaced by the
+ * strategic-projects entry at the academy's request (Sep 2026).
+ */
 export const PROGRAMS: ProgramSeed[] = [
   {
     slug: 'open-training',
@@ -22,61 +31,97 @@ export const PROGRAMS: ProgramSeed[] = [
     order: 0,
     featured: true,
     title: { ar: 'التدريب المفتوح', en: 'Open Training' },
+    season: { start: 'oct', end: 'may', count: 8 },
+    registrationMode: 'open',
   },
   {
     slug: 'palestine-our-compass',
     track: 'directed',
     order: 1,
     title: { ar: 'فلسطين بوصلتنا', en: 'Palestine, Our Compass' },
+    season: { start: 'jan', end: 'jun', count: 6 },
+    registrationMode: 'application',
   },
   {
     slug: 'leaders-of-tomorrow',
     track: 'directed',
     order: 2,
     title: { ar: 'قادة الغد', en: 'Leaders of Tomorrow' },
+    season: { start: 'jan', end: 'jun', count: 6 },
+    registrationMode: 'application',
   },
   {
     slug: 'impact-makers',
     track: 'directed',
     order: 3,
     title: { ar: 'صنّاع الأثر', en: 'Impact Makers' },
+    season: { start: 'jan', end: 'jun', count: 6 },
+    registrationMode: 'application',
   },
   {
     slug: 'community-pioneers',
     track: 'directed',
     order: 4,
     title: { ar: 'روّاد المجتمع', en: 'Community Pioneers' },
+    season: { start: 'jan', end: 'jun', count: 6 },
+    registrationMode: 'application',
   },
   {
-    slug: 'ambassadors-of-al-quds',
-    track: 'directed',
+    slug: 'strategic-projects',
+    track: 'projects',
     order: 5,
-    title: { ar: 'سفراء القدس الشريف', en: 'Ambassadors of Al-Quds Al-Sharif' },
+    title: { ar: 'المشاريع الاستراتيجية', en: 'Strategic Projects' },
+    season: { start: 'oct', end: 'sep', count: 0 },
+    registrationMode: 'closed',
   },
 ]
 
-/** Sep → Apr; month index is 0-based for Date. */
-export const SEASON_MONTHS = [
-  { m: 8, y: SEASON.startYear, ar: 'الأولى', en: 'first' },
-  { m: 9, y: SEASON.startYear, ar: 'الثانية', en: 'second' },
-  { m: 10, y: SEASON.startYear, ar: 'الثالثة', en: 'third' },
-  { m: 11, y: SEASON.startYear, ar: 'الرابعة', en: 'fourth' },
-  { m: 0, y: SEASON.endYear, ar: 'الخامسة', en: 'fifth' },
-  { m: 1, y: SEASON.endYear, ar: 'السادسة', en: 'sixth' },
-  { m: 2, y: SEASON.endYear, ar: 'السابعة', en: 'seventh' },
-  { m: 3, y: SEASON.endYear, ar: 'الثامنة', en: 'eighth' },
+/** Renamed in place by the seed when the old placeholder record still exists. */
+export const RENAMED_PROGRAMS: { from: string; to: string }[] = [
+  { from: 'ambassadors-of-al-quds', to: 'strategic-projects' },
 ]
+
+const ORDINALS = [
+  { ar: 'الأولى', en: 'first' },
+  { ar: 'الثانية', en: 'second' },
+  { ar: 'الثالثة', en: 'third' },
+  { ar: 'الرابعة', en: 'fourth' },
+  { ar: 'الخامسة', en: 'fifth' },
+  { ar: 'السادسة', en: 'sixth' },
+  { ar: 'السابعة', en: 'seventh' },
+  { ar: 'الثامنة', en: 'eighth' },
+]
+const MONTH_INDEX: Record<string, number> = {
+  jan: 0,
+  feb: 1,
+  mar: 2,
+  apr: 3,
+  may: 4,
+  jun: 5,
+  jul: 6,
+  aug: 7,
+  sep: 8,
+  oct: 9,
+  nov: 10,
+  dec: 11,
+}
+
+/** Placeholder session months for a program: `count` months from its start month. */
+export function seasonMonths(season: ProgramSeed['season']) {
+  const startIdx = MONTH_INDEX[season.start]!
+  return Array.from({ length: season.count }, (_, i) => {
+    const idx = startIdx + i
+    // The academy year starts in October: Oct–Dec belong to startYear, Jan–Sep to endYear.
+    const m = idx % 12
+    const y = m >= 9 ? SEASON.startYear : SEASON.endYear
+    return { m, y, ar: ORDINALS[i]?.ar ?? String(i + 1), en: ORDINALS[i]?.en ?? String(i + 1) }
+  })
+}
 
 export const MISSION = {
   ar: 'تقوم رسالة الأكاديمية على تمكين الشباب العربي والإسلامي، من خلال برامج تربوية ومعرفية وسياسية مكثّفة ومواكبة لتحديات ورهانات الطوفان، حيث تعتمد على مناهج علمية وأدوات عملية، لتعزيز الهوية ونصرة القضية الفلسطينية في مختلف الميادين.',
   en: "The Academy's mission is to empower Arab and Muslim youth through intensive educational, cognitive, and political programs that keep pace with the challenges and stakes of the flood, relying on scientific curricula and practical tools to strengthen identity and support the Palestinian cause in various fields.",
 }
-
-export const PILLARS = [
-  { title: { ar: 'تربوية', en: 'Educational' } },
-  { title: { ar: 'معرفية', en: 'Cognitive' } },
-  { title: { ar: 'سياسية', en: 'Political' } },
-]
 
 /**
  * Student / instructor window copy — the same built-in text as messages/*.json, entered
@@ -98,7 +143,7 @@ export const WINDOWS: Record<
   ar: {
     how: [
       'جميع الحصص مباشرة على Zoom، ولا توجد تسجيلات.',
-      'لكل برنامج ثماني حصص في الموسم، حصة واحدة كل شهر من سبتمبر إلى أبريل.',
+      'التدريب المفتوح ثماني محاضرات شهرية من أكتوبر إلى مايو، والبرامج الموجّهة ست حصص شهرية من يناير إلى يونيو.',
       'المواعيد معلنة بتوقيت القدس، ويعرض الموقع توقيتك المحلي إلى جانبه.',
       'يصلك رابط كل حصة بالبريد الإلكتروني قبل موعدها، ويظهر زر الانضمام على الموقع قبل البداية بـ {minutes} دقيقة.',
     ],
@@ -130,7 +175,7 @@ export const WINDOWS: Record<
   en: {
     how: [
       'All sessions are live on Zoom; there are no recordings.',
-      'Each program has eight sessions per season, one each month from September to April.',
+      'Open Training is eight monthly lectures from October to May; the directed programs are six monthly sessions from January to June.',
       'Times are announced in Al-Quds time; the site shows your local time beside them.',
       "You receive each session's link by email before it starts, and the join button appears on the site {minutes} minutes before.",
     ],
