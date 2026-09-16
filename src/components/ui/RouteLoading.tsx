@@ -10,7 +10,7 @@ import { Loader } from '@/components/ui/Loader'
 export async function RouteLoading() {
   const t = await getTranslations('common')
   return (
-    <div className="container-site flex min-h-[60dvh] items-center justify-center py-20">
+    <div className="route-loading container-site flex min-h-[60dvh] items-center justify-center py-20">
       <Loader size="lg" label={t('loading')} />
     </div>
   )

@@ -200,6 +200,41 @@
     }
   }
 
+  /* Whatever lands in <main> eases in: the first paint, a navigation, and the
+     content that replaces a route loader. The last keyframe is `transform: none`
+     so no containing block lingers for fixed or sticky descendants. The loader
+     itself waits a beat before fading in, so a fast navigation never flashes it.
+     Reduced motion drops the lift and keeps the fade. */
+  main > * {
+    animation: page-enter var(--dur-page) var(--ease-out) backwards;
+  }
+  main > .route-loading {
+    animation-delay: 150ms;
+  }
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    main > * {
+      animation-name: page-fade;
+    }
+    @keyframes page-fade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+
   /* The loader turns a third of a revolution per beat, settling between beats,
      and breathes as it turns. Under reduced motion the transform goes away and
      only a slow opacity pulse remains. */

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { isDevServer } from './helpers/dev'
+import { isDevServer, settleAnimations } from './helpers/dev'
 
 const locales = [
   { code: 'ar', dir: 'rtl' },
@@ -53,6 +53,7 @@ for (const { code, dir } of locales) {
         await expect(page.locator('main#main')).toBeVisible()
         await expect(page.getByRole('banner')).toBeVisible()
         await expect(page.getByRole('contentinfo')).toBeVisible()
+        await settleAnimations(page)
 
         const results = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])

@@ -58,6 +58,7 @@
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-fast: 150ms;
   --dur: 220ms;
+  --dur-page: 320ms;
   --focus-ring: 0 0 0 2px var(--paper), 0 0 0 4px var(--red-600);
 }
 
