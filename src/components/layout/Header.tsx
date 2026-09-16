@@ -67,77 +67,86 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
   return (
     <header
       data-compact={compact || undefined}
-      className={cn(
-        'sticky top-0 z-50 bg-paper transition-[box-shadow] duration-200 ease-brand',
-        compact ? 'shadow-[0_1px_0_0_var(--line)]' : 'shadow-[0_1px_0_0_transparent]',
-      )}
+      // The header's own (in-flow) height never changes; only the bar inside shrinks. When
+      // the header itself shrank, everything below it moved up 32px, Chrome's scroll
+      // anchoring scrolled back to keep the hero in place, scrollY dropped under the
+      // threshold, the header grew again — and the two fought for a dozen frames (the
+      // visible "glitch" when scrolling started). `pointer-events-none` lets clicks
+      // reach the page through the strip the compact bar no longer covers.
+      className="pointer-events-none sticky top-0 z-50 h-20 [overflow-anchor:none] md:h-24"
     >
       <div
         className={cn(
-          'container-site flex items-center justify-between gap-6 transition-[height] duration-200 ease-brand',
-          compact ? 'h-16' : 'h-20 md:h-24',
+          'pointer-events-auto bg-paper transition-[height,box-shadow] duration-200 ease-brand',
+          compact
+            ? 'h-16 shadow-[0_1px_0_0_var(--line)]'
+            : 'h-20 shadow-[0_1px_0_0_transparent] md:h-24',
         )}
       >
-        <Link href="/" aria-label={labels.logoHome} className="flex shrink-0 items-center">
-          {/* One logo, scaled down (not swapped) when compact, so it shrinks in step with
-              the header's height instead of popping to a second image mid-transition. */}
-          <span
-            className={cn(
-              // Tailwind's scale-* utility sets the standalone `scale` property, not
-              // `transform` — `transition-transform` alone would leave it unanimated.
-              'block transition-[scale] duration-200 ease-brand',
-              compact && 'md:scale-[var(--logo-compact-scale)]',
-            )}
-            style={{ '--logo-compact-scale': locale === 'ar' ? 34 / 48 : 28 / 40 } as CSSProperties}
-          >
-            <Logo locale={locale} height={locale === 'ar' ? 48 : 40} priority />
-          </span>
-        </Link>
+        <div className="container-site flex h-full items-center justify-between gap-6">
+          <Link href="/" aria-label={labels.logoHome} className="flex shrink-0 items-center">
+            {/* One logo, scaled down (not swapped) when compact, so it shrinks in step with
+                the header's height instead of popping to a second image mid-transition. */}
+            <span
+              className={cn(
+                // Tailwind's scale-* utility sets the standalone `scale` property, not
+                // `transform` — `transition-transform` alone would leave it unanimated.
+                'block transition-[scale] duration-200 ease-brand',
+                compact && 'md:scale-[var(--logo-compact-scale)]',
+              )}
+              style={
+                { '--logo-compact-scale': locale === 'ar' ? 34 / 48 : 28 / 40 } as CSSProperties
+              }
+            >
+              <Logo locale={locale} height={locale === 'ar' ? 48 : 40} priority />
+            </span>
+          </Link>
 
-        <nav aria-label={labels.mainNav} className="hidden md:block">
-          <ul className="flex items-center gap-7">
-            {primary.map((item) => {
-              const active = isActive(item.href)
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href as never}
-                    aria-current={active ? 'page' : undefined}
-                    className={cn(
-                      'link-grow relative block py-2 text-sm transition-colors',
-                      active
-                        ? 'font-semibold text-ink-900 after:w-full'
-                        : 'font-medium text-ink-700 hover:text-ink-900',
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
+          <nav aria-label={labels.mainNav} className="hidden md:block">
+            <ul className="flex items-center gap-7">
+              {primary.map((item) => {
+                const active = isActive(item.href)
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href as never}
+                      aria-current={active ? 'page' : undefined}
+                      className={cn(
+                        'link-grow relative block py-2 text-sm transition-colors',
+                        active
+                          ? 'font-semibold text-ink-900 after:w-full'
+                          : 'font-medium text-ink-700 hover:text-ink-900',
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
 
-        <div className="flex items-center gap-5">
-          <LanguageSwitch
-            label={labels.switchLanguage}
-            tone="muted"
-            className="hidden md:inline-flex"
-          />
-          <ButtonLink href={apply.href as never} size="md" className="max-sm:hidden">
-            {apply.label}
-          </ButtonLink>
-          <button
-            ref={openBtn}
-            type="button"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label={labels.openMenu}
-            onClick={() => setOpen(true)}
-            className="inline-flex size-11 items-center justify-center rounded-brand text-ink-900 hover:bg-paper-2 md:hidden"
-          >
-            <Menu strokeWidth={1.5} className="size-6" aria-hidden />
-          </button>
+          <div className="flex items-center gap-5">
+            <LanguageSwitch
+              label={labels.switchLanguage}
+              tone="muted"
+              className="hidden md:inline-flex"
+            />
+            <ButtonLink href={apply.href as never} size="md" className="max-sm:hidden">
+              {apply.label}
+            </ButtonLink>
+            <button
+              ref={openBtn}
+              type="button"
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label={labels.openMenu}
+              onClick={() => setOpen(true)}
+              className="inline-flex size-11 items-center justify-center rounded-brand text-ink-900 hover:bg-paper-2 md:hidden"
+            >
+              <Menu strokeWidth={1.5} className="size-6" aria-hidden />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -148,7 +157,7 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
         aria-modal="true"
         aria-label={labels.mainNav}
         hidden={!open}
-        className="fixed inset-0 z-[60] flex flex-col overflow-y-auto pattern-keffiyeh-navy surface-navy md:hidden"
+        className="pointer-events-auto fixed inset-0 z-[60] flex flex-col overflow-y-auto pattern-keffiyeh-navy surface-navy md:hidden"
       >
         <div className="container-site flex h-20 items-center justify-between">
           <Logo locale={locale} surface="dark" height={locale === 'ar' ? 44 : 36} />
