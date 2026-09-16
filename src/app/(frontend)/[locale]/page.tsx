@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
   const t = await getTranslations({ locale, namespace: 'site' })
   return {
     alternates: alternatesFor(locale as Locale, '/'),
-    title: { absolute: `${t('name')} — ${t('tagline')}` },
+    title: { absolute: `${t('name')} | ${t('tagline')}` },
     description: t('description'),
   }
 }

@@ -228,7 +228,7 @@ async function seed() {
         },
         {
           ar: { title: `[الحصة ${mo.ar}]`, summary: PLACEHOLDER.ar },
-          en: { title: `[Session ${number} — ${mo.en}]`, summary: PLACEHOLDER.en },
+          en: { title: `[Session ${number}: ${mo.en}]`, summary: PLACEHOLDER.en },
         },
       )
     }

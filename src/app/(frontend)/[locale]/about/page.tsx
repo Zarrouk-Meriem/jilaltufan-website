@@ -1,16 +1,20 @@
 import type { Metadata } from 'next'
+import { Compass, GraduationCap, Target } from 'lucide-react'
 import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Prose } from '@/components/content/Prose'
 import { PageIntro } from '@/components/sections/PageIntro'
+import { PageNav } from '@/components/ui/PageNav'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import { TextLink } from '@/components/ui/TextLink'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { getAboutPage } from '@/lib/queries'
 import { ordinalFor } from '@/lib/view'
 
 export const revalidate = 300
+
+/** One icon per value, in the order the academy lists them. */
+const VALUE_ICONS = [Compass, GraduationCap, Target]
 
 export async function generateMetadata({
   params,
@@ -28,10 +32,18 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
   const about = await getAboutPage(locale)
 
   const sections = [
+    { id: 'intro', title: t('about.intro'), show: !!about.intro },
     { id: 'vision', title: t('about.visionTitle'), show: !!about.vision },
     { id: 'mission', title: t('about.missionTitle'), show: !!about.mission },
     { id: 'goals', title: t('about.goalsTitle'), show: !!about.goals?.length },
   ].filter((s) => s.show)
+
+  // The vision is three lines: a statement, a «quoted» formulation, and an equation.
+  const visionLines = (about.vision ?? '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+  const isQuote = (l: string) => /^[«“"]/.test(l)
 
   return (
     <>
@@ -40,38 +52,23 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
         title={about.title ? about.title : t('about.title')}
         ordinal={t('nav.academy')}
       />
-      <div className="container-site grid gap-12 py-14 md:grid-cols-12 md:py-20">
-        {/* Side rail: on-this-page + structure link */}
-        <aside className="md:col-span-3">
-          <nav aria-label={t('about.onThisPage')} className="md:sticky md:top-28">
-            <p className="text-xs font-medium text-ink-500">{t('about.onThisPage')}</p>
-            <ul className="mt-3 flex flex-col gap-2 border-s border-line">
-              {sections.map((s) => (
-                <li key={s.id}>
-                  <a
-                    href={`#${s.id}`}
-                    className="link-grow relative -ms-px block border-s border-transparent ps-4 text-sm text-ink-700 hover:border-ink-900 hover:text-ink-900"
-                  >
-                    {s.title}
-                  </a>
-                </li>
-              ))}
-              <li>
-                <TextLink
-                  href="/about/structure"
-                  className="-ms-px block border-s border-transparent ps-4 text-sm"
-                >
-                  {t('about.structureLink')}
-                </TextLink>
-              </li>
-            </ul>
-          </nav>
+      <div className="container-site grid gap-10 py-12 md:grid-cols-12 md:gap-12 md:py-20">
+        <aside className="min-w-0 md:col-span-3">
+          <PageNav
+            label={t('about.onThisPage')}
+            items={sections.map(({ id, title }) => ({ id, title }))}
+            extra={{ href: '/about/structure', label: t('about.structureLink') }}
+          />
         </aside>
 
-        <div className="flex flex-col gap-20 md:col-span-8 md:col-start-5">
-          {about.intro ? <Prose data={about.intro} size="md" /> : null}
+        <div className="flex min-w-0 flex-col gap-16 md:col-span-8 md:col-start-5 md:gap-24">
+          {about.intro ? (
+            <section id="intro" className="scroll-mt-28">
+              <Prose data={about.intro} />
+            </section>
+          ) : null}
 
-          {about.vision ? (
+          {visionLines.length ? (
             <section id="vision" className="scroll-mt-28">
               <SectionHeading
                 locale={locale}
@@ -79,9 +76,22 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                 ordinal={ordinalFor(0, t)}
                 title={t('about.visionTitle')}
               />
-              <p className="mt-8 measure text-md whitespace-pre-line text-ink-900">
-                {about.vision}
-              </p>
+              <div className="mt-8 flex flex-col gap-6">
+                {visionLines.map((line, i) =>
+                  isQuote(line) ? (
+                    <blockquote
+                      key={i}
+                      className="measure border-s-2 border-red-600 ps-5 text-md leading-relaxed text-ink-900"
+                    >
+                      {line}
+                    </blockquote>
+                  ) : (
+                    <p key={i} className="measure text-base leading-relaxed text-ink-700">
+                      {line}
+                    </p>
+                  ),
+                )}
+              </div>
             </section>
           ) : null}
 
@@ -93,16 +103,24 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                 ordinal={ordinalFor(1, t)}
                 title={t('about.missionTitle')}
               />
-              <p className="mt-8 measure text-lg leading-relaxed text-ink-900">{about.mission}</p>
+              <p className="mt-8 measure text-md leading-relaxed text-ink-900">{about.mission}</p>
               {about.pillars?.length ? (
-                <ul className="mt-10 grid gap-6 border-t border-line pt-6 sm:grid-cols-3">
-                  {about.pillars.map((p, i) => (
-                    <li key={p.id ?? i}>
-                      <span className="text-xs text-ink-500">{String(i + 1).padStart(2, '0')}</span>
-                      <h3 className="mt-1 text-md">{p.title}</h3>
-                      {p.text ? <p className="mt-2 text-sm text-ink-700">{p.text}</p> : null}
-                    </li>
-                  ))}
+                <ul className="mt-10 grid gap-4 sm:grid-cols-3">
+                  {about.pillars.map((p, i) => {
+                    const Icon = VALUE_ICONS[i % VALUE_ICONS.length]!
+                    return (
+                      <li
+                        key={p.id ?? i}
+                        className="rounded-brand border border-line p-5 transition-colors duration-200 ease-brand hover:border-ink-900"
+                      >
+                        <Icon aria-hidden strokeWidth={1.5} className="size-6 text-red-700" />
+                        <h3 className="mt-4 text-base font-semibold text-ink-900">{p.title}</h3>
+                        {p.text ? (
+                          <p className="mt-2 text-sm leading-relaxed text-ink-700">{p.text}</p>
+                        ) : null}
+                      </li>
+                    )
+                  })}
                 </ul>
               ) : null}
             </section>
@@ -118,11 +136,11 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
               />
               <ol className="mt-8 flex flex-col divide-y divide-line border-y border-line">
                 {about.goals.map((g, i) => (
-                  <li key={g.id ?? i} className="flex gap-6 py-5">
-                    <span className="w-8 shrink-0 text-sm text-red-700 tabular-nums">
+                  <li key={g.id ?? i} className="flex gap-5 py-5">
+                    <span className="w-7 shrink-0 pt-0.5 text-sm text-red-700 tabular-nums">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <span className="text-md text-ink-900">{g.text}</span>
+                    <span className="text-base leading-relaxed text-ink-900">{g.text}</span>
                   </li>
                 ))}
               </ol>

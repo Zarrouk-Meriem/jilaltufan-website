@@ -153,7 +153,7 @@ export const WINDOWS: Record<
       'ادخل باسمك الحقيقي كما سجّلته حتى يتعرّف عليك المحاضر.',
       'أبقِ الميكروفون مغلقًا حتى يُطلب منك التحدّث.',
     ],
-    conduct: ['[نص مؤقت — يحدّده فريق الأكاديمية]'],
+    conduct: ['[نص مؤقت: يحدّده فريق الأكاديمية]'],
     faq: [
       ['هل تُسجَّل الحصص؟', 'لا. جميع الحصص مباشرة فقط.'],
       [
@@ -185,7 +185,7 @@ export const WINDOWS: Record<
       'Join with your real name as registered so the instructor recognises you.',
       "Keep your microphone muted until you're invited to speak.",
     ],
-    conduct: ["[Placeholder — to be defined by the Academy's team]"],
+    conduct: ["[Placeholder: to be defined by the Academy's team]"],
     faq: [
       ['Are sessions recorded?', 'No. All sessions are live only.'],
       [

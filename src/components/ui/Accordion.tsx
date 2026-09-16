@@ -118,14 +118,22 @@ export function Accordion({
                 />
               </button>
             </H>
+            {/* Height animates through grid-template-rows; closed panels are inert for
+                keyboard and assistive tech. Reduced motion snaps. */}
             <div
               id={panelId}
               role="region"
               aria-labelledby={btnId}
-              hidden={!expanded}
-              className="pb-6 text-ink-700"
+              aria-hidden={!expanded}
+              inert={!expanded}
+              className={cn(
+                'grid transition-[grid-template-rows] duration-300 ease-brand motion-reduce:transition-none',
+                expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+              )}
             >
-              {item.content}
+              <div className="min-h-0 overflow-hidden">
+                <div className="pb-6 text-ink-700">{item.content}</div>
+              </div>
             </div>
           </div>
         )

@@ -28,7 +28,7 @@ export async function generateMetadata({
   return {
     alternates: alternatesFor(locale as Locale, '/'),
     metadataBase: new URL(SITE_URL),
-    title: { default: t('name'), template: `%s — ${t('name')}` },
+    title: { default: t('name'), template: `%s | ${t('name')}` },
     description: t('description'),
     icons: { icon: '/brand/favicon.svg' },
     robots: SITE_NOINDEX ? { index: false, follow: false } : undefined,

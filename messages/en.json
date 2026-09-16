@@ -14,7 +14,7 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "switchLanguage": "Switch language",
-    "logoHome": "Jeel Al-Toufan Academy — Home",
+    "logoHome": "Jeel Al-Toufan Academy, home",
     "placeholderContent": "Placeholder content",
     "announcement": "Announcement"
   },
@@ -99,7 +99,7 @@
       },
       "political": {
         "title": "Political",
-        "text": "Understanding balances of power and the stakes of the flood — and acting on them."
+        "text": "Understanding balances of power and the stakes of the flood, and acting on them."
       }
     },
     "programsTitle": "Training **programs**",
@@ -111,7 +111,7 @@
     "upcomingTitle": "Upcoming **sessions**",
     "upcomingIntro": "The next three sessions across all programs, in Al-Quds time and yours.",
     "campTitle": "The **Jeel Al-Toufan** Camp",
-    "campIntro": "A full week of meeting, work, and formation — once a year.",
+    "campIntro": "A full week of meeting, work, and formation, once a year.",
     "campCta": "About the camp",
     "minbarTitle": "From **Minbar Al-Toufan**",
     "instructorsTitle": "Instructors",
@@ -213,12 +213,12 @@
     "emailOnly": "Link sent by email",
     "ics": "Calendar file (.ics)",
     "google": "Google Calendar",
-    "calendarDescription": "Live session on Zoom from {program} — Jeel Al-Toufan Academy. The link is sent to registered participants.",
+    "calendarDescription": "Live session on Zoom from {program}, Jeel Al-Toufan Academy. The link is sent to registered participants.",
     "calendarLocation": "Live on Zoom"
   },
   "schedule": {
     "title": "Session **schedule**",
-    "intro": "Every upcoming live session across programs, in Al-Quds time and yours. Pick a program to filter — the link is shareable.",
+    "intro": "Every upcoming live session across programs, in Al-Quds time and yours. Pick a program to filter; the link is shareable.",
     "allPrograms": "All programs",
     "filterLabel": "Filter by program",
     "empty": "No sessions have been published yet.",
@@ -351,7 +351,7 @@
     "materialsTitle": "My program's materials",
     "noMaterials": "No materials have been published for this program yet.",
     "conductTitle": "Code of conduct",
-    "conduct": ["[Placeholder — to be defined by the Academy's team]"],
+    "conduct": ["[Placeholder: to be defined by the Academy's team]"],
     "faqTitle": "Frequently asked questions",
     "faq": [
       {
@@ -453,7 +453,7 @@
   },
   "privacy": {
     "title": "Privacy policy",
-    "draftNote": "Draft — pending the Academy's review and approval.",
+    "draftNote": "Draft pending the Academy's review and approval.",
     "updated": "Last updated: {date}",
     "sections": [
       {
@@ -502,7 +502,7 @@
   },
   "terms": {
     "title": "Terms",
-    "draftNote": "Draft — pending the Academy's review and approval.",
+    "draftNote": "Draft pending the Academy's review and approval.",
     "sections": [
       {
         "h": "Using the site",
