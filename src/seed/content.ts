@@ -142,17 +142,6 @@ export const STRUCTURE_INTRO: Record<'ar' | 'en', Block[]> = {
       type: 'p',
       text: 'تقوم الأكاديمية، في علاقة بالعمل داخل مؤسساتها، على مبدأ العمل التطوعي في مختلف المهام القيادية والعلمية والتنفيذية والإدارية؛ قيمة مؤسسية نبيلة قائمة على البذل وتحمّل المسؤولية، تجمع بين روح التطوع ومهنية الأداء.',
     },
-    { type: 'h', text: 'الشركاء الاستراتيجيون' },
-    {
-      type: 'ul',
-      items: [
-        'الائتلاف العالمي لنصرة القدس وفلسطين (أصحاب المبادرة والرعاية).',
-        'منتدى العالم الإسلامي للفكر والحضارة (القيادة والتوجيه).',
-        'أكاديمية جيل الترجيح للتأهيل القيادي (الخبرة والدعم الفني).',
-        'أكاديمية منتدى الشرق (الخبرة والدعم الفني).',
-        'الحركات والأحزاب والجمعيات في العالم العربي والإسلامي (الدعم المالي والبشري).',
-      ],
-    },
   ],
   en: [
     {
@@ -166,17 +155,6 @@ export const STRUCTURE_INTRO: Record<'ar' | 'en', Block[]> = {
     {
       type: 'p',
       text: 'Work within the Academy’s institutions is voluntary across leadership, academic, executive, and administrative roles: a noble institutional value built on giving and responsibility, combining the spirit of volunteering with professional performance.',
-    },
-    { type: 'h', text: 'Strategic partners' },
-    {
-      type: 'ul',
-      items: [
-        'The Global Coalition for Al-Quds and Palestine (initiators and patrons).',
-        'The Islamic World Forum for Thought and Civilisation (leadership and guidance).',
-        'Jeel Al-Tarjeeh Academy for Leadership Training (expertise and technical support).',
-        'Al-Sharq Forum Academy (expertise and technical support).',
-        'Movements, parties, and associations across the Arab and Muslim world (financial and human support).',
-      ],
     },
   ],
 }
@@ -200,14 +178,6 @@ export const STRUCTURE: {
         name: { ar: 'الأستاذ زياد بومخلة', en: 'Ziad Boumakhla' },
         role: { ar: 'رئيس الأكاديمية · تونس', en: 'President of the Academy · Tunisia' },
       },
-      {
-        name: { ar: 'الأستاذ بشار زغموت', en: 'Bashar Zaghmout' },
-        role: { ar: 'نائب رئيس الأكاديمية · فلسطين', en: 'Vice-President · Palestine' },
-      },
-      {
-        name: { ar: 'الأستاذ يوسف نصر', en: 'Youssef Nasr' },
-        role: { ar: 'نائب رئيس الأكاديمية · فلسطين', en: 'Vice-President · Palestine' },
-      },
     ],
   },
   {
@@ -222,72 +192,6 @@ export const STRUCTURE: {
         name: { ar: 'محمد شنيبة', en: 'Mohamed Chniba' },
         role: { ar: 'المدير التنفيذي · تونس', en: 'Executive Director · Tunisia' },
       },
-      {
-        name: { ar: 'عمار علاء الدين حسن', en: 'Ammar Alaeddin Hassan' },
-        role: {
-          ar: 'نائب المدير التنفيذي، مسؤول العلاقات العامة والشراكات · السودان',
-          en: 'Deputy Executive Director, Public Relations and Partnerships · Sudan',
-        },
-      },
-      {
-        name: { ar: 'علي بشر أدم', en: 'Ali Bachar Adam' },
-        role: {
-          ar: 'نائب المدير التنفيذي، مسؤول التخطيط والمتابعة والتقييم · التشاد',
-          en: 'Deputy Executive Director, Planning, Monitoring and Evaluation · Chad',
-        },
-      },
-      {
-        name: { ar: 'إبراهيم النائلي', en: 'Ibrahim Al-Naili' },
-        role: { ar: 'مسؤول التدريب المفتوح · ليبيا', en: 'Open Training · Libya' },
-      },
-      {
-        name: { ar: 'الشيخ محمد أحمد', en: 'Sheikh Mohamed Ahmed' },
-        role: { ar: 'مسؤول البرامج الموجّهة · موريتانيا', en: 'Directed Programs · Mauritania' },
-      },
-      {
-        name: { ar: '[يُحدَّد لاحقًا]', en: '[To be confirmed]' },
-        role: {
-          ar: 'مسؤول المدربين والمحتوى التدريبي · العراق',
-          en: 'Trainers and Training Content · Iraq',
-        },
-      },
-      {
-        name: { ar: '[يُحدَّد لاحقًا]', en: '[To be confirmed]' },
-        role: {
-          ar: 'مسؤول الحوكمة وإدارة المخاطر والأمن الرقمي · مصر',
-          en: 'Governance, Risk and Digital Security · Egypt',
-        },
-      },
-      {
-        name: { ar: '[يُحدَّد لاحقًا]', en: '[To be confirmed]' },
-        role: { ar: 'مسؤول مشاريع التخرج · إندونيسيا', en: 'Graduation Projects · Indonesia' },
-      },
-      {
-        name: { ar: 'سمية البضن', en: 'Somaya Al-Badan' },
-        role: { ar: 'مسؤول المشاريع الاستراتيجية · لبنان', en: 'Strategic Projects · Lebanon' },
-      },
-      {
-        name: { ar: 'علا الدهيبي', en: 'Ola Al-Dhaibi' },
-        role: { ar: 'مسؤول منبر الطوفان · لبنان', en: 'Minbar Al-Toufan · Lebanon' },
-      },
-      {
-        name: { ar: 'رميصاء ناجي', en: 'Roumaissa Naji' },
-        role: {
-          ar: 'مسؤول المشاركين وشؤون الخريجين · الجزائر',
-          en: 'Participants and Alumni Affairs · Algeria',
-        },
-      },
-      {
-        name: { ar: 'أسماء كامل', en: 'Asmaa Kamel' },
-        role: { ar: 'مسؤول الإدارة والمالية · مصر', en: 'Administration and Finance · Egypt' },
-      },
-      {
-        name: { ar: 'مريم زروق', en: 'Meriem Zarrouk' },
-        role: {
-          ar: 'مسؤول الإعلام والاتصال الرقمي · تونس',
-          en: 'Media and Digital Communication · Tunisia',
-        },
-      },
     ],
   },
   {
@@ -297,19 +201,7 @@ export const STRUCTURE: {
       ar: 'المرجعية العلمية المستقلة المسؤولة عن جودة المحتوى والمناهج؛ يضع المعايير العلمية للبرامج واختيار المدربين، ويراجع المناهج والحقائب ويعتمدها، ويشرف على الدراسات والأبحاث، ويعتمد معايير تقييم مشاريع التخرج. يجتمع كل ثلاثة أشهر، ويضم أكاديميين وباحثين وخبراء من تخصصات متنوعة.',
       en: 'The independent academic authority responsible for the quality of content and curricula: it sets the academic standards for programs and trainer selection, reviews and approves curricula and training kits, supervises studies and research, and approves the criteria for graduation projects. It meets quarterly and brings together academics, researchers, and experts from varied fields.',
     },
-    members: [
-      {
-        name: { ar: 'الدكتور عبد الرزاق مقري', en: 'Dr. Abderrazak Makri' },
-        role: {
-          ar: 'رئيس المجلس العلمي · الجزائر',
-          en: 'Chair of the Scientific Council · Algeria',
-        },
-      },
-      {
-        name: { ar: 'همام النقيب', en: 'Hammam Al-Naqib' },
-        role: { ar: 'المنسق العام للمجلس العلمي · فلسطين', en: 'General Coordinator · Palestine' },
-      },
-    ],
+    members: [],
   },
 ]
 
