@@ -9,7 +9,8 @@ import { Button, ButtonLink } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
 import { DateBlock } from '@/components/ui/DateBlock'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { Checkbox, Input, Select, Textarea } from '@/components/ui/Field'
+import { Checkbox, Input, Textarea } from '@/components/ui/Field'
+import { StyleguideCombobox } from './StyleguideCombobox'
 import { Loader } from '@/components/ui/Loader'
 import { OrdinalLabel } from '@/components/ui/OrdinalLabel'
 import { SectionHeading } from '@/components/ui/SectionHeading'
@@ -307,10 +308,7 @@ export default async function StyleguidePage({ params }: PageProps<'/[locale]/st
             defaultValue="abc"
             error={ar ? 'أدخل رقمًا صحيحًا.' : 'Enter a valid number.'}
           />
-          <Select id="sg-select" label={ar ? 'البرنامج' : 'Program'}>
-            <option>{ar ? 'فلسطين بوصلتنا' : 'Palestine, Our Compass'}</option>
-            <option>{ar ? 'قادة الغد' : 'Leaders of Tomorrow'}</option>
-          </Select>
+          <StyleguideCombobox label={ar ? 'البرنامج' : 'Program'} />
           <Textarea id="sg-text" label={ar ? 'الدافع' : 'Motivation'} />
           <Checkbox
             id="sg-consent"

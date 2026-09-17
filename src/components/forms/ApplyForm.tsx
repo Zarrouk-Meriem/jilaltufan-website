@@ -4,11 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react'
-import { useForm, useWatch, type FieldErrors as FormErrors } from 'react-hook-form'
+import { useController, useForm, useWatch, type FieldErrors as FormErrors } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
-import { Checkbox, FileInput, Input, RadioGroup, Select, Textarea } from '@/components/ui/Field'
+import { Combobox } from '@/components/ui/Combobox'
+import { Checkbox, FileInput, Input, RadioGroup, Textarea } from '@/components/ui/Field'
 import { Loader } from '@/components/ui/Loader'
 import { Link } from '@/i18n/navigation'
 import {
@@ -83,6 +84,11 @@ export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
     },
   })
   const affiliated = useWatch({ control, name: 'affiliated' })
+  // The comboboxes are controlled: react-hook-form holds their value, a hidden input
+  // carries it in the FormData the action reads.
+  const nationality = useController({ control, name: 'nationality' })
+  const country = useController({ control, name: 'country' })
+  const hearAbout = useController({ control, name: 'hearAbout' })
 
   // Server-side field errors (shouldn't differ from the client's, but the server is the
   // truth): mark the fields and show the first step that owns one of them.
@@ -245,39 +251,36 @@ export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
           />
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
-          <Select
+          <Combobox
             id="nationality"
+            name="nationality"
             label={t('fields.nationality')}
             required
+            searchable={true}
+            options={countries}
+            value={nationality.field.value ?? ''}
+            onChange={nationality.field.onChange}
+            onBlur={nationality.field.onBlur}
+            inputRef={nationality.field.ref}
+            placeholder={t('selectPlaceholder')}
+            noResultsLabel={t('noResults')}
             error={err('nationality')}
-            {...register('nationality')}
-          >
-            <option value="" disabled>
-              {t('selectPlaceholder')}
-            </option>
-            {countries.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </Select>
-          <Select
+          />
+          <Combobox
             id="country"
+            name="country"
             label={t('fields.country')}
             required
-            autoComplete="country"
+            searchable={true}
+            options={countries}
+            value={country.field.value ?? ''}
+            onChange={country.field.onChange}
+            onBlur={country.field.onBlur}
+            inputRef={country.field.ref}
+            placeholder={t('selectPlaceholder')}
+            noResultsLabel={t('noResults')}
             error={err('country')}
-            {...register('country')}
-          >
-            <option value="" disabled>
-              {t('selectPlaceholder')}
-            </option>
-            {countries.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </Select>
+          />
         </div>
         <Input
           id="profession"
@@ -347,22 +350,21 @@ export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
 
       {/* 3 · Motivation, CV, pledge */}
       <section aria-labelledby="apply-step-title" inert={step !== 2} className={panel(2)}>
-        <Select
+        <Combobox
           id="hearAbout"
+          name="hearAbout"
           label={t('fields.hearAbout')}
           required
+          searchable={false}
+          options={HEAR_ABOUT.map((h) => ({ value: h, label: t(`hearAboutOptions.${h}`) }))}
+          value={hearAbout.field.value ?? ''}
+          onChange={hearAbout.field.onChange}
+          onBlur={hearAbout.field.onBlur}
+          inputRef={hearAbout.field.ref}
+          placeholder={t('selectPlaceholder')}
+          noResultsLabel={t('noResults')}
           error={err('hearAbout')}
-          {...register('hearAbout')}
-        >
-          <option value="" disabled>
-            {t('selectPlaceholder')}
-          </option>
-          {HEAR_ABOUT.map((h) => (
-            <option key={h} value={h}>
-              {t(`hearAboutOptions.${h}`)}
-            </option>
-          ))}
-        </Select>
+        />
         <Textarea
           id="motivation"
           label={t('fields.motivation')}

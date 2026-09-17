@@ -36,7 +36,10 @@ export function ApplySection({
           locale={locale}
           size="md"
           title={t('successTitle')}
-          intro={t('successBody', { email: done.email })}
+          intro={t.rich('successBody', {
+            email: done.email,
+            bdi: (chunks) => <bdi>{chunks}</bdi>,
+          })}
         />
         <p className="mt-10 text-xs font-medium text-ink-500">{t('successNext')}</p>
         <div className="mt-3 flex flex-wrap gap-3">

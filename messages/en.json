@@ -293,6 +293,7 @@
     "yes": "Yes",
     "no": "No",
     "selectPlaceholder": "Select",
+    "noResults": "No results",
     "linksTitle": "Your social accounts",
     "fields": {
       "fullName": "Full name",

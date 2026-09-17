@@ -10,6 +10,9 @@ const L = {
     nationality: 'الجنسية',
     country: 'بلد الإقامة',
     profession: 'المهنة',
+    tunisia: 'تونس',
+    palestine: 'فلسطين',
+    friend: 'صديق أو زميل',
     no: 'لا',
     yes: 'نعم',
     orgName: 'اسم الجهة',
@@ -35,6 +38,9 @@ const L = {
     nationality: 'Nationality',
     country: 'Country of residence',
     profession: 'Profession',
+    tunisia: 'Tunisia',
+    palestine: 'Palestine',
+    friend: 'A friend or colleague',
     no: 'No',
     yes: 'Yes',
     orgName: 'Name of the organisation',
@@ -73,6 +79,14 @@ const MINIMAL_PDF = Buffer.from(
   ].join('\n'),
 )
 
+/** Choose an option in a site combobox: type (or open) and click the matching option. */
+async function pick(page: Page, label: string | RegExp, option: string, searchable = true) {
+  const input = page.getByLabel(label)
+  if (searchable) await input.fill(option)
+  else await input.click()
+  await page.getByRole('option', { name: option, exact: true }).click()
+}
+
 /** Fills step 1 and 2 and lands on step 3 with everything but the CV filled. */
 async function fillThroughToLastStep(page: Page, locale: 'ar' | 'en') {
   const l = L[locale]
@@ -81,8 +95,8 @@ async function fillThroughToLastStep(page: Page, locale: 'ar' | 'en') {
   await page.getByLabel(l.dob).fill('2001-05-14')
   await page.getByLabel(l.email).fill(`playwright-${Date.now()}@example.com`)
   await page.getByLabel(l.phone).fill('+216 20 000 000')
-  await page.getByLabel(l.nationality).selectOption('TN')
-  await page.getByLabel(l.country).selectOption('PS')
+  await pick(page, l.nationality, l.tunisia)
+  await pick(page, l.country, l.palestine)
   await page.getByLabel(l.profession).fill('Student')
   await page.getByRole('button', { name: l.next, exact: true }).click()
   await expect(page.getByText(l.step(2), { exact: true })).toBeVisible()
@@ -94,7 +108,7 @@ async function fillThroughToLastStep(page: Page, locale: 'ar' | 'en') {
   // Arriving at a step never greets the visitor with errors for fields they have not seen.
   await expect(page.locator('form').getByRole('alert')).toHaveCount(0)
 
-  await page.getByLabel(l.hear).selectOption('friend')
+  await pick(page, l.hear, l.friend, false)
   await page
     .getByLabel(l.why)
     .fill('This is an automated end-to-end submission used to verify the application flow.')
@@ -143,8 +157,8 @@ test('the organisation name is asked only after answering yes, and back keeps wh
   await page.getByLabel(L.en.dob).fill('2001-05-14')
   await page.getByLabel(L.en.email).fill('playwright@example.com')
   await page.getByLabel(L.en.phone).fill('+216 20 000 000')
-  await page.getByLabel(L.en.nationality).selectOption('TN')
-  await page.getByLabel(L.en.country).selectOption('PS')
+  await pick(page, L.en.nationality, L.en.tunisia)
+  await pick(page, L.en.country, L.en.palestine)
   await page.getByLabel(L.en.profession).fill('Student')
   await page.getByRole('button', { name: L.en.next, exact: true }).click()
   await expect(page.getByText(L.en.step(2), { exact: true })).toBeVisible()
@@ -168,4 +182,17 @@ test('a filled honeypot is silently accepted (bots learn nothing) but not surfac
   await page.locator('#website').fill('http://spam.example', { force: true })
   await page.getByRole('button', { name: L.en.submit }).click()
   await expect(page.getByRole('status')).toBeVisible({ timeout: 20_000 })
+})
+
+test('the country combobox filters as you type and picks with the keyboard', async ({ page }) => {
+  await page.goto('/ar/apply', { waitUntil: 'networkidle' })
+  const input = page.getByLabel(L.ar.nationality)
+  await input.fill('تون')
+  await expect(page.getByRole('option').first()).toHaveText(L.ar.tunisia)
+  // Typing already highlights the first match; ArrowDown would move to the second.
+  await input.press('Enter')
+  await expect(input).toHaveValue(L.ar.tunisia)
+  await expect(page.getByRole('listbox')).toBeHidden()
+  // The value the server reads travels in the hidden input, as the ISO code.
+  await expect(page.locator('input[name="nationality"]')).toHaveValue('TN')
 })

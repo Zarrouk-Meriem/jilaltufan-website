@@ -304,6 +304,7 @@
     "yes": "نعم",
     "no": "لا",
     "selectPlaceholder": "اختر",
+    "noResults": "لا نتائج",
     "linksTitle": "حساباتك على الشبكات الاجتماعية",
     "fields": {
       "fullName": "الاسم الكامل",
