@@ -13,17 +13,11 @@ type Success = Extract<ApplyResult, { status: 'success' }>
 /** Owns the form ↔ confirmation switch; the form itself stays a leaf. */
 export function ApplySection({
   locale,
-  programSlug,
-  programTitle,
-  mode,
   action,
   countries,
   turnstileSiteKey,
 }: {
   locale: string
-  programSlug: string
-  programTitle: string
-  mode: 'open' | 'application'
   action: (prev: ApplyResult, fd: FormData) => Promise<ApplyResult>
   countries: CountryOption[]
   turnstileSiteKey?: string
@@ -32,7 +26,6 @@ export function ApplySection({
   const [done, setDone] = useState<Success | null>(null)
 
   if (done) {
-    const open = done.mode === 'open'
     return (
       <div
         role="status"
@@ -42,17 +35,13 @@ export function ApplySection({
         <SectionHeading
           locale={locale}
           size="md"
-          title={open ? t('successOpenTitle') : t('successApplicationTitle')}
-          intro={
-            open
-              ? t('successOpenBody', { program: programTitle, email: done.email })
-              : t('successApplicationBody', { program: programTitle, email: done.email })
-          }
+          title={t('successTitle')}
+          intro={t('successBody', { email: done.email })}
         />
         <p className="mt-10 text-xs font-medium text-ink-500">{t('successNext')}</p>
         <div className="mt-3 flex flex-wrap gap-3">
-          <ButtonLink href={`/schedule?program=${programSlug}` as never} variant="secondary">
-            {t('seeSchedule')}
+          <ButtonLink href="/programs" variant="secondary">
+            {t('seePrograms')}
           </ButtonLink>
           <ButtonLink href="/students" variant="ghost">
             {t('studentWindow')}
@@ -71,8 +60,6 @@ export function ApplySection({
         <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
       ) : null}
       <ApplyForm
-        programSlug={programSlug}
-        mode={mode}
         countries={countries}
         turnstileSiteKey={turnstileSiteKey}
         action={async (prev, fd) => {

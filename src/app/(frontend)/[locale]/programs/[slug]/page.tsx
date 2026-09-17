@@ -192,7 +192,7 @@ export default async function ProgramPage({ params }: PageProps<'/[locale]/progr
             </dl>
             <div className="mt-6 flex flex-col gap-3">
               {canApply ? (
-                <ButtonLink href={`/apply/${program.slug}`} className="w-full">
+                <ButtonLink href="/apply" className="w-full">
                   {t('program.applyNow')}
                 </ButtonLink>
               ) : (

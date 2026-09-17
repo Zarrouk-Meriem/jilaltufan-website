@@ -1,6 +1,5 @@
 /** Plain, calm transactional emails. Text + minimal HTML, both locales. */
 type Locale = 'ar' | 'en'
-type Mode = 'open' | 'application' | 'closed'
 
 const dir = (l: Locale) => (l === 'ar' ? 'rtl' : 'ltr')
 
@@ -17,34 +16,27 @@ ${paragraphs.map((p) => `<p style="margin:0 0 12px;white-space:pre-line">${esc(p
 const esc = (s: string) =>
   s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!)
 
-export function applicantEmail(locale: Locale, mode: Mode, name: string, program: string) {
+/** The applicant's confirmation: one application for the academy, program chosen after acceptance. */
+export function applicantEmail(locale: Locale, name: string) {
   if (locale === 'ar') {
-    const subject =
-      mode === 'open' ? `تم تسجيلك في ${program}` : `استلمنا طلبك للالتحاق بـ ${program}`
+    const subject = 'استلمنا طلب التحاقك بأكاديمية جيل الطوفان'
     return {
       subject,
       ...wrap('ar', subject, [
         `أهلًا ${name}،`,
-        mode === 'open'
-          ? `تم تسجيلك في برنامج «${program}». سنرسل إليك رابط كل حصة قبل موعدها بالبريد الإلكتروني.`
-          : `استلمنا طلبك للالتحاق ببرنامج «${program}». سيراجعه فريق الأكاديمية ويتواصل معك بعد المراجعة على هذا البريد.`,
+        'استلمنا طلبك للالتحاق بالأكاديمية. سيراجعه فريق الأكاديمية ويتواصل معك على هذا البريد بعد المراجعة، وعند القبول تختار برنامجك.',
         'جميع الحصص مباشرة على Zoom بتوقيت القدس.',
         'إن كان لديك سؤال، يكفي أن تردّ على هذه الرسالة.',
         'أكاديمية جيل الطوفان — بالعلم نتحرّر',
       ]),
     }
   }
-  const subject =
-    mode === 'open'
-      ? `You're registered for ${program}`
-      : `We received your application to ${program}`
+  const subject = 'We received your application to Jeel Al-Toufan Academy'
   return {
     subject,
     ...wrap('en', subject, [
       `Hello ${name},`,
-      mode === 'open'
-        ? `You're registered for "${program}". We'll email you the link to each session before it starts.`
-        : `We received your application to "${program}". The Academy's team will review it and be in touch at this address.`,
+      "We received your application to the Academy. The Academy's team will review it and be in touch at this address; once accepted, you choose your program.",
       'All sessions are live on Zoom, in Al-Quds time.',
       'If you have a question, simply reply to this email.',
       'Jeel Al-Toufan Academy — Through knowledge, we are liberated',
@@ -56,20 +48,18 @@ export function applicantEmail(locale: Locale, mode: Mode, name: string, program
 export type NotificationLine = [label: string, value: string | undefined | null]
 
 export function academyNotification(a: {
-  program: string
   fullName: string
   lines: NotificationLine[]
   adminUrl: string
   cvUrl?: string
 }) {
-  const subject = `طلب جديد: ${a.program} — ${a.fullName}`
+  const subject = `طلب التحاق جديد: ${a.fullName}`
   return {
     subject,
     ...wrap(
       'ar',
       subject,
       [
-        `البرنامج: ${a.program}`,
         ...a.lines.filter((l): l is [string, string] => !!l[1]).map(([k, v]) => `${k}: ${v}`),
         a.cvUrl ? `السيرة الذاتية: ${a.cvUrl}` : '',
         `الإدارة: ${a.adminUrl}`,

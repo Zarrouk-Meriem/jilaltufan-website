@@ -18,7 +18,7 @@ import { SITE_URL } from '@/lib/site'
 
 export type ApplyResult =
   | { status: 'idle' }
-  | { status: 'success'; mode: 'open' | 'application'; program: string; email: string }
+  | { status: 'success'; email: string }
   | { status: 'error'; formError?: string; fieldErrors?: FieldErrors }
 
 const HEAR_ABOUT_AR: Record<ApplyData['hearAbout'], string> = {
@@ -51,8 +51,7 @@ export async function submitApplication(
   if (!parsed.success) {
     const fieldErrors = toFieldErrors(parsed.error)
     // Honeypot filled: pretend success so bots learn nothing; write nothing.
-    if (fieldErrors.website === 'spam')
-      return { status: 'success', mode: 'application', program: '', email: input.email }
+    if (fieldErrors.website === 'spam') return { status: 'success', email: input.email }
     return { status: 'error', formError: 'formInvalid', fieldErrors }
   }
   const data = parsed.data
@@ -65,19 +64,6 @@ export async function submitApplication(
     return { status: 'error', formError: 'turnstile' }
 
   const payload = await getClient()
-  const program = (
-    await payload.find({
-      collection: 'programs',
-      where: { and: [{ slug: { equals: data.program } }, { status: { equals: 'published' } }] },
-      limit: 1,
-      locale: data.locale,
-      depth: 0,
-      overrideAccess: false,
-    })
-  ).docs[0]
-  if (!program) return { status: 'error', formError: 'programNotFound' }
-  if (program.registrationMode === 'closed') return { status: 'error', formError: 'programClosed' }
-  const mode: 'open' | 'application' = program.registrationMode === 'open' ? 'open' : 'application'
 
   try {
     // The CV first: if storage rejects it, the visitor hears now and can retry, instead
@@ -104,7 +90,8 @@ export async function submitApplication(
       collection: 'applications',
       overrideAccess: true,
       data: {
-        program: program.id,
+        // No program at this stage: a visitor applies to the academy; staff assign the
+        // program after acceptance.
         applicationStatus: 'new',
         fullName: data.fullName,
         gender: data.gender,
@@ -132,7 +119,7 @@ export async function submitApplication(
     const settings = await payload.findGlobal({ slug: 'site-settings', depth: 0 })
     // Applications have their own mailbox when the academy sets one; contact@ otherwise.
     const applicationsEmail = settings.applicationsEmail || settings.contactEmail
-    const applicant = applicantEmail(data.locale, mode, data.fullName, program.title)
+    const applicant = applicantEmail(data.locale, data.fullName)
     const lines: NotificationLine[] = [
       ['الاسم', data.fullName],
       ['الجنس', data.gender === 'female' ? 'أنثى' : 'ذكر'],
@@ -152,7 +139,6 @@ export async function submitApplication(
       ['اللغة', data.locale],
     ]
     const notify = academyNotification({
-      program: program.title,
       fullName: data.fullName,
       lines,
       cvUrl: cvId ? `${SITE_URL}/admin/collections/application-files/${cvId}` : undefined,
@@ -183,7 +169,7 @@ export async function submitApplication(
       ),
     )
 
-    return { status: 'success', mode, program: program.title, email: data.email }
+    return { status: 'success', email: data.email }
   } catch (err) {
     // Payload inspects the bytes, not just the name: a damaged or mislabelled CV is the
     // visitor's to fix, so it lands under the field rather than as a generic failure.

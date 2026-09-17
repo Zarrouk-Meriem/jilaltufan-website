@@ -16,7 +16,6 @@ const routes = [
   '/events/jeel-altoufan-camp',
   '/projects',
   '/apply',
-  '/apply/palestine-our-compass',
   '/students',
   '/instructors',
   '/knowledge',

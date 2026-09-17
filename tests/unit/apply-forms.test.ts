@@ -10,7 +10,6 @@ import { createRateLimiter } from '@/lib/forms/rate-limit'
 import { academyNotification, applicantEmail } from '@/lib/email/templates'
 
 const valid = {
-  program: 'palestine-our-compass',
   fullName: 'اسم تجريبي',
   gender: 'female',
   dateOfBirth: '2001-05-14',
@@ -118,7 +117,7 @@ describe('applySchema', () => {
   it('every schema field the visitor fills belongs to exactly one step', () => {
     const all = STEP_FIELDS.flat()
     expect(new Set(all).size).toBe(all.length)
-    const hidden = ['program', 'locale', 'website', 'turnstileToken']
+    const hidden = ['locale', 'website', 'turnstileToken']
     for (const k of Object.keys(valid)) if (!hidden.includes(k)) expect(all).toContain(k)
   })
 })
@@ -139,17 +138,14 @@ describe('rate limiter', () => {
 })
 
 describe('emails', () => {
-  it('applicant email wording follows the registration mode and locale', () => {
-    expect(applicantEmail('ar', 'open', 'سارة', 'قادة الغد').subject).toContain('تم تسجيلك')
-    expect(applicantEmail('ar', 'application', 'سارة', 'قادة الغد').subject).toContain(
-      'استلمنا طلبك',
-    )
-    expect(applicantEmail('en', 'application', 'Sara', 'Leaders').text).toContain('review it')
-    expect(applicantEmail('en', 'open', 'Sara', 'Leaders').html).toContain('dir="ltr"')
+  it('applicant email says the program comes after acceptance, in the visitor locale', () => {
+    expect(applicantEmail('ar', 'سارة').subject).toContain('استلمنا طلب')
+    expect(applicantEmail('ar', 'سارة').text).toContain('تختار برنامجك')
+    expect(applicantEmail('en', 'Sara').text).toContain('review it')
+    expect(applicantEmail('en', 'Sara').html).toContain('dir="ltr"')
   })
   it('academy notification escapes HTML, drops empty answers, and links the CV', () => {
     const n = academyNotification({
-      program: 'p',
       fullName: '<b>x</b>',
       lines: [
         ['الاسم', '<b>x</b>'],

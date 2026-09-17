@@ -661,7 +661,10 @@ export interface Event {
  */
 export interface Application {
   id: number;
-  program: number | Program;
+  /**
+   * Applications are to the academy; set the program here after acceptance.
+   */
+  program?: (number | null) | Program;
   applicationStatus: 'new' | 'reviewing' | 'accepted' | 'waitlisted' | 'rejected';
   fullName: string;
   gender?: ('female' | 'male') | null;

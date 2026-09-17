@@ -14,6 +14,5 @@ describe('robots.txt', () => {
     const rule = (Array.isArray(r.rules) ? r.rules[0] : r.rules)!
     expect(rule.allow).toBe('/')
     expect(rule.disallow).toContain('/admin')
-    expect(rule.disallow).toContain('/*/apply/')
   })
 })

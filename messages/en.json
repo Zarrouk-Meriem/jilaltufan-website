@@ -116,7 +116,7 @@
     "minbarTitle": "From **Minbar Al-Toufan**",
     "instructorsTitle": "Instructors",
     "closingTitle": "Your place is **with us**",
-    "closingText": "Apply to the program that fits you and begin your season with Jeel Al-Toufan.",
+    "closingText": "Apply today; once accepted, choose the program that fits you and begin your season with Jeel Al-Toufan.",
     "viewSchedule": "Full schedule",
     "allPrograms": "All programs",
     "nextSessionEmpty": "The session schedule hasn't been published yet.",
@@ -159,7 +159,7 @@
     "sessionsTitle": "Sessions",
     "sessionsIntro": "One session every month, live on Zoom. Open any session for its details.",
     "registrationTitle": "Registration & follow-up",
-    "applyNow": "Apply to this program",
+    "applyNow": "Apply to the Academy",
     "registrationClosed": "Registration is currently closed",
     "contactUs": "Contact us",
     "deadline": "Registration deadline: {date}",
@@ -180,8 +180,8 @@
     "directedTitle": "Directed programs",
     "directedIntro": "Directed training builds capability and competence: four programs, two theoretical and two applied, six sessions each from January to June. They run at the same time, and each participant joins one program only.",
     "howItWorks": "How the programs work",
-    "step1": "Choose your program and apply in three short steps.",
-    "step2": "You receive a confirmation, then the link to each session before it starts.",
+    "step1": "Apply to the Academy in three short steps.",
+    "step2": "After review and acceptance you choose your program, and the link to each session reaches you before it starts.",
     "step3": "One session a month, live on Zoom, in Al-Quds time.",
     "projectsTitle": "Strategic projects",
     "projectsIntro": "Alongside education and training, the Academy launches strategic projects that contribute directly to the effort of comprehensive liberation and turn knowledge into role and responsibility."
@@ -266,14 +266,9 @@
     "allProjects": "All projects"
   },
   "apply": {
-    "title": "**Apply** now",
-    "intro": "Choose the program that fits you. The application takes three short steps, and we follow up by email.",
-    "chooseProgram": "Choose a program",
-    "formTitle": "Apply to {program}",
-    "formTitleOpen": "Register for {program}",
-    "formIntro": "Three short steps: your basic details, then your affiliation and accounts, then your motivation. It takes about five minutes; fields marked with a star are required.",
-    "closedTitle": "Registration is currently closed",
-    "closedBody": "Registration for \"{program}\" is closed at the moment. Contact us if you have questions, or explore the other programs.",
+    "title": "**Apply** to the Academy",
+    "intro": "One application for the whole Academy: apply in three short steps, and we follow up by email. Once accepted, you choose your program.",
+    "formIntro": "Three steps: your basic details, then your affiliation and accounts, then your motivation. It takes about five minutes; fields marked with a star are required.",
     "stepsLabel": "Application steps",
     "stepOf": "Step {n} of {total}",
     "steps": {
@@ -361,18 +356,14 @@
       "formInvalid": "Please review the highlighted fields."
     },
     "submit": "Send application",
-    "submitOpen": "Register now",
     "submitting": "Sending…",
-    "successOpenTitle": "You're registered",
-    "successOpenBody": "You're registered for \"{program}\". We sent a confirmation to <bdi>{email}</bdi> and will email the link to each session before it starts.",
-    "successApplicationTitle": "We received your application",
-    "successApplicationBody": "We received your application to \"{program}\". We sent a confirmation to <bdi>{email}</bdi>; the Academy's team will be in touch after review.",
     "successNext": "In the meantime",
-    "seeSchedule": "See the session schedule",
     "studentWindow": "Student window",
     "backHome": "Home",
-    "otherPrograms": "Other programs",
-    "turnstileLabel": "Security check"
+    "turnstileLabel": "Security check",
+    "successTitle": "We received your application",
+    "successBody": "We received your application to the Academy and sent a confirmation to <bdi>{email}</bdi>. The Academy's team will review it and be in touch; once accepted, you choose your program.",
+    "seePrograms": "Explore the programs"
   },
   "students": {
     "title": "Student **window**",
@@ -415,7 +406,7 @@
       },
       {
         "q": "How will I know my application was accepted?",
-        "a": "The Academy's team reviews applications, then contacts you at the email address you registered."
+        "a": "The Academy's team reviews applications, then contacts you at the email address you registered; once accepted, you choose your program."
       }
     ],
     "accountTitle": "My account",

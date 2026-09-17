@@ -30,8 +30,6 @@ const clientSchema = withApplyRules(applyObject.extend({ website: z.string().opt
 export type CountryOption = { value: string; label: string }
 
 type Props = {
-  programSlug: string
-  mode: 'open' | 'application'
   action: (prev: ApplyResult, fd: FormData) => Promise<ApplyResult>
   /** Computed on the server so both renders list the same names in the same order. */
   countries: CountryOption[]
@@ -46,7 +44,7 @@ function stepWithErrors(errors: Partial<Record<keyof ApplyInput, unknown>>) {
   return STEP_FIELDS.findIndex((fields) => fields.some((f) => keys.includes(f)))
 }
 
-export function ApplyForm({ programSlug, mode, action, countries, turnstileSiteKey }: Props) {
+export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
   const t = useTranslations('apply')
   const locale = useLocale() as 'ar' | 'en'
   const [pending, startTransition] = useTransition()
@@ -66,7 +64,6 @@ export function ApplyForm({ programSlug, mode, action, countries, turnstileSiteK
     resolver: zodResolver(clientSchema),
     mode: 'onBlur',
     defaultValues: {
-      program: programSlug,
       locale,
       website: '',
       fullName: '',
@@ -157,7 +154,6 @@ export function ApplyForm({ programSlug, mode, action, countries, turnstileSiteK
       className="grid scroll-mt-28 gap-10"
       aria-busy={pending}
     >
-      <input type="hidden" {...register('program')} value={programSlug} />
       <input type="hidden" {...register('locale')} value={locale} />
       {/* Honeypot — invisible to people, irresistible to bots. */}
       <div aria-hidden className="absolute -start-[9999px] h-px w-px overflow-hidden">
@@ -383,16 +379,14 @@ export function ApplyForm({ programSlug, mode, action, countries, turnstileSiteK
           error={err('aboutYou')}
           {...register('aboutYou')}
         />
-        {mode === 'application' ? (
-          <FileInput
-            id="cv"
-            label={t('fields.cv')}
-            hint={t('hints.cv')}
-            accept={CV_ACCEPT}
-            error={err('cv')}
-            {...register('cv')}
-          />
-        ) : null}
+        <FileInput
+          id="cv"
+          label={t('fields.cv')}
+          hint={t('hints.cv')}
+          accept={CV_ACCEPT}
+          error={err('cv')}
+          {...register('cv')}
+        />
         <div className="flex flex-col gap-4 border-t border-line pt-6">
           <Checkbox
             id="pledge"
@@ -444,7 +438,7 @@ export function ApplyForm({ programSlug, mode, action, countries, turnstileSiteK
         {last ? (
           <Button key="submit" type="submit" size="lg" disabled={pending}>
             {pending ? <Loader size="sm" tone="white" /> : null}
-            {pending ? t('submitting') : mode === 'open' ? t('submitOpen') : t('submit')}
+            {pending ? t('submitting') : t('submit')}
           </Button>
         ) : (
           <Button key="next" type="button" size="lg" onClick={next}>

@@ -77,7 +77,6 @@ const affiliationRule = z.discriminatedUnion(
  * (the honeypot is a server-only check) and still apply the same rules.
  */
 export const applyObject = z.object({
-  program: z.string().min(1, 'required'),
   // 1 · basic information
   fullName: z.string().trim().min(2, 'required').max(120, 'tooLong'),
   gender: z.enum(GENDERS, { error: 'required' }),
@@ -143,7 +142,6 @@ export function formDataToInput(fd: FormData): ApplyInput {
     fd.get(k) === 'on' || fd.get(k) === 'true' ? true : (false as unknown as true)
   const file = fd.get('cv')
   return {
-    program: s('program'),
     fullName: s('fullName'),
     gender: s('gender') as ApplyInput['gender'],
     dateOfBirth: s('dateOfBirth'),

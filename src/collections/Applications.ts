@@ -54,9 +54,15 @@ export const Applications: CollectionConfig = {
       name: 'program',
       type: 'relationship',
       relationTo: 'programs',
-      required: true,
       index: true,
       label: { ar: 'البرنامج', en: 'Program' },
+      admin: {
+        position: 'sidebar',
+        description: {
+          ar: 'الطلب عام للأكاديمية؛ يُحدَّد البرنامج هنا بعد القبول.',
+          en: 'Applications are to the academy; set the program here after acceptance.',
+        },
+      },
     },
     {
       name: 'applicationStatus',

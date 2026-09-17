@@ -109,7 +109,7 @@ for (const locale of ['ar', 'en'] as const) {
   test(`[${locale}] apply happy path walks the three steps and shows the confirmation`, async ({
     page,
   }) => {
-    await page.goto(`/${locale}/apply/palestine-our-compass`, { waitUntil: 'networkidle' })
+    await page.goto(`/${locale}/apply`, { waitUntil: 'networkidle' })
     await expect(page.getByText(L[locale].step(1), { exact: true })).toBeVisible()
     await fillThroughToLastStep(page, locale)
     await page.getByLabel(L[locale].cv).setInputFiles({
@@ -127,7 +127,7 @@ for (const locale of ['ar', 'en'] as const) {
 test('a step does not advance until its own fields are valid, in the visitor language', async ({
   page,
 }) => {
-  await page.goto('/ar/apply/palestine-our-compass', { waitUntil: 'networkidle' })
+  await page.goto('/ar/apply', { waitUntil: 'networkidle' })
   await page.getByRole('button', { name: L.ar.next, exact: true }).click()
   await expect(page.locator('form').getByRole('alert').first()).toContainText(L.ar.required)
   await expect(page.getByText(L.ar.step(1), { exact: true })).toBeVisible()
@@ -137,7 +137,7 @@ test('a step does not advance until its own fields are valid, in the visitor lan
 test('the organisation name is asked only after answering yes, and back keeps what was typed', async ({
   page,
 }) => {
-  await page.goto('/en/apply/palestine-our-compass', { waitUntil: 'networkidle' })
+  await page.goto('/en/apply', { waitUntil: 'networkidle' })
   await page.getByLabel(L.en.name).fill('Playwright')
   await page.getByLabel(L.en.female, { exact: true }).check()
   await page.getByLabel(L.en.dob).fill('2001-05-14')
@@ -163,23 +163,9 @@ test('the organisation name is asked only after answering yes, and back keeps wh
 test('a filled honeypot is silently accepted (bots learn nothing) but not surfaced as an error', async ({
   page,
 }) => {
-  await page.goto('/en/apply/palestine-our-compass', { waitUntil: 'networkidle' })
+  await page.goto('/en/apply', { waitUntil: 'networkidle' })
   await fillThroughToLastStep(page, 'en')
   await page.locator('#website').fill('http://spam.example', { force: true })
   await page.getByRole('button', { name: L.en.submit }).click()
   await expect(page.getByRole('status')).toBeVisible({ timeout: 20_000 })
-})
-
-test('the open track asks for no CV', async ({ page }) => {
-  await page.goto('/ar/apply/open-training', { waitUntil: 'networkidle' })
-  await expect(page.getByText(L.ar.step(1), { exact: true })).toBeVisible()
-  await expect(page.getByLabel(L.ar.cv)).toHaveCount(0)
-})
-
-test('the program chooser lists every published program with its registration state', async ({
-  page,
-}) => {
-  await page.goto('/ar/apply', { waitUntil: 'networkidle' })
-  await expect(page.getByRole('link', { name: /فلسطين بوصلتنا/ })).toBeVisible()
-  await expect(page.getByRole('link', { name: /التدريب المفتوح/ })).toBeVisible()
 })
