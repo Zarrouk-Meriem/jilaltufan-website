@@ -75,6 +75,7 @@ export interface Config {
     materials: Material;
     events: Event;
     applications: Application;
+    'application-files': ApplicationFile;
     'contact-messages': ContactMessage;
     users: User;
     media: Media;
@@ -101,6 +102,7 @@ export interface Config {
     materials: MaterialsSelect<false> | MaterialsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     applications: ApplicationsSelect<false> | ApplicationsSelect<true>;
+    'application-files': ApplicationFilesSelect<false> | ApplicationFilesSelect<true>;
     'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -662,13 +664,487 @@ export interface Application {
   program: number | Program;
   applicationStatus: 'new' | 'reviewing' | 'accepted' | 'waitlisted' | 'rejected';
   fullName: string;
+  gender?: ('female' | 'male') | null;
+  dateOfBirth?: string | null;
   email: string;
   phone?: string | null;
-  country?: string | null;
-  city?: string | null;
-  ageRange?: ('under-18' | '18-24' | '25-34' | '35-44' | '45-plus') | null;
+  nationality?:
+    | (
+        | 'IS'
+        | 'ET'
+        | 'AZ'
+        | 'AM'
+        | 'AW'
+        | 'ER'
+        | 'ES'
+        | 'AU'
+        | 'EE'
+        | 'SZ'
+        | 'AF'
+        | 'AR'
+        | 'JO'
+        | 'EC'
+        | 'AE'
+        | 'AL'
+        | 'BH'
+        | 'BR'
+        | 'PT'
+        | 'BA'
+        | 'CZ'
+        | 'ME'
+        | 'DZ'
+        | 'DK'
+        | 'CV'
+        | 'SV'
+        | 'SN'
+        | 'SD'
+        | 'SE'
+        | 'SO'
+        | 'CN'
+        | 'IQ'
+        | 'GA'
+        | 'VA'
+        | 'PH'
+        | 'CM'
+        | 'CG'
+        | 'CD'
+        | 'KW'
+        | 'DE'
+        | 'MA'
+        | 'MX'
+        | 'SA'
+        | 'GB'
+        | 'NO'
+        | 'AT'
+        | 'NE'
+        | 'IN'
+        | 'US'
+        | 'JP'
+        | 'YE'
+        | 'GR'
+        | 'AG'
+        | 'AD'
+        | 'ID'
+        | 'AO'
+        | 'UY'
+        | 'UZ'
+        | 'UG'
+        | 'UA'
+        | 'IR'
+        | 'IE'
+        | 'IT'
+        | 'PG'
+        | 'PY'
+        | 'PK'
+        | 'PW'
+        | 'BB'
+        | 'BM'
+        | 'BN'
+        | 'BE'
+        | 'BG'
+        | 'BZ'
+        | 'BD'
+        | 'PA'
+        | 'BJ'
+        | 'BT'
+        | 'BW'
+        | 'PR'
+        | 'BF'
+        | 'BI'
+        | 'PL'
+        | 'BO'
+        | 'PF'
+        | 'PE'
+        | 'BY'
+        | 'TH'
+        | 'TW'
+        | 'TM'
+        | 'TR'
+        | 'TT'
+        | 'TD'
+        | 'CL'
+        | 'TZ'
+        | 'TG'
+        | 'TV'
+        | 'TK'
+        | 'TN'
+        | 'TO'
+        | 'TL'
+        | 'JM'
+        | 'GI'
+        | 'AX'
+        | 'BS'
+        | 'KM'
+        | 'MQ'
+        | 'MV'
+        | 'TC'
+        | 'SB'
+        | 'FO'
+        | 'VI'
+        | 'VG'
+        | 'KY'
+        | 'CK'
+        | 'MH'
+        | 'MP'
+        | 'WF'
+        | 'IM'
+        | 'CF'
+        | 'DO'
+        | 'ZA'
+        | 'SS'
+        | 'GE'
+        | 'DJ'
+        | 'JE'
+        | 'DM'
+        | 'RW'
+        | 'RU'
+        | 'RO'
+        | 'RE'
+        | 'ZM'
+        | 'ZW'
+        | 'CI'
+        | 'WS'
+        | 'AS'
+        | 'PM'
+        | 'SM'
+        | 'VC'
+        | 'KN'
+        | 'LC'
+        | 'SX'
+        | 'ST'
+        | 'LK'
+        | 'SK'
+        | 'SI'
+        | 'SG'
+        | 'SY'
+        | 'SR'
+        | 'CH'
+        | 'SL'
+        | 'SC'
+        | 'RS'
+        | 'TJ'
+        | 'OM'
+        | 'GM'
+        | 'GH'
+        | 'GD'
+        | 'GL'
+        | 'GT'
+        | 'GP'
+        | 'GU'
+        | 'GF'
+        | 'GY'
+        | 'GG'
+        | 'GN'
+        | 'GQ'
+        | 'GW'
+        | 'VU'
+        | 'FR'
+        | 'PS'
+        | 'VE'
+        | 'FI'
+        | 'VN'
+        | 'FJ'
+        | 'CY'
+        | 'QA'
+        | 'KG'
+        | 'KZ'
+        | 'NC'
+        | 'HR'
+        | 'KH'
+        | 'CA'
+        | 'CU'
+        | 'CW'
+        | 'KR'
+        | 'KP'
+        | 'CR'
+        | 'XK'
+        | 'CO'
+        | 'KI'
+        | 'KE'
+        | 'LV'
+        | 'LA'
+        | 'LB'
+        | 'LU'
+        | 'LY'
+        | 'LR'
+        | 'LT'
+        | 'LI'
+        | 'LS'
+        | 'MT'
+        | 'ML'
+        | 'MY'
+        | 'YT'
+        | 'MG'
+        | 'EG'
+        | 'MK'
+        | 'MW'
+        | 'MO'
+        | 'MN'
+        | 'MR'
+        | 'MU'
+        | 'MZ'
+        | 'MD'
+        | 'MC'
+        | 'MM'
+        | 'FM'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NG'
+        | 'NI'
+        | 'NZ'
+        | 'NU'
+        | 'HT'
+        | 'HN'
+        | 'HU'
+        | 'NL'
+        | 'HK'
+      )
+    | null;
+  country?:
+    | (
+        | 'IS'
+        | 'ET'
+        | 'AZ'
+        | 'AM'
+        | 'AW'
+        | 'ER'
+        | 'ES'
+        | 'AU'
+        | 'EE'
+        | 'SZ'
+        | 'AF'
+        | 'AR'
+        | 'JO'
+        | 'EC'
+        | 'AE'
+        | 'AL'
+        | 'BH'
+        | 'BR'
+        | 'PT'
+        | 'BA'
+        | 'CZ'
+        | 'ME'
+        | 'DZ'
+        | 'DK'
+        | 'CV'
+        | 'SV'
+        | 'SN'
+        | 'SD'
+        | 'SE'
+        | 'SO'
+        | 'CN'
+        | 'IQ'
+        | 'GA'
+        | 'VA'
+        | 'PH'
+        | 'CM'
+        | 'CG'
+        | 'CD'
+        | 'KW'
+        | 'DE'
+        | 'MA'
+        | 'MX'
+        | 'SA'
+        | 'GB'
+        | 'NO'
+        | 'AT'
+        | 'NE'
+        | 'IN'
+        | 'US'
+        | 'JP'
+        | 'YE'
+        | 'GR'
+        | 'AG'
+        | 'AD'
+        | 'ID'
+        | 'AO'
+        | 'UY'
+        | 'UZ'
+        | 'UG'
+        | 'UA'
+        | 'IR'
+        | 'IE'
+        | 'IT'
+        | 'PG'
+        | 'PY'
+        | 'PK'
+        | 'PW'
+        | 'BB'
+        | 'BM'
+        | 'BN'
+        | 'BE'
+        | 'BG'
+        | 'BZ'
+        | 'BD'
+        | 'PA'
+        | 'BJ'
+        | 'BT'
+        | 'BW'
+        | 'PR'
+        | 'BF'
+        | 'BI'
+        | 'PL'
+        | 'BO'
+        | 'PF'
+        | 'PE'
+        | 'BY'
+        | 'TH'
+        | 'TW'
+        | 'TM'
+        | 'TR'
+        | 'TT'
+        | 'TD'
+        | 'CL'
+        | 'TZ'
+        | 'TG'
+        | 'TV'
+        | 'TK'
+        | 'TN'
+        | 'TO'
+        | 'TL'
+        | 'JM'
+        | 'GI'
+        | 'AX'
+        | 'BS'
+        | 'KM'
+        | 'MQ'
+        | 'MV'
+        | 'TC'
+        | 'SB'
+        | 'FO'
+        | 'VI'
+        | 'VG'
+        | 'KY'
+        | 'CK'
+        | 'MH'
+        | 'MP'
+        | 'WF'
+        | 'IM'
+        | 'CF'
+        | 'DO'
+        | 'ZA'
+        | 'SS'
+        | 'GE'
+        | 'DJ'
+        | 'JE'
+        | 'DM'
+        | 'RW'
+        | 'RU'
+        | 'RO'
+        | 'RE'
+        | 'ZM'
+        | 'ZW'
+        | 'CI'
+        | 'WS'
+        | 'AS'
+        | 'PM'
+        | 'SM'
+        | 'VC'
+        | 'KN'
+        | 'LC'
+        | 'SX'
+        | 'ST'
+        | 'LK'
+        | 'SK'
+        | 'SI'
+        | 'SG'
+        | 'SY'
+        | 'SR'
+        | 'CH'
+        | 'SL'
+        | 'SC'
+        | 'RS'
+        | 'TJ'
+        | 'OM'
+        | 'GM'
+        | 'GH'
+        | 'GD'
+        | 'GL'
+        | 'GT'
+        | 'GP'
+        | 'GU'
+        | 'GF'
+        | 'GY'
+        | 'GG'
+        | 'GN'
+        | 'GQ'
+        | 'GW'
+        | 'VU'
+        | 'FR'
+        | 'PS'
+        | 'VE'
+        | 'FI'
+        | 'VN'
+        | 'FJ'
+        | 'CY'
+        | 'QA'
+        | 'KG'
+        | 'KZ'
+        | 'NC'
+        | 'HR'
+        | 'KH'
+        | 'CA'
+        | 'CU'
+        | 'CW'
+        | 'KR'
+        | 'KP'
+        | 'CR'
+        | 'XK'
+        | 'CO'
+        | 'KI'
+        | 'KE'
+        | 'LV'
+        | 'LA'
+        | 'LB'
+        | 'LU'
+        | 'LY'
+        | 'LR'
+        | 'LT'
+        | 'LI'
+        | 'LS'
+        | 'MT'
+        | 'ML'
+        | 'MY'
+        | 'YT'
+        | 'MG'
+        | 'EG'
+        | 'MK'
+        | 'MW'
+        | 'MO'
+        | 'MN'
+        | 'MR'
+        | 'MU'
+        | 'MZ'
+        | 'MD'
+        | 'MC'
+        | 'MM'
+        | 'FM'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NG'
+        | 'NI'
+        | 'NZ'
+        | 'NU'
+        | 'HT'
+        | 'HN'
+        | 'HU'
+        | 'NL'
+        | 'HK'
+      )
+    | null;
+  profession?: string | null;
+  affiliated?: boolean | null;
+  affiliationName?: string | null;
+  facebook?: string | null;
+  instagram?: string | null;
+  linkedin?: string | null;
+  hearAbout?: ('social' | 'friend' | 'organisation' | 'event' | 'search' | 'other') | null;
   motivation?: string | null;
-  hearAbout?: string | null;
+  aboutYou?: string | null;
+  cv?: (number | null) | ApplicationFile;
+  pledge: boolean;
   consent: boolean;
   locale?: ('ar' | 'en') | null;
   /**
@@ -677,6 +1153,26 @@ export interface Application {
   internalNotes?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * CVs attached to applications. Visible to the academy’s team only.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "application-files".
+ */
+export interface ApplicationFile {
+  id: number;
+  applicant?: string | null;
+  originalName?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -942,6 +1438,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'applications';
         value: number | Application;
+      } | null)
+    | ({
+        relationTo: 'application-files';
+        value: number | ApplicationFile;
       } | null)
     | ({
         relationTo: 'contact-messages';
@@ -1222,18 +1722,45 @@ export interface ApplicationsSelect<T extends boolean = true> {
   program?: T;
   applicationStatus?: T;
   fullName?: T;
+  gender?: T;
+  dateOfBirth?: T;
   email?: T;
   phone?: T;
+  nationality?: T;
   country?: T;
-  city?: T;
-  ageRange?: T;
-  motivation?: T;
+  profession?: T;
+  affiliated?: T;
+  affiliationName?: T;
+  facebook?: T;
+  instagram?: T;
+  linkedin?: T;
   hearAbout?: T;
+  motivation?: T;
+  aboutYou?: T;
+  cv?: T;
+  pledge?: T;
   consent?: T;
   locale?: T;
   internalNotes?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "application-files_select".
+ */
+export interface ApplicationFilesSelect<T extends boolean = true> {
+  applicant?: T;
+  originalName?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1624,9 +2151,13 @@ export interface InstructorsPage {
 export interface SiteSetting {
   id: number;
   /**
-   * Receives application and contact notifications.
+   * Receives contact-form messages; shown in the footer and on the contact page.
    */
   contactEmail: string;
+  /**
+   * Receives application notifications and is the reply-to address on applicant confirmations. Falls back to the contact email when empty.
+   */
+  applicationsEmail?: string | null;
   whatsapp?: string | null;
   /**
    * IANA name. Shown to visitors as "Al-Quds time".
@@ -1856,6 +2387,7 @@ export interface InstructorsPageSelect<T extends boolean = true> {
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   contactEmail?: T;
+  applicationsEmail?: T;
   whatsapp?: T;
   academyTimeZone?: T;
   socials?:
@@ -1963,6 +2495,7 @@ export interface TaskCreateCollectionExport {
       | 'materials'
       | 'events'
       | 'applications'
+      | 'application-files'
       | 'contact-messages'
       | 'users'
       | 'media'

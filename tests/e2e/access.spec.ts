@@ -20,7 +20,7 @@ test.describe('public API access', () => {
   test('applications and contact messages are closed to the public — read and create', async ({
     request,
   }) => {
-    for (const c of ['applications', 'contact-messages']) {
+    for (const c of ['applications', 'application-files', 'contact-messages']) {
       expect((await request.get(`/api/${c}`)).status()).toBe(403)
       expect(
         (
@@ -28,6 +28,14 @@ test.describe('public API access', () => {
         ).status(),
       ).toBe(403)
     }
+  })
+
+  test('a CV file URL is never served to the public', async ({ request }) => {
+    // The upload endpoint honours the collection's `read`; unknown or known, the answer
+    // for anyone who is not staff must not be the file.
+    const res = await request.get('/api/application-files/file/cv-anything.pdf')
+    expect([401, 403, 404]).toContain(res.status())
+    expect(res.headers()['content-type'] ?? '').not.toContain('application/pdf')
   })
 
   test('users list is not public', async ({ request }) => {

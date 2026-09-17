@@ -10,7 +10,7 @@ function wrap(locale: Locale, title: string, paragraphs: string[]): { text: stri
 <div style="max-width:560px;margin:0 auto;background:#fff;padding:32px;border:1px solid rgba(5,7,8,.12)">
 <div style="width:48px;height:3px;background:#c3272e;margin-bottom:20px"></div>
 <h1 style="margin:0 0 16px;font-size:20px;color:#050708">${esc(title)}</h1>
-${paragraphs.map((p) => `<p style="margin:0 0 12px">${esc(p)}</p>`).join('\n')}
+${paragraphs.map((p) => `<p style="margin:0 0 12px;white-space:pre-line">${esc(p)}</p>`).join('\n')}
 </div></body></html>`
   return { text, html }
 }
@@ -27,8 +27,9 @@ export function applicantEmail(locale: Locale, mode: Mode, name: string, program
         `أهلًا ${name}،`,
         mode === 'open'
           ? `تم تسجيلك في برنامج «${program}». سنرسل إليك رابط كل حصة قبل موعدها بالبريد الإلكتروني.`
-          : `استلمنا طلبك للالتحاق ببرنامج «${program}». سيراجعه فريق الأكاديمية ونتواصل معك قريبًا.`,
+          : `استلمنا طلبك للالتحاق ببرنامج «${program}». سيراجعه فريق الأكاديمية ويتواصل معك بعد المراجعة على هذا البريد.`,
         'جميع الحصص مباشرة على Zoom بتوقيت القدس.',
+        'إن كان لديك سؤال، يكفي أن تردّ على هذه الرسالة.',
         'أكاديمية جيل الطوفان — بالعلم نتحرّر',
       ]),
     }
@@ -43,25 +44,23 @@ export function applicantEmail(locale: Locale, mode: Mode, name: string, program
       `Hello ${name},`,
       mode === 'open'
         ? `You're registered for "${program}". We'll email you the link to each session before it starts.`
-        : `We received your application to "${program}". The Academy's team will review it and be in touch soon.`,
+        : `We received your application to "${program}". The Academy's team will review it and be in touch at this address.`,
       'All sessions are live on Zoom, in Al-Quds time.',
+      'If you have a question, simply reply to this email.',
       'Jeel Al-Toufan Academy — Through knowledge, we are liberated',
     ]),
   }
 }
 
+/** One labelled line per answer; empty answers are dropped. */
+export type NotificationLine = [label: string, value: string | undefined | null]
+
 export function academyNotification(a: {
   program: string
   fullName: string
-  email: string
-  phone?: string
-  country: string
-  city?: string
-  ageRange: string
-  motivation: string
-  hearAbout?: string
-  locale: Locale
+  lines: NotificationLine[]
   adminUrl: string
+  cvUrl?: string
 }) {
   const subject = `طلب جديد: ${a.program} — ${a.fullName}`
   return {
@@ -71,11 +70,8 @@ export function academyNotification(a: {
       subject,
       [
         `البرنامج: ${a.program}`,
-        `الاسم: ${a.fullName}`,
-        `البريد: ${a.email}${a.phone ? ` · الهاتف: ${a.phone}` : ''}`,
-        `البلد: ${a.country}${a.city ? ` · ${a.city}` : ''} · الفئة العمرية: ${a.ageRange} · اللغة: ${a.locale}`,
-        `الدافع: ${a.motivation}`,
-        a.hearAbout ? `كيف عرف عنّا: ${a.hearAbout}` : '',
+        ...a.lines.filter((l): l is [string, string] => !!l[1]).map(([k, v]) => `${k}: ${v}`),
+        a.cvUrl ? `السيرة الذاتية: ${a.cvUrl}` : '',
         `الإدارة: ${a.adminUrl}`,
       ].filter(Boolean),
     ),

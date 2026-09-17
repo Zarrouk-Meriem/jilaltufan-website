@@ -22,8 +22,19 @@ export const SiteSettings: GlobalConfig = {
               label: { ar: 'بريد التواصل', en: 'Contact email' },
               admin: {
                 description: {
-                  ar: 'يستقبل إشعارات الطلبات والرسائل.',
-                  en: 'Receives application and contact notifications.',
+                  ar: 'يستقبل رسائل نموذج التواصل، ويظهر في التذييل وصفحة التواصل.',
+                  en: 'Receives contact-form messages; shown in the footer and on the contact page.',
+                },
+              },
+            },
+            {
+              name: 'applicationsEmail',
+              type: 'email',
+              label: { ar: 'بريد طلبات الالتحاق (اختياري)', en: 'Applications email (optional)' },
+              admin: {
+                description: {
+                  ar: 'يستقبل إشعارات طلبات الالتحاق، ويكون عنوان الرد في رسائل التأكيد للمتقدّمين. إن تُرك فارغًا يُستخدم بريد التواصل.',
+                  en: 'Receives application notifications and is the reply-to address on applicant confirmations. Falls back to the contact email when empty.',
                 },
               },
             },

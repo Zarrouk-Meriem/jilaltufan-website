@@ -6,7 +6,7 @@ import Script from 'next/script'
 import { ButtonLink } from '@/components/ui/Button'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import type { ApplyResult } from '@/app/(frontend)/[locale]/apply/actions'
-import { ApplyForm } from './ApplyForm'
+import { ApplyForm, type CountryOption } from './ApplyForm'
 
 type Success = Extract<ApplyResult, { status: 'success' }>
 
@@ -17,6 +17,7 @@ export function ApplySection({
   programTitle,
   mode,
   action,
+  countries,
   turnstileSiteKey,
 }: {
   locale: string
@@ -24,6 +25,7 @@ export function ApplySection({
   programTitle: string
   mode: 'open' | 'application'
   action: (prev: ApplyResult, fd: FormData) => Promise<ApplyResult>
+  countries: CountryOption[]
   turnstileSiteKey?: string
 }) {
   const t = useTranslations('apply')
@@ -71,6 +73,7 @@ export function ApplySection({
       <ApplyForm
         programSlug={programSlug}
         mode={mode}
+        countries={countries}
         turnstileSiteKey={turnstileSiteKey}
         action={async (prev, fd) => {
           const r = await action(prev, fd)

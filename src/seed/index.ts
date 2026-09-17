@@ -360,6 +360,7 @@ async function seed() {
     overrideAccess: true,
     data: {
       contactEmail: 'contact@jilaltufan.org',
+      applicationsEmail: 'applications@jilaltufan.org',
       academyTimeZone: 'Asia/Hebron',
       joinLinkVisibility: 'window',
       joinWindowMinutes: 30,

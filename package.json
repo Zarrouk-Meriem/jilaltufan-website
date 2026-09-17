@@ -27,7 +27,7 @@
     "wedge": "node scripts/image-wedge.cjs",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:unit",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate",
-    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate:create",
+    "migrate:create": "node --import tsx/esm scripts/create-migration.mjs",
     "payload:tsx": "node --import tsx/esm scripts/payload-cli.mjs",
     "verify": "scripts/verify.sh"
   },

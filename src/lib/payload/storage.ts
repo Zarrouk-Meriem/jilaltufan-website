@@ -10,6 +10,7 @@ export function storagePlugins() {
       // (read-only filesystem) they need remote storage just like media.
       collections: {
         media: { prefix: 'media' },
+        'application-files': { prefix: 'applications' },
         exports: { prefix: 'exports' },
         imports: { prefix: 'imports' },
       },

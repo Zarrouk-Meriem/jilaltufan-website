@@ -1,41 +1,66 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
-import { useActionState, useEffect, useRef, useTransition } from 'react'
-import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/Button'
-import { Loader } from '@/components/ui/Loader'
-import { Callout } from '@/components/ui/Callout'
-import { Checkbox, Input, Select, Textarea } from '@/components/ui/Field'
-import { Link } from '@/i18n/navigation'
+import { useActionState, useEffect, useRef, useState, useTransition } from 'react'
+import { useForm, useWatch, type FieldErrors as FormErrors } from 'react-hook-form'
 import { z } from 'zod'
-import { AGE_RANGES, applySchema, type ApplyInput } from '@/lib/forms/apply-schema'
+import { Button } from '@/components/ui/Button'
+import { Callout } from '@/components/ui/Callout'
+import { Checkbox, FileInput, Input, RadioGroup, Select, Textarea } from '@/components/ui/Field'
+import { Loader } from '@/components/ui/Loader'
+import { Link } from '@/i18n/navigation'
+import {
+  applyObject,
+  CV_ACCEPT,
+  GENDERS,
+  HEAR_ABOUT,
+  STEP_FIELDS,
+  withApplyRules,
+  type ApplyInput,
+} from '@/lib/forms/apply-schema'
+import type { ApplyResult } from '@/app/(frontend)/[locale]/apply/actions'
+import { Stepper } from './Stepper'
 
 // The honeypot is a SERVER check; the client must not block on it (a bot that runs JS would
 // simply learn to leave the field empty, and a real submission is never affected).
-const clientSchema = applySchema.extend({ website: z.string().optional() })
-import type { ApplyResult } from '@/app/(frontend)/[locale]/apply/actions'
+const clientSchema = withApplyRules(applyObject.extend({ website: z.string().optional() }))
+
+export type CountryOption = { value: string; label: string }
 
 type Props = {
   programSlug: string
   mode: 'open' | 'application'
   action: (prev: ApplyResult, fd: FormData) => Promise<ApplyResult>
+  /** Computed on the server so both renders list the same names in the same order. */
+  countries: CountryOption[]
   turnstileSiteKey?: string
-  onSuccess?: (r: Extract<ApplyResult, { status: 'success' }>) => void
 }
 
-export function ApplyForm({ programSlug, mode, action, turnstileSiteKey }: Props) {
+const STEP_KEYS = ['basics', 'affiliation', 'motivation'] as const
+
+/** The first step that owns one of the fields in error, so it can be shown. */
+function stepWithErrors(errors: Partial<Record<keyof ApplyInput, unknown>>) {
+  const keys = Object.keys(errors) as (keyof ApplyInput)[]
+  return STEP_FIELDS.findIndex((fields) => fields.some((f) => keys.includes(f)))
+}
+
+export function ApplyForm({ programSlug, mode, action, countries, turnstileSiteKey }: Props) {
   const t = useTranslations('apply')
   const locale = useLocale() as 'ar' | 'en'
-  const [state, formAction] = useActionState(action, { status: 'idle' })
   const [pending, startTransition] = useTransition()
+  const [step, setStep] = useState(0)
+  const formRef = useRef<HTMLFormElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
   const errorRef = useRef<HTMLDivElement>(null)
 
   const {
     register,
     handleSubmit,
     setError,
+    trigger,
+    control,
     formState: { errors },
   } = useForm<ApplyInput>({
     resolver: zodResolver(clientSchema),
@@ -44,36 +69,94 @@ export function ApplyForm({ programSlug, mode, action, turnstileSiteKey }: Props
       program: programSlug,
       locale,
       website: '',
+      fullName: '',
+      dateOfBirth: '',
+      email: '',
       phone: '',
-      city: '',
-      hearAbout: '',
+      nationality: '',
+      country: '',
+      profession: '',
+      affiliationName: '',
+      facebook: '',
+      instagram: '',
+      linkedin: '',
+      hearAbout: '' as never,
+      motivation: '',
+      aboutYou: '',
     },
   })
+  const affiliated = useWatch({ control, name: 'affiliated' })
 
-  // Server-side field errors (shouldn't differ from the client's, but the server is the truth).
+  // Server-side field errors (shouldn't differ from the client's, but the server is the
+  // truth): mark the fields and show the first step that owns one of them.
+  const [state, formAction] = useActionState(
+    async (prev: ApplyResult, fd: FormData) => {
+      const r = await action(prev, fd)
+      if (r.status === 'error') {
+        const fieldErrors = r.fieldErrors ?? {}
+        for (const [k, v] of Object.entries(fieldErrors))
+          setError(k as keyof ApplyInput, { message: v })
+        const at = stepWithErrors(fieldErrors)
+        if (at >= 0) setStep(at)
+      }
+      return r
+    },
+    { status: 'idle' } as ApplyResult,
+  )
+
+  const goTo = (i: number) => {
+    setStep(i)
+    // After the panel switch: bring the form into view and hand focus to its heading.
+    requestAnimationFrame(() => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      formRef.current?.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' })
+      headingRef.current?.focus({ preventScroll: true })
+    })
+  }
+
+  // The form-level message renders only once the state says so; hand it focus then.
   useEffect(() => {
-    if (state.status !== 'error') return
-    for (const [k, v] of Object.entries(state.fieldErrors ?? {}))
-      setError(k as keyof ApplyInput, { message: v })
-    errorRef.current?.focus()
-  }, [state, setError])
+    if (state.status === 'error' && state.formError) errorRef.current?.focus()
+  }, [state])
 
   const err = (k: keyof ApplyInput) => {
     const m = errors[k]?.message
     return m ? t(`errors.${m}` as 'errors.required') : undefined
   }
 
+  const next = async () => {
+    const ok = await trigger(STEP_FIELDS[step] as (keyof ApplyInput)[], { shouldFocus: true })
+    if (ok) goTo(step + 1)
+  }
+
   // The form element comes from the event, not a ref read during render.
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const form = e.currentTarget
-    return handleSubmit(() => {
-      const fd = new FormData(form)
-      startTransition(() => formAction(fd))
-    })(e)
+    return handleSubmit(
+      () => {
+        const fd = new FormData(form)
+        startTransition(() => formAction(fd))
+      },
+      (invalid: FormErrors<ApplyInput>) => {
+        const at = stepWithErrors(invalid)
+        if (at >= 0 && at !== step) goTo(at)
+      },
+    )(e)
   }
 
+  const last = step === STEP_KEYS.length - 1
+  const BackIcon = locale === 'ar' ? ArrowRight : ArrowLeft
+  const NextIcon = locale === 'ar' ? ArrowLeft : ArrowRight
+  const panel = (i: number) => cn('flex flex-col gap-6', step === i ? undefined : 'hidden')
+
   return (
-    <form onSubmit={onSubmit} noValidate className="grid gap-6" aria-busy={pending}>
+    <form
+      ref={formRef}
+      onSubmit={onSubmit}
+      noValidate
+      className="grid scroll-mt-28 gap-10"
+      aria-busy={pending}
+    >
       <input type="hidden" {...register('program')} value={programSlug} />
       <input type="hidden" {...register('locale')} value={locale} />
       {/* Honeypot — invisible to people, irresistible to bots. */}
@@ -82,118 +165,298 @@ export function ApplyForm({ programSlug, mode, action, turnstileSiteKey }: Props
         <input id="website" tabIndex={-1} autoComplete="off" {...register('website')} />
       </div>
 
+      <Stepper
+        label={t('stepsLabel')}
+        current={step}
+        steps={STEP_KEYS.map((k) => ({ title: t(`steps.${k}.title`), hint: t(`steps.${k}.hint`) }))}
+        stepLabel={(n, total) => t('stepOf', { n, total })}
+        onSelect={goTo}
+      />
+
       {state.status === 'error' && state.formError ? (
         <div ref={errorRef} tabIndex={-1} role="alert">
           <Callout>{t(`errors.${state.formError}` as 'errors.server')}</Callout>
         </div>
       ) : null}
 
-      <Input
-        id="fullName"
-        label={t('fields.fullName')}
-        required
-        autoComplete="name"
-        error={err('fullName')}
-        {...register('fullName')}
-      />
-      <Input
-        id="email"
-        type="email"
-        label={t('fields.email')}
-        required
-        autoComplete="email"
-        hint={t('hints.email')}
-        error={err('email')}
-        dir="ltr"
-        {...register('email')}
-      />
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div>
+        <p className="text-xs font-medium text-ink-500">
+          {t('stepOf', { n: step + 1, total: STEP_KEYS.length })}
+        </p>
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="mt-1 text-lg focus:outline-none"
+          id="apply-step-title"
+        >
+          {t(`steps.${STEP_KEYS[step]}.title`)}
+        </h2>
+        <p className="mt-2 measure text-sm text-ink-700">{t(`steps.${STEP_KEYS[step]}.lead`)}</p>
+      </div>
+
+      {/* 1 · Basic information */}
+      <section aria-labelledby="apply-step-title" inert={step !== 0} className={panel(0)}>
         <Input
-          id="phone"
-          type="tel"
-          label={t('fields.phone')}
-          autoComplete="tel"
-          hint={t('hints.phone')}
-          error={err('phone')}
-          dir="ltr"
-          {...register('phone')}
-        />
-        <Select
-          id="ageRange"
-          label={t('fields.ageRange')}
+          id="fullName"
+          label={t('fields.fullName')}
           required
-          error={err('ageRange')}
-          defaultValue=""
-          {...register('ageRange')}
+          autoComplete="name"
+          error={err('fullName')}
+          {...register('fullName')}
+        />
+        <div className="grid gap-6 sm:grid-cols-2">
+          <RadioGroup
+            id="gender"
+            label={t('fields.gender')}
+            required
+            error={err('gender')}
+            options={GENDERS.map((g) => ({ value: g, label: t(`genders.${g}`) }))}
+            {...register('gender')}
+          />
+          <Input
+            id="dateOfBirth"
+            type="date"
+            label={t('fields.dateOfBirth')}
+            required
+            autoComplete="bday"
+            dir="ltr"
+            error={err('dateOfBirth')}
+            {...register('dateOfBirth')}
+          />
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <Input
+            id="email"
+            type="email"
+            label={t('fields.email')}
+            required
+            autoComplete="email"
+            hint={t('hints.email')}
+            error={err('email')}
+            dir="ltr"
+            {...register('email')}
+          />
+          <Input
+            id="phone"
+            type="tel"
+            label={t('fields.phone')}
+            required
+            autoComplete="tel"
+            hint={t('hints.phone')}
+            error={err('phone')}
+            dir="ltr"
+            {...register('phone')}
+          />
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <Select
+            id="nationality"
+            label={t('fields.nationality')}
+            required
+            error={err('nationality')}
+            {...register('nationality')}
+          >
+            <option value="" disabled>
+              {t('selectPlaceholder')}
+            </option>
+            {countries.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </Select>
+          <Select
+            id="country"
+            label={t('fields.country')}
+            required
+            autoComplete="country"
+            error={err('country')}
+            {...register('country')}
+          >
+            <option value="" disabled>
+              {t('selectPlaceholder')}
+            </option>
+            {countries.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <Input
+          id="profession"
+          label={t('fields.profession')}
+          required
+          autoComplete="organization-title"
+          hint={t('hints.profession')}
+          error={err('profession')}
+          {...register('profession')}
+        />
+      </section>
+
+      {/* 2 · Affiliation and presence */}
+      <section aria-labelledby="apply-step-title" inert={step !== 1} className={panel(1)}>
+        <RadioGroup
+          id="affiliated"
+          label={t('fields.affiliated')}
+          required
+          error={err('affiliated')}
+          options={[
+            { value: 'yes', label: t('yes') },
+            { value: 'no', label: t('no') },
+          ]}
+          {...register('affiliated')}
+        />
+        {affiliated === 'yes' ? (
+          <Input
+            id="affiliationName"
+            label={t('fields.affiliationName')}
+            required
+            autoComplete="organization"
+            error={err('affiliationName')}
+            {...register('affiliationName')}
+          />
+        ) : null}
+        <div className="border-t border-line pt-6">
+          <p className="text-sm font-medium text-ink-900">{t('linksTitle')}</p>
+          <p className="mt-1 text-xs text-ink-500">{t('hints.links')}</p>
+          <div className="mt-5 grid gap-6 sm:grid-cols-3">
+            <Input
+              id="facebook"
+              label={t('fields.facebook')}
+              dir="ltr"
+              autoComplete="url"
+              error={err('facebook')}
+              {...register('facebook')}
+            />
+            <Input
+              id="instagram"
+              label={t('fields.instagram')}
+              dir="ltr"
+              autoComplete="url"
+              error={err('instagram')}
+              {...register('instagram')}
+            />
+            <Input
+              id="linkedin"
+              label={t('fields.linkedin')}
+              dir="ltr"
+              autoComplete="url"
+              error={err('linkedin')}
+              {...register('linkedin')}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 3 · Motivation, CV, pledge */}
+      <section aria-labelledby="apply-step-title" inert={step !== 2} className={panel(2)}>
+        <Select
+          id="hearAbout"
+          label={t('fields.hearAbout')}
+          required
+          error={err('hearAbout')}
+          {...register('hearAbout')}
         >
           <option value="" disabled>
-            {t('agePlaceholder')}
+            {t('selectPlaceholder')}
           </option>
-          {AGE_RANGES.map((a) => (
-            <option key={a} value={a}>
-              {t(`ages.${a}` as 'ages.18-24')}
+          {HEAR_ABOUT.map((h) => (
+            <option key={h} value={h}>
+              {t(`hearAboutOptions.${h}`)}
             </option>
           ))}
         </Select>
-      </div>
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Input
-          id="country"
-          label={t('fields.country')}
+        <Textarea
+          id="motivation"
+          label={t('fields.motivation')}
           required
-          autoComplete="country-name"
-          error={err('country')}
-          {...register('country')}
+          hint={t('hints.motivation')}
+          error={err('motivation')}
+          {...register('motivation')}
         />
-        <Input
-          id="city"
-          label={t('fields.city')}
-          autoComplete="address-level2"
-          error={err('city')}
-          {...register('city')}
+        <Textarea
+          id="aboutYou"
+          label={t('fields.aboutYou')}
+          required
+          hint={t('hints.aboutYou')}
+          error={err('aboutYou')}
+          {...register('aboutYou')}
         />
-      </div>
-      <Textarea
-        id="motivation"
-        label={t('fields.motivation')}
-        required
-        hint={t('hints.motivation')}
-        error={err('motivation')}
-        {...register('motivation')}
-      />
-      <Input
-        id="hearAbout"
-        label={t('fields.hearAbout')}
-        hint={t('hints.hearAbout')}
-        error={err('hearAbout')}
-        {...register('hearAbout')}
-      />
-      <Checkbox
-        id="consent"
-        error={err('consent')}
-        label={t.rich('fields.consent', {
-          privacy: (chunks) => (
-            <Link href="/privacy" className="underline decoration-red-600 underline-offset-2">
-              {chunks}
-            </Link>
-          ),
-        })}
-        {...register('consent')}
-      />
-      {turnstileSiteKey ? (
-        <div
-          className="cf-turnstile"
-          data-sitekey={turnstileSiteKey}
-          data-language={locale}
-          aria-label={t('turnstileLabel')}
-        />
-      ) : null}
-      <div>
-        <Button type="submit" size="lg" disabled={pending}>
-          {pending ? <Loader size="sm" tone="white" /> : null}
-          {pending ? t('submitting') : mode === 'open' ? t('submitOpen') : t('submit')}
-        </Button>
+        {mode === 'application' ? (
+          <FileInput
+            id="cv"
+            label={t('fields.cv')}
+            hint={t('hints.cv')}
+            accept={CV_ACCEPT}
+            error={err('cv')}
+            {...register('cv')}
+          />
+        ) : null}
+        <div className="flex flex-col gap-4 border-t border-line pt-6">
+          <Checkbox
+            id="pledge"
+            error={err('pledge')}
+            label={t.rich('fields.pledge', {
+              conduct: (chunks) => (
+                <Link href="/students" className="underline decoration-red-600 underline-offset-2">
+                  {chunks}
+                </Link>
+              ),
+            })}
+            {...register('pledge')}
+          />
+          <Checkbox
+            id="consent"
+            error={err('consent')}
+            label={t.rich('fields.consent', {
+              privacy: (chunks) => (
+                <Link href="/privacy" className="underline decoration-red-600 underline-offset-2">
+                  {chunks}
+                </Link>
+              ),
+            })}
+            {...register('consent')}
+          />
+        </div>
+        {turnstileSiteKey ? (
+          <div
+            className="cf-turnstile"
+            data-sitekey={turnstileSiteKey}
+            data-language={locale}
+            aria-label={t('turnstileLabel')}
+          />
+        ) : null}
+      </section>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6">
+        {step > 0 ? (
+          <Button type="button" variant="ghost" size="lg" onClick={() => goTo(step - 1)}>
+            <BackIcon aria-hidden strokeWidth={1.5} className="size-4" />
+            {t('back')}
+          </Button>
+        ) : (
+          <span />
+        )}
+        {/* Distinct keys, so React never turns the clicked Next button into the submit
+            button: validation resolves in a microtask, the re-render lands before the
+            browser runs the click's default action, and a reused node would submit. */}
+        {last ? (
+          <Button key="submit" type="submit" size="lg" disabled={pending}>
+            {pending ? <Loader size="sm" tone="white" /> : null}
+            {pending ? t('submitting') : mode === 'open' ? t('submitOpen') : t('submit')}
+          </Button>
+        ) : (
+          <Button key="next" type="button" size="lg" onClick={next}>
+            {t('next')}
+            <NextIcon aria-hidden strokeWidth={1.5} className="size-4" />
+          </Button>
+        )}
       </div>
     </form>
   )
+}
+
+function cn(...parts: (string | undefined | false)[]) {
+  return parts.filter(Boolean).join(' ')
 }

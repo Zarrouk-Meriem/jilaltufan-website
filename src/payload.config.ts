@@ -8,6 +8,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { ApplicationFiles } from './collections/ApplicationFiles'
 import { Applications } from './collections/Applications'
 import { ContactMessages } from './collections/ContactMessages'
 import { Events } from './collections/Events'
@@ -83,6 +84,7 @@ export default buildConfig({
     Materials,
     Events,
     Applications,
+    ApplicationFiles,
     ContactMessages,
     Users,
     Media,

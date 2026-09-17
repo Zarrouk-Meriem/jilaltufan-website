@@ -7,6 +7,7 @@ import { PageIntro } from '@/components/sections/PageIntro'
 import { ButtonLink } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
 import type { Locale } from '@/i18n/routing'
+import { countryOptions } from '@/lib/countries'
 import { getProgramBySlug } from '@/lib/queries'
 import { submitApplication } from '../actions'
 
@@ -89,6 +90,7 @@ export default async function ApplyProgramPage({
           programTitle={program.title}
           mode={mode === 'open' ? 'open' : 'application'}
           action={submitApplication}
+          countries={countryOptions(locale)}
           turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || undefined}
         />
       </div>

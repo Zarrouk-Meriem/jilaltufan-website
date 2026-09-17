@@ -22,7 +22,8 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 
 ## Content the academy must supply
 
-- [x] **About text** — intro, founding philosophy, vision, values, and the eight goals are seeded from «الورقة التأسيسية» (10 June 2026).
+- [x] **About text** — intro, founding philosophy, vision, values, and the eight goals are seeded from «الورقة التأسيسية» (10 June 2026). Rewritten 2026-09-17 for visitors (the paper was internal): same facts, plainer and shorter Arabic; `src/seed/content.ts` is the source, `pnpm seed` re-applies it while the About page is not editor-owned.
+- [ ] **P2 — Review the public wording.** Someone from the academy should read `/ar/about`, `/ar/programs` and the six program pages once; the tone is theirs to sign off.
 - [ ] **P1 — Session titles and summaries.** Program definitions, target audience, the four competencies, duration, and admission/continuation/graduation criteria are seeded from the founding paper; open training is 8 lectures Oct → May, the four directed programs are 6 sessions Jan → Jun. Sessions themselves are still `[الحصة الأولى]`… placeholders. «سفراء القدس الشريف» was replaced by «المشاريع الاستراتيجية» (Sep 2026); its own projects are still to be listed.
 - [ ] **P1 — Real session dates and Zoom links** for the 2026/2027 season. _32 placeholder sessions exist (8 open Oct→May, 4 × 6 directed Jan→Jun), with no Zoom URLs._
 - [ ] **P1 — Instructors:** names, roles, short bios, photos. _Seeded as «[اسم المحاضر]», no photos, no invented biography. Sessions currently have no instructor attached — this is deliberate._
@@ -32,7 +33,7 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 - [ ] **P2 — منبر الطوفان** — at least three posts, or the home section stays hidden (by design).
 - [ ] **P2 — Code of conduct** and the student FAQ for `/students`. _Editable in admin → Windows → Student window (seeded with the built-in copy; the conduct line is a marked placeholder)._
 - [ ] **P2 — Instructor guidelines** for `/instructors`. _Editable in admin → Windows → Instructor window._
-- [ ] **P2 — Privacy policy and terms.** Drafts will describe exactly what the application form collects and why; **the academy must review and approve the final text.**
+- [ ] **P2 — Privacy policy and terms.** The drafts list exactly what the application form collects (updated 2026-09-17 for the three-step form: gender, date of birth, nationality, residence, profession, affiliation, social links, CV); **the academy must review and approve the final text.**
 - [ ] **P3 — Statistics.** The stats band is built but **toggled off**. Turn it on only when real numbers exist: figures + switch in Site settings → Statistics, then Home page → Statistics band.
 
 ## Photography
@@ -45,7 +46,9 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 
 - [ ] **P1 — Final English name usage.** _"Academy · Flood's Generation"_ per the brief vs _"Jeel Al-Toufan Academy"_. Currently both appear in different places; pick one for `/en`.
 - [x] **Domain: `jilaltufan.org`** is the official one (non-profit); `.com` is registered too and should 301 to `.org` at the DNS/CDN layer.
-- [x] **Mail:** `admin@jilaltufan.org` is the official mailbox; `contact@jilaltufan.org` (alias) receives application and contact notifications; `no-reply@jilaltufan.org` sends — needs the domain verified in Resend (SPF + DKIM) before launch.
+- [x] **Mail:** `admin@jilaltufan.org` is the official mailbox; `contact@jilaltufan.org` (alias) receives contact-form messages; `no-reply@jilaltufan.org` sends — needs the domain verified in Resend (SPF + DKIM) before launch.
+- [ ] **P1 — Create the `applications@jilaltufan.org` alias in Zoho** (2026-09-17). Application notifications go there and it is the Reply-To on every applicant confirmation, so replies land with whoever reviews applications rather than in the general inbox. Aliases are free in Zoho; until it exists, set Site settings → Applications email to a mailbox that does, or leave it empty to fall back to `contact@`.
+- [ ] **P2 — Is the CV required?** The intake sheet lists «اختر CV»; the form asks for it as optional (PDF/Word ≤ 5 MB) so a missing CV never blocks a young applicant. Making it required is one line in `src/lib/forms/apply-schema.ts`. Open Training never asks for one.
 - [ ] **P2 — Social links** (Instagram, X, YouTube, Telegram…) for the footer and JSON-LD `sameAs`. _Enter in admin → Site settings → Social links; WhatsApp number in the same tab._
 - [ ] **P2 — Registration mode per program.** Default is `application` for all six. Confirm, or mark specific programs `open`.
 - [ ] **P2 — Join-link policy.** Default is `window` (link appears 30 min before start). Alternatives: `always`, `email-only`. _Enforced in the query layer: the Zoom URL is not in the HTML outside the window._

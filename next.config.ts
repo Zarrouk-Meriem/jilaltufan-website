@@ -29,6 +29,8 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/api/og': ['./src/app/(frontend)/api/og/fonts/**'],
   },
+  // The apply form posts a CV (≤ 5 MB) through a server action; the default cap is 1 MB.
+  experimental: { serverActions: { bodySizeLimit: '6mb' } },
   images: {
     formats: ['image/avif', 'image/webp'],
     localPatterns: [{ pathname: '/api/media/file/**' }, { pathname: '/brand/**' }],

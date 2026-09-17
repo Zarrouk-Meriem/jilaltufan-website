@@ -157,3 +157,101 @@ export function Checkbox({
     </div>
   )
 }
+
+type Option = { value: string; label: string }
+
+/**
+ * A short list of radios under one legend. Spread the result of `register(name)`
+ * onto the group; every radio receives it, which is how react-hook-form tracks one
+ * value across several inputs.
+ */
+export function RadioGroup({
+  label,
+  hint,
+  error,
+  required,
+  id,
+  options,
+  className,
+  ...rest
+}: Common & { options: Option[]; className?: string } & Omit<
+    ComponentProps<'input'>,
+    'type' | 'id' | 'children'
+  >) {
+  return (
+    <fieldset
+      role="radiogroup"
+      aria-required={required || undefined}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={describedBy(id, hint, error)}
+      className={cn('flex min-w-0 flex-col gap-1.5', className)}
+    >
+      <legend className="text-sm font-medium text-ink-900">
+        {label}
+        {required ? (
+          <span aria-hidden className="ms-1 text-red-600">
+            *
+          </span>
+        ) : null}
+      </legend>
+      <div className="flex min-h-11 flex-wrap items-center gap-x-6 gap-y-2">
+        {options.map((o) => (
+          <label
+            key={o.value}
+            htmlFor={`${id}-${o.value}`}
+            className="inline-flex items-center gap-2 text-sm text-ink-700"
+          >
+            <input
+              id={`${id}-${o.value}`}
+              type="radio"
+              value={o.value}
+              className="size-4 shrink-0 border border-line-strong accent-red-600 focus:shadow-[var(--focus-ring)] focus:outline-none"
+              {...rest}
+            />
+            {o.label}
+          </label>
+        ))}
+      </div>
+      {hint && !error ? (
+        <p id={`${id}-hint`} className="text-xs text-ink-500">
+          {hint}
+        </p>
+      ) : null}
+      {error ? (
+        <p id={`${id}-error`} role="alert" className="text-xs font-medium text-red-700">
+          {error}
+        </p>
+      ) : null}
+    </fieldset>
+  )
+}
+
+/** Native file input, its button styled as the secondary button. */
+export function FileInput({
+  label,
+  hint,
+  error,
+  required,
+  id,
+  className,
+  ...rest
+}: Common & Omit<ComponentProps<'input'>, 'type'>) {
+  return (
+    <Wrap {...{ label, hint, error, required, id }}>
+      <input
+        id={id}
+        type="file"
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(id, hint, error)}
+        required={required}
+        className={cn(
+          'block w-full rounded-brand text-sm text-ink-700 focus:shadow-[var(--focus-ring)] focus:outline-none',
+          'file:me-3 file:h-10 file:cursor-pointer file:rounded-brand file:border file:border-ink-900 file:bg-transparent file:px-3.5 file:text-sm file:font-medium file:text-ink-900',
+          'file:transition-[background-color,color] file:duration-150 file:ease-brand hover:file:bg-ink-900 hover:file:text-white',
+          className,
+        )}
+        {...rest}
+      />
+    </Wrap>
+  )
+}

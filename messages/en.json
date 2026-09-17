@@ -176,15 +176,15 @@
     "title": "Training **programs**",
     "intro": "Choose your path. Open Training for anyone who wants to begin, the directed programs for those who want to go deeper, and the strategic projects for those who want to act.",
     "openTitle": "Open Training",
-    "openIntro": "An independent track that spreads foundational knowledge among the widest circle of the nation’s youth: eight monthly lectures from October to May, each season carrying the name of a leading figure tied to the Palestinian cause.",
+    "openIntro": "An independent track for the widest circle of the nation's youth: eight monthly lectures from October to May, each season carrying the name of a leading, symbolic figure from the history of the Palestinian cause.",
     "directedTitle": "Directed programs",
-    "directedIntro": "Directed training builds capability and competence: four programs, two theoretical and two applied, six sessions each from January to June. They run concurrently, and you enrol in one program only.",
+    "directedIntro": "Directed training builds capability and competence: four programs, two theoretical and two applied, six sessions each from January to June. They run at the same time, and each participant joins one program only.",
     "howItWorks": "How the programs work",
-    "step1": "Choose a program and submit your application.",
-    "step2": "You receive a confirmation, then the session link before each session.",
+    "step1": "Choose your program and apply in three short steps.",
+    "step2": "You receive a confirmation, then the link to each session before it starts.",
     "step3": "One session a month, live on Zoom, in Al-Quds time.",
     "projectsTitle": "Strategic projects",
-    "projectsIntro": "Alongside education, training, and the programs, the Academy launches strategic projects that contribute directly and effectively to the effort of comprehensive liberation."
+    "projectsIntro": "Alongside education and training, the Academy launches strategic projects that contribute directly to the effort of comprehensive liberation and turn knowledge into role and responsibility."
   },
   "about": {
     "title": "About the **Academy**",
@@ -258,7 +258,7 @@
   },
   "projects": {
     "title": "Projects & **initiatives**",
-    "intro": "The Academy does not rely on conventional exams: to graduate from a directed program, each person or team presents a practical engagement project (a media campaign, a political study, a field initiative) that serves the effort of comprehensive liberation, presented in September each year. The Jeel Al-Toufan incubator selects ten projects a year and provides mentoring, networking, legal, administrative and technical support, and six months of follow-up.",
+    "intro": "The Academy does not rely on conventional exams: every participant or team in a directed program graduates with a practical engagement project (a media campaign, a political study, or a field initiative) that serves the effort of comprehensive liberation, presented in September each year. The Jeel Al-Toufan incubator selects ten projects a year and provides mentoring, networking, and legal, administrative, and technical support, with six months of follow-up.",
     "empty": "No projects have been published yet.",
     "ongoing": "Ongoing",
     "upcoming": "Upcoming",
@@ -267,43 +267,90 @@
   },
   "apply": {
     "title": "**Apply** now",
-    "intro": "Choose the program that fits you. Registration is short, and we follow up by email.",
+    "intro": "Choose the program that fits you. The application takes three short steps, and we follow up by email.",
     "chooseProgram": "Choose a program",
     "formTitle": "Apply to {program}",
     "formTitleOpen": "Register for {program}",
-    "formIntro": "Fill in the form below. Fields marked with a star are required.",
+    "formIntro": "Three short steps: your basic details, then your affiliation and accounts, then your motivation. It takes about five minutes; fields marked with a star are required.",
     "closedTitle": "Registration is currently closed",
     "closedBody": "Registration for \"{program}\" is closed at the moment. Contact us if you have questions, or explore the other programs.",
+    "stepsLabel": "Application steps",
+    "stepOf": "Step {n} of {total}",
+    "steps": {
+      "basics": {
+        "title": "Your details",
+        "hint": "Who you are and how to reach you",
+        "lead": "Introduce yourself briefly. We use your email and phone number to reach you about your application and the program's sessions."
+      },
+      "affiliation": {
+        "title": "Affiliation & presence",
+        "hint": "Your organisation and accounts",
+        "lead": "Are you active in an organisation? And where can we find you online? Links are optional."
+      },
+      "motivation": {
+        "title": "Your motivation",
+        "hint": "Why us, and who you are",
+        "lead": "A few honest sentences are enough. This is the part the Academy's team reads most carefully."
+      }
+    },
+    "next": "Next",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "selectPlaceholder": "Select",
+    "linksTitle": "Your social accounts",
     "fields": {
       "fullName": "Full name",
+      "gender": "Gender",
+      "dateOfBirth": "Date of birth",
       "email": "Email",
-      "phone": "Phone / WhatsApp",
-      "country": "Country",
-      "city": "City",
-      "ageRange": "Age range",
-      "motivation": "Why do you want to join this program?",
+      "phone": "Phone number",
+      "nationality": "Nationality",
+      "country": "Country of residence",
+      "profession": "Profession",
+      "affiliated": "Do you belong to a movement, organisation, initiative, or association?",
+      "affiliationName": "Name of the organisation",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
       "hearAbout": "How did you hear about the Academy?",
+      "motivation": "Why do you want to join us?",
+      "aboutYou": "Tell us about yourself",
+      "cv": "CV",
+      "pledge": "I commit to attending and taking part seriously in the program's sessions, completing its assignments, and respecting the <conduct>code of conduct</conduct>.",
       "consent": "I agree to my data being processed according to the <privacy>privacy policy</privacy>."
+    },
+    "genders": {
+      "female": "Female",
+      "male": "Male"
+    },
+    "hearAboutOptions": {
+      "social": "Social media",
+      "friend": "A friend or colleague",
+      "organisation": "An organisation or association",
+      "event": "An event or camp",
+      "search": "Web search",
+      "other": "Other"
     },
     "hints": {
       "email": "We send the confirmation and session links here.",
-      "phone": "Optional. With country code.",
-      "motivation": "A few sentences are enough. At least 20 characters.",
-      "hearAbout": "Optional."
+      "phone": "With the country code, e.g. +216. A number that works on WhatsApp is best.",
+      "profession": "Student, graduate, employee, freelancer…",
+      "links": "Optional. A profile link or a username.",
+      "motivation": "What do you expect from the program, and what will you do with what you learn? At least 20 characters.",
+      "aboutYou": "Your studies or work, your interests, and any experience in public work. At least 20 characters.",
+      "cv": "Optional. PDF or Word, up to 5 MB."
     },
-    "ages": {
-      "under-18": "Under 18",
-      "18-24": "18–24",
-      "25-34": "25–34",
-      "35-44": "35–44",
-      "45-plus": "45 and over"
-    },
-    "agePlaceholder": "Select",
     "errors": {
       "required": "This field is required.",
       "email": "Enter a valid email address.",
       "tooLong": "This is longer than allowed.",
+      "dateOfBirth": "Enter a valid date of birth.",
       "motivationShort": "Write at least 20 characters.",
+      "aboutShort": "Write at least 20 characters.",
+      "cvTooLarge": "The file is larger than 5 MB.",
+      "cvType": "The file must be a PDF or Word document.",
+      "pledge": "The commitment pledge is required.",
       "consent": "Agreeing to the privacy policy is required.",
       "spam": "The form could not be sent.",
       "rateLimited": "Too many submissions in a short time. Please try again in a few minutes.",
@@ -368,7 +415,7 @@
       },
       {
         "q": "How will I know my application was accepted?",
-        "a": "The Academy's team contacts you by email after reviewing it."
+        "a": "The Academy's team reviews applications, then contacts you at the email address you registered."
       }
     ],
     "accountTitle": "My account",
@@ -404,7 +451,7 @@
     "title": "Content & **knowledge**",
     "intro": "Minbar Al-Toufan, and lectures and learning materials.",
     "minbarTitle": "Minbar Al-Toufan",
-    "minbarIntro": "Intellectual spaces for analysis and foresight that respond quickly to current events concerning Palestine, the nation, and the world: independent lectures and specialised sessions by experts, researchers, and specialists. We read the event, understand the context, and anticipate what follows.",
+    "minbarIntro": "An intellectual space that reads current events and issues concerning Palestine, the nation, and the world, with analysis and foresight: independent lectures and specialised sessions by experts and researchers. We read the event, understand the context, and anticipate what follows.",
     "minbarEmpty": "No posts have been published yet.",
     "allPosts": "All posts",
     "materialsTitle": "Lectures & materials",
@@ -459,7 +506,7 @@
       {
         "h": "What we collect",
         "p": [
-          "When you apply we collect: full name, email, phone (optional), country, city (optional), age range, your motivation, and how you heard about the Academy (optional).",
+          "When you apply we collect: full name, gender, date of birth, email, phone number, nationality, country of residence, profession, any organisation you belong to, links to your social accounts (optional), how you heard about the Academy, your motivation, a short note about yourself, and your CV (optional).",
           "When you contact us we collect: name, email, subject, and your message."
         ]
       },
@@ -472,7 +519,7 @@
       {
         "h": "Who can see it",
         "p": [
-          "Only the Academy's team responsible for running the programs. We do not sell data or share it with third parties for marketing.",
+          "Only the Academy's team responsible for reviewing applications and running the programs; CVs are visible to no one else. We do not sell data or share it with third parties for marketing.",
           "Data is stored with the hosting and email providers the Academy contracts."
         ]
       },
