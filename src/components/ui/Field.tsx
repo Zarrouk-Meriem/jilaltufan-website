@@ -9,14 +9,46 @@ const control =
 
 type Common = { label: string; hint?: string; error?: string; required?: boolean; id: string }
 
+/**
+ * The line under a control is always there, so an error replacing a hint (or
+ * appearing under a field that had none) never pushes the rest of the form down.
+ * `lines` reserves room for hints that wrap on a phone.
+ */
+function Message({
+  id,
+  hint,
+  error,
+  lines = 1,
+}: {
+  id: string
+  hint?: string
+  error?: string
+  lines?: 1 | 2
+}) {
+  return (
+    <div className={cn('text-xs leading-5', lines === 2 ? 'min-h-10' : 'min-h-5')}>
+      {error ? (
+        <p id={`${id}-error`} role="alert" className="font-medium text-red-700">
+          {error}
+        </p>
+      ) : hint ? (
+        <p id={`${id}-hint`} className="text-ink-500">
+          {hint}
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
 function Wrap({
   label,
   hint,
   error,
   required,
   id,
+  lines,
   children,
-}: Common & { children: React.ReactNode }) {
+}: Common & { lines?: 1 | 2; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-sm font-medium text-ink-900">
@@ -28,16 +60,7 @@ function Wrap({
         ) : null}
       </label>
       {children}
-      {hint && !error ? (
-        <p id={`${id}-hint`} className="text-xs text-ink-500">
-          {hint}
-        </p>
-      ) : null}
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-xs font-medium text-red-700">
-          {error}
-        </p>
-      ) : null}
+      <Message id={id} hint={hint} error={error} lines={lines} />
     </div>
   )
 }
@@ -79,7 +102,7 @@ export function Textarea({
   ...rest
 }: Common & ComponentProps<'textarea'>) {
   return (
-    <Wrap {...{ label, hint, error, required, id }}>
+    <Wrap {...{ label, hint, error, required, id }} lines={2}>
       <textarea
         id={id}
         aria-invalid={error ? true : undefined}
@@ -142,18 +165,14 @@ export function Checkbox({
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className={cn(
-            'mt-1 size-4 shrink-0 rounded-brand border border-line-strong accent-red-600 focus:shadow-[var(--focus-ring)] focus:outline-none',
+            'mt-1 size-4 shrink-0 rounded-brand accent-red-600 focus:outline-none focus-visible:shadow-[var(--focus-ring)]',
             className,
           )}
           {...rest}
         />
         <span>{label}</span>
       </label>
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-xs font-medium text-red-700">
-          {error}
-        </p>
-      ) : null}
+      <Message id={id} error={error} />
     </div>
   )
 }
@@ -205,23 +224,14 @@ export function RadioGroup({
               id={`${id}-${o.value}`}
               type="radio"
               value={o.value}
-              className="size-4 shrink-0 border border-line-strong accent-red-600 focus:shadow-[var(--focus-ring)] focus:outline-none"
+              className="size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-line-strong bg-paper transition-[border-color,border-width] duration-150 ease-brand checked:border-[5px] checked:border-red-600 hover:border-ink-700 focus:outline-none focus-visible:shadow-[var(--focus-ring)]"
               {...rest}
             />
             {o.label}
           </label>
         ))}
       </div>
-      {hint && !error ? (
-        <p id={`${id}-hint`} className="text-xs text-ink-500">
-          {hint}
-        </p>
-      ) : null}
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-xs font-medium text-red-700">
-          {error}
-        </p>
-      ) : null}
+      <Message id={id} hint={hint} error={error} />
     </fieldset>
   )
 }
