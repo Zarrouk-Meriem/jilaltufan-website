@@ -86,7 +86,7 @@ Use `PORT=3001 scripts/dev-restart.sh [--clean]`. Never poll the server with req
 
 ## Accessibility
 
-WCAG 2.2 AA is a gate, not a goal. Semantic landmarks, skip link, 2px red focus ring with offset, keyboard-complete accordion / menu / lightbox, form errors announced, `alt` required on every upload. Zero serious/critical axe violations.
+WCAG 2.2 AA is a gate, not a goal. Semantic landmarks, skip link, 2px red focus ring with offset on buttons and links (form fields instead darken their border to ink and take the soft `--focus-halo`; the hard ring on a field was called harsh, user feedback 2026-09-18), keyboard-complete accordion / menu / lightbox, form errors announced, `alt` required on every upload. Zero serious/critical axe violations.
 
 Honour `prefers-reduced-motion` by removing transforms — not by shortening them.
 

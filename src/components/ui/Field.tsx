@@ -4,7 +4,7 @@ import { cn } from '@/lib/cn'
 export const control =
   'w-full rounded-brand border border-line-strong bg-paper px-3.5 text-ink-900 placeholder:text-ink-500 ' +
   'transition-[border-color,box-shadow] duration-150 ease-brand ' +
-  'hover:border-ink-700 focus:border-ink-900 focus:outline-none focus:shadow-[var(--focus-ring)] ' +
+  'hover:border-ink-700 focus:border-ink-900 focus:outline-none focus:shadow-[var(--focus-halo)] ' +
   'aria-[invalid=true]:border-error-600 disabled:bg-paper-2 disabled:opacity-60'
 
 type Common = { label: string; hint?: string; error?: string; required?: boolean; id: string }
@@ -131,7 +131,7 @@ export function Checkbox({
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className={cn(
-            'mt-1 size-4 shrink-0 rounded-brand accent-red-600 focus:outline-none focus-visible:shadow-[var(--focus-ring)]',
+            'mt-1 size-4 shrink-0 rounded-brand accent-red-600 focus:outline-none focus-visible:shadow-[var(--focus-halo)]',
             className,
           )}
           {...rest}
@@ -190,7 +190,7 @@ export function RadioGroup({
               id={`${id}-${o.value}`}
               type="radio"
               value={o.value}
-              className="size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-line-strong bg-paper transition-[border-color,border-width] duration-150 ease-brand checked:border-[5px] checked:border-red-600 hover:border-ink-700 focus:outline-none focus-visible:shadow-[var(--focus-ring)]"
+              className="size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-line-strong bg-paper transition-[border-color,border-width] duration-150 ease-brand checked:border-[5px] checked:border-red-600 hover:border-ink-700 focus:outline-none focus-visible:border-ink-900 focus-visible:shadow-[var(--focus-halo)]"
               {...rest}
             />
             {o.label}
@@ -221,7 +221,7 @@ export function FileInput({
         aria-describedby={describedBy(id, hint, error)}
         required={required}
         className={cn(
-          'block w-full rounded-brand text-sm text-ink-700 focus:shadow-[var(--focus-ring)] focus:outline-none',
+          'block w-full rounded-brand text-sm text-ink-700 focus:shadow-[var(--focus-halo)] focus:outline-none',
           'file:me-3 file:h-10 file:cursor-pointer file:rounded-brand file:border file:border-ink-900 file:bg-transparent file:px-3.5 file:text-sm file:font-medium file:text-ink-900',
           'file:transition-[background-color,color] file:duration-150 file:ease-brand hover:file:bg-ink-900 hover:file:text-white',
           className,
