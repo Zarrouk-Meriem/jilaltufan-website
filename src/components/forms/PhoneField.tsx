@@ -3,8 +3,11 @@
 import { useState, type Ref } from 'react'
 import { Combobox } from '@/components/ui/Combobox'
 import { control, FieldWrap } from '@/components/ui/Field'
-import { formatNational, toE164, type DialOption } from '@/lib/dial-codes'
+import { formatNational, splitE164, toE164, type DialOption } from '@/lib/dial-codes'
 import { cn } from '@/lib/cn'
+
+const fallbackFor = (options: DialOption[], c?: string) =>
+  c && options.some((o) => o.value === c) ? c : ''
 
 /**
  * Country (flag + calling code) beside the national number, the way phone fields are
@@ -22,6 +25,7 @@ export function PhoneField({
   error,
   required,
   options,
+  value = '',
   onChange,
   onBlur,
   inputRef,
@@ -37,6 +41,8 @@ export function PhoneField({
   error?: string
   required?: boolean
   options: DialOption[]
+  /** The form's value (E.164); when it changes from outside, the controls follow it. */
+  value?: string
   onChange: (value: string) => void
   onBlur?: () => void
   inputRef?: Ref<HTMLInputElement>
@@ -46,7 +52,20 @@ export function PhoneField({
 }) {
   const [chosen, setChosen] = useState('')
   const [number, setNumber] = useState('')
-  const fallback = options.some((o) => o.value === defaultCountry) ? defaultCountry! : ''
+  // Derived-state pattern: when the form hands us a value we did not emit (a restored
+  // draft), split it into country and national number once.
+  const [seen, setSeen] = useState(value)
+  if (value !== seen) {
+    setSeen(value)
+    if (value && value !== toE164(number, chosen || fallbackFor(options, defaultCountry))) {
+      const parts = splitE164(value)
+      if (parts) {
+        setChosen(parts.country)
+        setNumber(formatNational(parts.national, parts.country))
+      }
+    }
+  }
+  const fallback = fallbackFor(options, defaultCountry)
   const country = chosen || fallback
   const stored = toE164(number, country)
 

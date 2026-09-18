@@ -218,3 +218,39 @@ test('the country combobox filters as you type and picks with the keyboard', asy
   // The value the server reads travels in the hidden input, as the ISO code.
   await expect(page.locator('input[name="nationality"]')).toHaveValue('TN')
 })
+
+test('a reload keeps what was typed and the step reached; start over clears it', async ({
+  page,
+}) => {
+  await page.goto('/en/apply', { waitUntil: 'networkidle' })
+  await page.getByLabel(L.en.name).fill('Playwright Draft')
+  await page.getByLabel(L.en.female, { exact: true }).check()
+  await pick(page, L.en.day, '14')
+  await pick(page, L.en.month, L.en.may)
+  await pick(page, L.en.year, '2001')
+  await page.getByLabel(L.en.email).fill('draft@example.com')
+  await pick(page, L.en.code, L.en.tunisiaCode)
+  await page.getByLabel(L.en.phone).fill('20 000 000')
+  await pick(page, L.en.nationality, L.en.tunisia)
+  await pick(page, L.en.country, L.en.palestine)
+  await page.getByLabel(L.en.profession).fill('Student')
+  await page.getByRole('button', { name: L.en.next, exact: true }).click()
+  await expect(page.getByText(L.en.step(2), { exact: true })).toBeVisible()
+  await page.waitForTimeout(500) // the draft is written 300 ms after the last change
+
+  await page.reload({ waitUntil: 'networkidle' })
+  await expect(page.getByText(L.en.step(2), { exact: true })).toBeVisible()
+  await expect(page.getByText(/We restored what you typed/)).toBeVisible()
+  await page.getByRole('button', { name: L.en.back, exact: true }).click()
+  await expect(page.getByLabel(L.en.name)).toHaveValue('Playwright Draft')
+  await expect(page.getByLabel(L.en.nationality)).toHaveValue(L.en.tunisia)
+  await expect(page.getByLabel(L.en.phone)).toHaveValue('20 000 000')
+  await expect(page.locator('input[name="phone"]')).toHaveValue('+21620000000')
+  await expect(page.locator('input[name="dateOfBirth"]')).toHaveValue('2001-05-14')
+
+  await page.getByRole('button', { name: 'Start over', exact: true }).click()
+  await expect(page.getByLabel(L.en.name)).toHaveValue('')
+  await page.reload({ waitUntil: 'networkidle' })
+  await expect(page.getByText(L.en.step(1), { exact: true })).toBeVisible()
+  await expect(page.getByLabel(L.en.name)).toHaveValue('')
+})

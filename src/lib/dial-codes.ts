@@ -72,6 +72,16 @@ export function formatNational(input: string, country: string) {
   }
 }
 
+/** An E.164 value back into its country and national digits (a restored draft). */
+export function splitE164(e164: string): { country: string; national: string } | null {
+  try {
+    const p = parsePhoneNumberFromString(e164)
+    return p?.country ? { country: p.country, national: p.nationalNumber } : null
+  } catch {
+    return null
+  }
+}
+
 /** The stored form: E.164 (`+21620000000`), or '' while the number is not parseable. */
 export function toE164(national: string, country: string) {
   const digits = latinDigits(national).replace(/[^\d]/g, '')

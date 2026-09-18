@@ -23,6 +23,7 @@ import {
 } from '@/lib/forms/apply-schema'
 import type { ApplyResult } from '@/app/(frontend)/[locale]/apply/actions'
 import type { DialOption } from '@/lib/dial-codes'
+import { clearDraft, readDraft, writeDraft } from '@/lib/forms/apply-draft'
 import { DateField } from './DateField'
 import { PhoneField } from './PhoneField'
 import { Stepper } from './Stepper'
@@ -74,6 +75,8 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
     setError,
     trigger,
     control,
+    reset,
+    getValues,
     formState: { errors },
   } = useForm<ApplyInput>({
     resolver: zodResolver(clientSchema),
@@ -98,6 +101,34 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
     },
   })
   const affiliated = useWatch({ control, name: 'affiliated' })
+
+  // Draft: restore once after mount (the server never sees the browser's storage),
+  // then save on every change and on every step change; the confirmation clears it.
+  const [restored, setRestored] = useState(false)
+  useEffect(() => {
+    const draft = readDraft()
+    if (!draft) return
+    // The union in the schema (affiliated yes/no) makes the merged shape too wide for TS;
+    // the values are the form's own input shape.
+    reset({ ...getValues(), ...draft.values } as ApplyInput, { keepDefaultValues: true })
+    // Deferred: the step and the notice are UI state, set from outside the render pass.
+    const id = requestAnimationFrame(() => {
+      setStep(Math.min(Math.max(draft.step, 0), STEP_KEYS.length - 1))
+      setRestored(true)
+    })
+    return () => cancelAnimationFrame(id)
+  }, [reset, getValues])
+  const values = useWatch({ control })
+  useEffect(() => {
+    const timer = setTimeout(() => writeDraft(step, values as Partial<ApplyInput>), 300)
+    return () => clearTimeout(timer)
+  }, [values, step])
+  const startOver = () => {
+    clearDraft()
+    reset()
+    setRestored(false)
+    goTo(0)
+  }
   // The comboboxes are controlled: react-hook-form holds their value, a hidden input
   // carries it in the FormData the action reads.
   const nationality = useController({ control, name: 'nationality' })
@@ -111,6 +142,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
   const [state, formAction] = useActionState(
     async (prev: ApplyResult, fd: FormData) => {
       const r = await action(prev, fd)
+      if (r.status === 'success') clearDraft()
       if (r.status === 'error') {
         const fieldErrors = r.fieldErrors ?? {}
         for (const [k, v] of Object.entries(fieldErrors))
@@ -203,6 +235,18 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
         />
       </div>
 
+      {restored ? (
+        <p className="flex enter-fade flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-ink-700">
+          <span>{t('draftRestored')}</span>
+          <button
+            type="button"
+            onClick={startOver}
+            className="link-grow relative font-medium text-ink-900"
+          >
+            {t('draftStartOver')}
+          </button>
+        </p>
+      ) : null}
       {state.status === 'error' && state.formError ? (
         <div ref={errorRef} tabIndex={-1} role="alert">
           <Callout>{t(`errors.${state.formError}` as 'errors.server')}</Callout>
@@ -279,6 +323,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
             placeholder={t('hints.phonePlaceholder')}
             error={err('phone')}
             options={dialCodes}
+            value={phone.field.value ?? ''}
             onChange={phone.field.onChange}
             onBlur={phone.field.onBlur}
             inputRef={phone.field.ref}

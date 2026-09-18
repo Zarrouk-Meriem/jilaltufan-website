@@ -271,6 +271,8 @@
     "formIntro": "Three steps: your basic details, then your affiliation and accounts, then your motivation. It takes about five minutes; fields marked with a star are required.",
     "stepsLabel": "Application steps",
     "stepOf": "Step {n} of {total}",
+    "draftRestored": "We restored what you typed earlier; it is kept only in your browser and erased when you send.",
+    "draftStartOver": "Start over",
     "steps": {
       "basics": {
         "title": "Your details",

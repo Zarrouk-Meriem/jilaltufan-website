@@ -63,6 +63,16 @@ export function DateField({
   const [y, setY] = useState(initY)
   const [m, setM] = useState(initM)
   const [d, setD] = useState(initD)
+  // A value handed in from outside (a restored draft) replaces the parts once.
+  const [seen, setSeen] = useState(value)
+  if (value !== seen) {
+    setSeen(value)
+    if (value && value !== (y && m && d ? `${y}-${m}-${d}` : '')) {
+      setY(initY)
+      setM(initM)
+      setD(initD)
+    }
+  }
   const number = useMemo(
     () => new Intl.NumberFormat(locale, { numberingSystem: 'latn', useGrouping: false }),
     [locale],
