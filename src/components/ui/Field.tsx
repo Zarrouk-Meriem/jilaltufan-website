@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 export const control =
@@ -7,7 +7,13 @@ export const control =
   'hover:border-ink-700 focus:border-ink-900 focus:outline-none focus:shadow-[var(--focus-halo)] ' +
   'aria-[invalid=true]:border-error-600 disabled:bg-paper-2 disabled:opacity-60'
 
-type Common = { label: string; hint?: string; error?: string; required?: boolean; id: string }
+export type Common = {
+  label: string
+  hint?: string
+  error?: string
+  required?: boolean
+  id: string
+}
 
 /**
  * The line under a control is always there, so an error replacing a hint (or
@@ -76,18 +82,32 @@ export function Input({
   required,
   id,
   className,
+  icon,
   ...rest
-}: Common & ComponentProps<'input'>) {
+}: Common & ComponentProps<'input'> & { icon?: ReactNode }) {
+  const input = (
+    <input
+      id={id}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={describedBy(id, hint, error)}
+      required={required}
+      className={cn(control, 'h-11', icon && 'ps-10', className)}
+      {...rest}
+    />
+  )
   return (
     <FieldWrap {...{ label, hint, error, required, id }}>
-      <input
-        id={id}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(id, hint, error)}
-        required={required}
-        className={cn(control, 'h-11', className)}
-        {...rest}
-      />
+      {icon ? (
+        // Same direction as the input, so the icon sits where its text begins.
+        <div dir={rest.dir} className="relative">
+          {input}
+          <span className="pointer-events-none absolute start-3.5 top-1/2 flex -translate-y-1/2 text-ink-500">
+            {icon}
+          </span>
+        </div>
+      ) : (
+        input
+      )}
     </FieldWrap>
   )
 }
@@ -203,31 +223,3 @@ export function RadioGroup({
 }
 
 /** Native file input, its button styled as the secondary button. */
-export function FileInput({
-  label,
-  hint,
-  error,
-  required,
-  id,
-  className,
-  ...rest
-}: Common & Omit<ComponentProps<'input'>, 'type'>) {
-  return (
-    <FieldWrap {...{ label, hint, error, required, id }}>
-      <input
-        id={id}
-        type="file"
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(id, hint, error)}
-        required={required}
-        className={cn(
-          'block w-full rounded-brand text-sm text-ink-700 focus:shadow-[var(--focus-halo)] focus:outline-none',
-          'file:me-3 file:h-10 file:cursor-pointer file:rounded-brand file:border file:border-ink-900 file:bg-transparent file:px-3.5 file:text-sm file:font-medium file:text-ink-900',
-          'file:transition-[background-color,color] file:duration-150 file:ease-brand hover:file:bg-ink-900 hover:file:text-white',
-          className,
-        )}
-        {...rest}
-      />
-    </FieldWrap>
-  )
-}

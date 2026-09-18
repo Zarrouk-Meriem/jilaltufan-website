@@ -307,6 +307,8 @@
     "no": "لا",
     "selectPlaceholder": "اختر",
     "noResults": "لا نتائج",
+    "fileChoose": "اختر ملفًا",
+    "fileNone": "لم يُختر أيّ ملف بعد.",
     "date": {
       "day": "اليوم",
       "month": "الشهر",

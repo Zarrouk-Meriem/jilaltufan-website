@@ -180,10 +180,19 @@
   & > * {
     min-height: 0;
     overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      opacity var(--dur) var(--ease-out),
+      transform var(--dur) var(--ease-out);
   }
 }
 @utility collapse-y-open {
   grid-template-rows: 1fr;
+  & > * {
+    opacity: 1;
+    transform: none;
+  }
 }
 @keyframes enter-up {
   from {
@@ -209,6 +218,10 @@
   }
   .collapse-y {
     transition: none;
+    & > * {
+      transform: none;
+      transition: opacity var(--dur) var(--ease-out);
+    }
   }
 }
 

@@ -6,10 +6,12 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react'
 import { useController, useForm, useWatch, type FieldErrors as FormErrors } from 'react-hook-form'
 import { z } from 'zod'
+import { BrandIcon } from '@/components/icons/Brand'
 import { Button } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
 import { Combobox } from '@/components/ui/Combobox'
-import { Checkbox, FileInput, Input, RadioGroup, Textarea } from '@/components/ui/Field'
+import { Checkbox, Input, RadioGroup, Textarea } from '@/components/ui/Field'
+import { FileInput } from '@/components/ui/FileInput'
 import { Loader } from '@/components/ui/Loader'
 import { Link } from '@/i18n/navigation'
 import {
@@ -376,28 +378,35 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
 
       {/* 2 · Affiliation and presence */}
       <section aria-labelledby="apply-step-title" inert={step !== 1} className={panel(1)}>
-        <RadioGroup
-          id="affiliated"
-          label={t('fields.affiliated')}
-          required
-          error={err('affiliated')}
-          options={[
-            { value: 'yes', label: t('yes') },
-            { value: 'no', label: t('no') },
-          ]}
-          {...register('affiliated')}
-        />
-        {/* Stays mounted and eases open; the schema ignores it unless the answer is yes. */}
-        <div className={cn('collapse-y', affiliated === 'yes' && 'collapse-y-open')}>
-          <div inert={affiliated !== 'yes'}>
-            <Input
-              id="affiliationName"
-              label={t('fields.affiliationName')}
-              required
-              autoComplete="organization"
-              error={err('affiliationName')}
-              {...register('affiliationName')}
-            />
+        {/* One group: the name field belongs to the question, so the panel's gap does
+            not surround an empty block while it is collapsed. */}
+        <div>
+          <RadioGroup
+            id="affiliated"
+            label={t('fields.affiliated')}
+            required
+            error={err('affiliated')}
+            options={[
+              { value: 'yes', label: t('yes') },
+              { value: 'no', label: t('no') },
+            ]}
+            {...register('affiliated')}
+          />
+          {/* Stays mounted and eases open; the schema ignores it unless the answer is yes.
+              The spacing lives inside the clipped child so it grows with the height. */}
+          <div className={cn('collapse-y', affiliated === 'yes' && 'collapse-y-open')}>
+            <div inert={affiliated !== 'yes'}>
+              <div className="pt-1">
+                <Input
+                  id="affiliationName"
+                  label={t('fields.affiliationName')}
+                  required
+                  autoComplete="organization"
+                  error={err('affiliationName')}
+                  {...register('affiliationName')}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div className="border-t border-line pt-6">
@@ -407,6 +416,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
             <Input
               id="facebook"
               label={t('fields.facebook')}
+              icon={<BrandIcon brand="facebook" />}
               dir="ltr"
               autoComplete="url"
               error={err('facebook')}
@@ -415,6 +425,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
             <Input
               id="instagram"
               label={t('fields.instagram')}
+              icon={<BrandIcon brand="instagram" />}
               dir="ltr"
               autoComplete="url"
               error={err('instagram')}
@@ -423,6 +434,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
             <Input
               id="linkedin"
               label={t('fields.linkedin')}
+              icon={<BrandIcon brand="linkedin" />}
               dir="ltr"
               autoComplete="url"
               error={err('linkedin')}
@@ -470,6 +482,8 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
           label={t('fields.cv')}
           hint={t('hints.cv')}
           accept={CV_ACCEPT}
+          chooseLabel={t('fileChoose')}
+          emptyLabel={t('fileNone')}
           error={err('cv')}
           {...register('cv')}
         />

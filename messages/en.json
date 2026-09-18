@@ -296,6 +296,8 @@
     "no": "No",
     "selectPlaceholder": "Select",
     "noResults": "No results",
+    "fileChoose": "Choose a file",
+    "fileNone": "No file chosen yet.",
     "date": {
       "day": "Day",
       "month": "Month",
