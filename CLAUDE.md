@@ -63,6 +63,11 @@ Use `PORT=3001 scripts/dev-restart.sh [--clean]`. Never poll the server with req
 - Buttons and badges: 2px radius. The brand is angular; no pills.
 - Section rhythm: 128px desktop / 72px mobile. Content max-width 1200px; reading pages narrower.
 
+## Form controls — non-negotiable (user feedback, 2026-09-18)
+
+- **Never a native `<select>` or a native date/time picker.** The OS draws them in its own style and they break the page. Use the site's controls: `Combobox` (`src/components/ui/Combobox.tsx`, searchable for long lists, `bare` inside composite fields), `DateField` (day · month · year comboboxes), `PhoneField` (country code combobox + number). Radios and checkboxes are drawn by us too (`RadioGroup`, `Checkbox` in `Field.tsx`). The only native widget left is the file picker, styled through `file:` utilities.
+- Any new choice control must match the theme (2 px radius, hairline border, paper background, ink text, red only for the chosen mark) and follow the Motion rules below.
+
 ## Motion — non-negotiable (user feedback, 2026-09-18)
 
 - **Nothing appears, disappears, or changes abruptly.** Anything that shows, hides, toggles, expands, swaps, or moves in response to the visitor (a conditional field, a step panel, an error line, a dropdown, a confirmation, a filter result) eases: opacity plus a 4–8 px lift, or height through `grid-template-rows`, 150–250 ms on `--ease-out`. Use the utilities in `globals.css`: `enter` (fade-up on show), `enter-fade` (fade only, for text inside a reserved slot), `collapse-y` (height 0fr/1fr, keep the child mounted and `inert` while collapsed). The Accordion is the model for height; `.reveal` for first view.

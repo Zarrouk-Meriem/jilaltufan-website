@@ -6,6 +6,7 @@ import { PageIntro } from '@/components/sections/PageIntro'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { countryOptions } from '@/lib/countries'
+import { dialOptions } from '@/lib/dial-codes'
 import { submitApplication } from './actions'
 
 /**
@@ -44,6 +45,7 @@ export default async function ApplyPage({ params }: PageProps<'/[locale]/apply'>
           locale={locale}
           action={submitApplication}
           countries={countryOptions(locale)}
+          dialCodes={dialOptions(locale)}
           turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || undefined}
         />
       </div>

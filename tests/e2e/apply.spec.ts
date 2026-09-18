@@ -11,6 +11,12 @@ const L = {
     country: 'بلد الإقامة',
     profession: 'المهنة',
     tunisia: 'تونس',
+    code: 'رمز الدولة',
+    tunisiaCode: 'تونس +216',
+    day: 'اليوم',
+    month: 'الشهر',
+    year: 'السنة',
+    may: 'مايو',
     palestine: 'فلسطين',
     friend: 'صديق أو زميل',
     no: 'لا',
@@ -39,6 +45,12 @@ const L = {
     country: 'Country of residence',
     profession: 'Profession',
     tunisia: 'Tunisia',
+    code: 'Country code',
+    tunisiaCode: 'Tunisia +216',
+    day: 'Day',
+    month: 'Month',
+    year: 'Year',
+    may: 'May',
     palestine: 'Palestine',
     friend: 'A friend or colleague',
     no: 'No',
@@ -92,9 +104,12 @@ async function fillThroughToLastStep(page: Page, locale: 'ar' | 'en') {
   const l = L[locale]
   await page.getByLabel(l.name).fill('اختبار آلي — Playwright')
   await page.getByLabel(l.female, { exact: true }).check()
-  await page.getByLabel(l.dob).fill('2001-05-14')
+  await pick(page, l.day, '14')
+  await pick(page, l.month, l.may)
+  await pick(page, l.year, '2001')
   await page.getByLabel(l.email).fill(`playwright-${Date.now()}@example.com`)
-  await page.getByLabel(l.phone).fill('+216 20 000 000')
+  await pick(page, l.code, l.tunisiaCode)
+  await page.getByLabel(l.phone).fill('20 000 000')
   await pick(page, l.nationality, l.tunisia)
   await pick(page, l.country, l.palestine)
   await page.getByLabel(l.profession).fill('Student')
@@ -154,9 +169,12 @@ test('the organisation name is asked only after answering yes, and back keeps wh
   await page.goto('/en/apply', { waitUntil: 'networkidle' })
   await page.getByLabel(L.en.name).fill('Playwright')
   await page.getByLabel(L.en.female, { exact: true }).check()
-  await page.getByLabel(L.en.dob).fill('2001-05-14')
+  await pick(page, L.en.day, '14')
+  await pick(page, L.en.month, L.en.may)
+  await pick(page, L.en.year, '2001')
   await page.getByLabel(L.en.email).fill('playwright@example.com')
-  await page.getByLabel(L.en.phone).fill('+216 20 000 000')
+  await pick(page, L.en.code, L.en.tunisiaCode)
+  await page.getByLabel(L.en.phone).fill('20 000 000')
   await pick(page, L.en.nationality, L.en.tunisia)
   await pick(page, L.en.country, L.en.palestine)
   await page.getByLabel(L.en.profession).fill('Student')

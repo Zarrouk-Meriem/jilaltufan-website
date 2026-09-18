@@ -22,6 +22,9 @@ import {
   type ApplyInput,
 } from '@/lib/forms/apply-schema'
 import type { ApplyResult } from '@/app/(frontend)/[locale]/apply/actions'
+import type { DialOption } from '@/lib/dial-codes'
+import { DateField } from './DateField'
+import { PhoneField } from './PhoneField'
 import { Stepper } from './Stepper'
 
 // The honeypot is a SERVER check; the client must not block on it (a bot that runs JS would
@@ -34,6 +37,7 @@ type Props = {
   action: (prev: ApplyResult, fd: FormData) => Promise<ApplyResult>
   /** Computed on the server so both renders list the same names in the same order. */
   countries: CountryOption[]
+  dialCodes: DialOption[]
   turnstileSiteKey?: string
 }
 
@@ -45,7 +49,7 @@ function stepWithErrors(errors: Partial<Record<keyof ApplyInput, unknown>>) {
   return STEP_FIELDS.findIndex((fields) => fields.some((f) => keys.includes(f)))
 }
 
-export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
+export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Props) {
   const t = useTranslations('apply')
   const locale = useLocale() as 'ar' | 'en'
   const [pending, startTransition] = useTransition()
@@ -89,6 +93,8 @@ export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
   const nationality = useController({ control, name: 'nationality' })
   const country = useController({ control, name: 'country' })
   const hearAbout = useController({ control, name: 'hearAbout' })
+  const phone = useController({ control, name: 'phone' })
+  const dateOfBirth = useController({ control, name: 'dateOfBirth' })
 
   // Server-side field errors (shouldn't differ from the client's, but the server is the
   // truth): mark the fields and show the first step that owns one of them.
@@ -215,15 +221,18 @@ export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
             options={GENDERS.map((g) => ({ value: g, label: t(`genders.${g}`) }))}
             {...register('gender')}
           />
-          <Input
+          <DateField
             id="dateOfBirth"
-            type="date"
+            name="dateOfBirth"
             label={t('fields.dateOfBirth')}
             required
-            autoComplete="bday"
-            dir="ltr"
             error={err('dateOfBirth')}
-            {...register('dateOfBirth')}
+            value={dateOfBirth.field.value ?? ''}
+            onChange={dateOfBirth.field.onChange}
+            onBlur={dateOfBirth.field.onBlur}
+            inputRef={dateOfBirth.field.ref}
+            labels={{ day: t('date.day'), month: t('date.month'), year: t('date.year') }}
+            noResultsLabel={t('noResults')}
           />
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
@@ -238,16 +247,21 @@ export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
             dir="ltr"
             {...register('email')}
           />
-          <Input
+          <PhoneField
             id="phone"
-            type="tel"
+            name="phone"
             label={t('fields.phone')}
+            codeLabel={t('fields.phoneCode')}
             required
-            autoComplete="tel"
             hint={t('hints.phone')}
+            placeholder={t('hints.phonePlaceholder')}
             error={err('phone')}
-            dir="ltr"
-            {...register('phone')}
+            options={dialCodes}
+            onChange={phone.field.onChange}
+            onBlur={phone.field.onBlur}
+            inputRef={phone.field.ref}
+            defaultCountry={country.field.value || nationality.field.value || undefined}
+            noResultsLabel={t('noResults')}
           />
         </div>
         <div className="grid gap-6 sm:grid-cols-2">

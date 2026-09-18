@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { isCountryCode } from '@/lib/countries'
+import { normalizePhone } from '@/lib/dial-codes'
 
 /**
  * The application form, validated identically on the client and in the server
@@ -82,7 +83,12 @@ export const applyObject = z.object({
   gender: z.enum(GENDERS, { error: 'required' }),
   dateOfBirth,
   email: z.email('email').max(200, 'tooLong'),
-  phone: z.string().trim().min(6, 'required').max(40, 'tooLong'),
+  phone: z
+    .string()
+    .trim()
+    .max(40, 'tooLong')
+    .transform(normalizePhone)
+    .refine((v) => /^\+\d{1,4}\d{6,14}$/.test(v), 'phone'),
   nationality: country,
   country,
   profession: z.string().trim().min(2, 'required').max(120, 'tooLong'),

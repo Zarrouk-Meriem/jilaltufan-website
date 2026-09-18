@@ -74,6 +74,17 @@ describe('applySchema', () => {
     ).toBe(true)
   })
 
+  it('normalises the phone and insists on a country code', () => {
+    const r = applySchema.safeParse({ ...valid, phone: '+٢١٦ ٢٠ ٠٠٠ ٠٠٠' })
+    expect(r.success).toBe(true)
+    if (r.success) expect(r.data.phone).toBe('+21620000000')
+    for (const p of ['20 000 000', '+216 12', 'abc', '+216 2000000000000000']) {
+      const bad = applySchema.safeParse({ ...valid, phone: p })
+      expect(bad.success).toBe(false)
+      if (!bad.success) expect(['phone', 'tooLong']).toContain(toFieldErrors(bad.error).phone)
+    }
+  })
+
   it('rejects an impossible or future date of birth', () => {
     for (const d of ['2001-02-30', '1900-01-01', '2099-01-01', '14/05/2001'])
       expect(applySchema.safeParse({ ...valid, dateOfBirth: d }).success).toBe(false)

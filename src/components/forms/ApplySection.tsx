@@ -6,6 +6,7 @@ import Script from 'next/script'
 import { ButtonLink } from '@/components/ui/Button'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import type { ApplyResult } from '@/app/(frontend)/[locale]/apply/actions'
+import type { DialOption } from '@/lib/dial-codes'
 import { ApplyForm, type CountryOption } from './ApplyForm'
 
 type Success = Extract<ApplyResult, { status: 'success' }>
@@ -15,11 +16,13 @@ export function ApplySection({
   locale,
   action,
   countries,
+  dialCodes,
   turnstileSiteKey,
 }: {
   locale: string
   action: (prev: ApplyResult, fd: FormData) => Promise<ApplyResult>
   countries: CountryOption[]
+  dialCodes: DialOption[]
   turnstileSiteKey?: string
 }) {
   const t = useTranslations('apply')
@@ -64,6 +67,7 @@ export function ApplySection({
       ) : null}
       <ApplyForm
         countries={countries}
+        dialCodes={dialCodes}
         turnstileSiteKey={turnstileSiteKey}
         action={async (prev, fd) => {
           const r = await action(prev, fd)

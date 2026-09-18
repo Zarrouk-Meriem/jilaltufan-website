@@ -294,6 +294,11 @@
     "no": "No",
     "selectPlaceholder": "Select",
     "noResults": "No results",
+    "date": {
+      "day": "Day",
+      "month": "Month",
+      "year": "Year"
+    },
     "linksTitle": "Your social accounts",
     "fields": {
       "fullName": "Full name",
@@ -301,6 +306,7 @@
       "dateOfBirth": "Date of birth",
       "email": "Email",
       "phone": "Phone number",
+      "phoneCode": "Country code",
       "nationality": "Nationality",
       "country": "Country of residence",
       "profession": "Profession",
@@ -330,7 +336,8 @@
     },
     "hints": {
       "email": "We send the confirmation and session links here.",
-      "phone": "With the country code, e.g. +216. A number that works on WhatsApp is best.",
+      "phone": "Choose the country code, then type the number without it. A number that works on WhatsApp is best.",
+      "phonePlaceholder": "20 000 000",
       "profession": "Student, graduate, employee, freelancer…",
       "links": "Optional. A profile link or a username.",
       "motivation": "What do you expect from the program, and what will you do with what you learn? At least 20 characters.",
@@ -340,6 +347,7 @@
     "errors": {
       "required": "This field is required.",
       "email": "Enter a valid email address.",
+      "phone": "Enter the country code and a valid number.",
       "tooLong": "This is longer than allowed.",
       "dateOfBirth": "Enter a valid date of birth.",
       "motivationShort": "Write at least 20 characters.",

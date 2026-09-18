@@ -5,7 +5,8 @@ import { useEffect, useId, useMemo, useRef, useState, type Ref } from 'react'
 import { cn } from '@/lib/cn'
 import { control, FieldWrap } from './Field'
 
-export type ComboboxOption = { value: string; label: string }
+/** `short` is what the closed control shows when it differs from the list row. */
+export type ComboboxOption = { value: string; label: string; short?: string }
 
 /** Loose matching for typed text: no case, no tashkeel, one alef for all its forms. */
 function fold(s: string) {
@@ -39,10 +40,14 @@ export function Combobox({
   error,
   required,
   searchable = true,
+  bare = false,
+  ariaLabel,
+  className,
 }: {
   id: string
-  name: string
-  label: string
+  /** FormData key of the hidden input; omit when a parent carries the value itself. */
+  name?: string
+  label?: string
   options: ComboboxOption[]
   value: string
   onChange: (value: string) => void
@@ -54,6 +59,10 @@ export function Combobox({
   error?: string
   required?: boolean
   searchable?: boolean
+  /** Only the control, no label or message line (for composite fields). */
+  bare?: boolean
+  ariaLabel?: string
+  className?: string
 }) {
   const listId = `${useId()}-list`
   const [open, setOpen] = useState(false)
@@ -153,96 +162,97 @@ export function Combobox({
     }
   }
 
-  return (
-    <FieldWrap {...{ label, hint, error, required, id }}>
-      <div className="relative">
-        <input
-          id={id}
-          ref={inputRef}
-          type="text"
-          role="combobox"
-          aria-expanded={open}
-          aria-controls={listId}
-          aria-autocomplete={searchable ? 'list' : 'none'}
-          aria-activedescendant={open && active >= 0 ? `${listId}-${active}` : undefined}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
-          aria-required={required || undefined}
-          autoComplete="off"
-          readOnly={!searchable}
-          placeholder={placeholder}
-          value={query ?? selected?.label ?? ''}
-          onChange={(e) => {
-            setQuery(e.target.value)
-            setOpen(true)
-            setActive(0)
-          }}
-          onFocus={() => {
-            if (!searchable) show()
-          }}
-          onClick={() => {
-            if (!open) show()
-          }}
-          onKeyDown={onKeyDown}
-          onBlur={() => {
-            close()
-            onBlur?.()
-          }}
-          className={cn(control, 'h-11 pe-10', !searchable && 'cursor-pointer')}
-        />
-        <input type="hidden" name={name} value={value} />
-        <ChevronDown
-          aria-hidden
-          strokeWidth={1.5}
-          className={cn(
-            'pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-700 transition-transform duration-200 ease-brand motion-reduce:transition-none',
-            open && 'rotate-180',
-          )}
-        />
-        <ul
-          ref={listRef}
-          id={listId}
-          role="listbox"
-          hidden={!open}
-          className="absolute start-0 end-0 top-full z-20 mt-1 max-h-64 enter overflow-y-auto rounded-brand border border-line-strong bg-paper py-1 shadow-[0_12px_32px_rgb(5_7_8_/_0.12)]"
-        >
-          {filtered.length ? (
-            filtered.map((o, i) => {
-              const isSelected = o.value === value
-              return (
-                <li
-                  key={o.value}
-                  id={`${listId}-${i}`}
-                  data-index={i}
-                  role="option"
-                  aria-selected={isSelected}
-                  // mousedown, not click: the input must keep focus so blur does not close
-                  // the list before the choice lands.
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    choose(o)
-                  }}
-                  onMouseMove={() => setActive(i)}
-                  className={cn(
-                    'flex cursor-pointer items-center justify-between gap-3 px-3.5 py-2 text-sm text-ink-900',
-                    i === active && 'bg-paper-2',
-                    isSelected && 'font-medium',
-                  )}
-                >
-                  <span>{o.label}</span>
-                  {isSelected ? (
-                    <Check aria-hidden strokeWidth={2} className="size-4 shrink-0 text-red-600" />
-                  ) : null}
-                </li>
-              )
-            })
-          ) : (
-            <li className="px-3.5 py-2 text-sm text-ink-500" role="presentation">
-              {noResultsLabel}
-            </li>
-          )}
-        </ul>
-      </div>
-    </FieldWrap>
+  const body = (
+    <div className={cn('relative', className)}>
+      <input
+        id={id}
+        ref={inputRef}
+        type="text"
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-autocomplete={searchable ? 'list' : 'none'}
+        aria-activedescendant={open && active >= 0 ? `${listId}-${active}` : undefined}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
+        aria-required={required || undefined}
+        aria-label={ariaLabel}
+        autoComplete="off"
+        readOnly={!searchable}
+        placeholder={placeholder}
+        value={query ?? selected?.short ?? selected?.label ?? ''}
+        onChange={(e) => {
+          setQuery(e.target.value)
+          setOpen(true)
+          setActive(0)
+        }}
+        onFocus={() => {
+          if (!searchable) show()
+        }}
+        onClick={() => {
+          if (!open) show()
+        }}
+        onKeyDown={onKeyDown}
+        onBlur={() => {
+          close()
+          onBlur?.()
+        }}
+        className={cn(control, 'h-11 pe-10', !searchable && 'cursor-pointer')}
+      />
+      {name ? <input type="hidden" name={name} value={value} /> : null}
+      <ChevronDown
+        aria-hidden
+        strokeWidth={1.5}
+        className={cn(
+          'pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-700 transition-transform duration-200 ease-brand motion-reduce:transition-none',
+          open && 'rotate-180',
+        )}
+      />
+      <ul
+        ref={listRef}
+        id={listId}
+        role="listbox"
+        hidden={!open}
+        className="absolute start-0 end-0 top-full z-20 mt-1 max-h-64 enter overflow-y-auto rounded-brand border border-line-strong bg-paper py-1 shadow-[0_12px_32px_rgb(5_7_8_/_0.12)]"
+      >
+        {filtered.length ? (
+          filtered.map((o, i) => {
+            const isSelected = o.value === value
+            return (
+              <li
+                key={o.value}
+                id={`${listId}-${i}`}
+                data-index={i}
+                role="option"
+                aria-selected={isSelected}
+                // mousedown, not click: the input must keep focus so blur does not close
+                // the list before the choice lands.
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  choose(o)
+                }}
+                onMouseMove={() => setActive(i)}
+                className={cn(
+                  'flex cursor-pointer items-center justify-between gap-3 px-3.5 py-2 text-sm text-ink-900',
+                  i === active && 'bg-paper-2',
+                  isSelected && 'font-medium',
+                )}
+              >
+                <span>{o.label}</span>
+                {isSelected ? (
+                  <Check aria-hidden strokeWidth={2} className="size-4 shrink-0 text-red-600" />
+                ) : null}
+              </li>
+            )
+          })
+        ) : (
+          <li className="px-3.5 py-2 text-sm text-ink-500" role="presentation">
+            {noResultsLabel}
+          </li>
+        )}
+      </ul>
+    </div>
   )
+  if (bare) return body
+  return <FieldWrap {...{ label: label ?? '', hint, error, required, id }}>{body}</FieldWrap>
 }
