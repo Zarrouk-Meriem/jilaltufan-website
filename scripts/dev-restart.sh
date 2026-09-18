@@ -13,4 +13,10 @@ sleep 2
 for _ in $(seq 1 90); do grep -q "Ready in" .artifacts-dev.log && break; sleep 1; done
 grep -q "Ready in" .artifacts-dev.log || { echo "dev server did not become ready"; exit 1; }
 sleep 4
+# Warm every public route one at a time: parallel first compiles (a Playwright run with
+# four workers, a browser tab reconnecting) race on Turbopack's manifests and leave
+# every route answering 500 with "Unexpected non-whitespace character after JSON".
+for r in "" /programs /programs/palestine-our-compass /apply /schedule /events /events/jeel-altoufan-camp /projects /about /about/structure /students /instructors /knowledge /knowledge/minbar /knowledge/materials /contact /privacy /terms; do
+  for l in ar en; do curl -s -o /dev/null "http://localhost:$PORT/$l$r"; done
+done
 curl -s -o /dev/null -w "http://localhost:$PORT → %{http_code}\n" "http://localhost:$PORT/ar"

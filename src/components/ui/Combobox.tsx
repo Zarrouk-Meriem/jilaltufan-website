@@ -6,7 +6,12 @@ import { cn } from '@/lib/cn'
 import { control, FieldWrap } from './Field'
 
 /** `short` is what the closed control shows when it differs from the list row. */
-export type ComboboxOption = { value: string; label: string; short?: string }
+export type ComboboxOption = { value: string; label: string; short?: string; flag?: string }
+
+/** A country flag from flag-icons (4:3, SVG), decorative next to the name. */
+const Flag = ({ code }: { code: string }) => (
+  <span aria-hidden className={`fi fi-${code} shrink-0 rounded-[1px] text-[1.1em]`} />
+)
 
 /** Loose matching for typed text: no case, no tashkeel, one alef for all its forms. */
 function fold(s: string) {
@@ -162,8 +167,14 @@ export function Combobox({
     }
   }
 
+  const hasFlags = options.some((o) => o.flag)
   const body = (
     <div className={cn('relative', className)}>
+      {/* Static copy of flag-icons (scripts/sync-flags.mjs); React hoists the link to <head>. */}
+      {hasFlags ? (
+        // eslint-disable-next-line @next/next/no-css-tags -- a static file on purpose (scripts/sync-flags.mjs)
+        <link rel="stylesheet" precedence="default" href="/flags/flag-icons.css" />
+      ) : null}
       <input
         id={id}
         ref={inputRef}
@@ -197,8 +208,18 @@ export function Combobox({
           close()
           onBlur?.()
         }}
-        className={cn(control, 'h-11 pe-10', !searchable && 'cursor-pointer')}
+        className={cn(
+          control,
+          'h-11 pe-10',
+          !searchable && 'cursor-pointer',
+          selected?.flag && query === null && 'ps-10',
+        )}
       />
+      {selected?.flag && query === null ? (
+        <span className="pointer-events-none absolute start-3.5 top-1/2 flex -translate-y-1/2">
+          <Flag code={selected.flag} />
+        </span>
+      ) : null}
       {name ? <input type="hidden" name={name} value={value} /> : null}
       <ChevronDown
         aria-hidden
@@ -238,7 +259,10 @@ export function Combobox({
                   isSelected && 'font-medium',
                 )}
               >
-                <span>{o.label}</span>
+                <span className="flex min-w-0 items-center gap-2.5">
+                  {o.flag ? <Flag code={o.flag} /> : null}
+                  <span className="truncate">{o.label}</span>
+                </span>
                 {isSelected ? (
                   <Check aria-hidden strokeWidth={2} className="size-4 shrink-0 text-red-600" />
                 ) : null}

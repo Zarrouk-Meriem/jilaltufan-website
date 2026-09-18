@@ -52,9 +52,15 @@ importers:
       dotenv:
         specifier: 17.4.2
         version: 17.4.2
+      flag-icons:
+        specifier: ^7.5.0
+        version: 7.5.0
       graphql:
         specifier: ^16.8.1
         version: 16.14.2
+      libphonenumber-js:
+        specifier: ^1.13.13
+        version: 1.13.13
       lucide-react:
         specifier: 1.44.0
         version: 1.44.0(react@19.3.0)
@@ -3092,6 +3098,9 @@ packages:
     resolution: {integrity: sha512-6jvvn/12IC4quLBL1KNokxC7wWTvYncaVUYSoxWw7YykPLuRrnv4qdHcSOywOI5RpkOVGeQRtWM8/q+G6W6qfQ==}
     engines: {node: '>= 8'}
 
+  flag-icons@7.5.0:
+    resolution: {integrity: sha512-kd+MNXviFIg5hijH766tt+3x76ele1AXlo4zDdCxIvqWZhKt4T83bOtxUOOMlTx/EcFdUMH5yvQgYlFh1EqqFg==}
+
   flat-cache@4.0.1:
     resolution: {integrity: sha512-f7ccFPK3SXFHpx15UIGyRJ/FJQctuKZ0zVuN3frBo4HnK3cay9VEW0R6yPYFHC0AgqhukPzKjq22t5DmAyqGyw==}
     engines: {node: '>=16'}
@@ -3530,6 +3539,9 @@ packages:
     resolution: {integrity: sha512-DeXj9X5xDCjgKLU/7RR+/HQEVzuuEUiwldwOGsHK/sfAfELGWEyTcf0x+uOvCvK3O2zPmZePXWL85vtia6GyZw==}
     engines: {node: '>=16'}
     hasBin: true
+
+  libphonenumber-js@1.13.13:
+    resolution: {integrity: sha512-hV6SmWnyQ8U1QXhhqbqYBHIStNnscG7A5XbGodgdHhf/8N5PwhYpJA5U/yHDjYwPYTd8uNGXqq416XctuvK2PA==}
 
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
@@ -7885,6 +7897,8 @@ snapshots:
       micromatch: 4.0.8
       resolve-dir: 1.0.1
 
+  flag-icons@7.5.0: {}
+
   flat-cache@4.0.1:
     dependencies:
       flatted: 3.4.4
@@ -8321,6 +8335,8 @@ snapshots:
   lib0@0.2.117:
     dependencies:
       isomorphic.js: 0.2.5
+
+  libphonenumber-js@1.13.13: {}
 
   lightningcss-android-arm64@1.32.0:
     optional: true

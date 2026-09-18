@@ -31,7 +31,7 @@ import { Stepper } from './Stepper'
 // simply learn to leave the field empty, and a real submission is never affected).
 const clientSchema = withApplyRules(applyObject.extend({ website: z.string().optional() }))
 
-export type CountryOption = { value: string; label: string }
+export type CountryOption = { value: string; label: string; flag?: string }
 
 type Props = {
   action: (prev: ApplyResult, fd: FormData) => Promise<ApplyResult>
@@ -57,6 +57,16 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
   const formRef = useRef<HTMLFormElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
   const errorRef = useRef<HTMLDivElement>(null)
+  // The stepper sticks under the header; a hairline appears only once it is stuck.
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  const [stuck, setStuck] = useState(false)
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => setStuck(!e!.isIntersecting), { threshold: 1 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   const {
     register,
@@ -173,13 +183,24 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
         <input id="website" tabIndex={-1} autoComplete="off" {...register('website')} />
       </div>
 
-      <Stepper
-        label={t('stepsLabel')}
-        current={step}
-        steps={STEP_KEYS.map((k) => ({ title: t(`steps.${k}.title`), hint: t(`steps.${k}.hint`) }))}
-        stepLabel={(n, total) => t('stepOf', { n, total })}
-        onSelect={goTo}
-      />
+      <div ref={sentinelRef} aria-hidden className="-mb-px h-px" />
+      <div
+        className={cn(
+          'sticky top-20 z-30 -mx-[var(--gutter)] bg-paper px-[var(--gutter)] py-4 transition-shadow duration-200 ease-brand motion-reduce:transition-none md:top-24',
+          stuck && 'shadow-[0_1px_0_0_var(--line)]',
+        )}
+      >
+        <Stepper
+          label={t('stepsLabel')}
+          current={step}
+          steps={STEP_KEYS.map((k) => ({
+            title: t(`steps.${k}.title`),
+            hint: t(`steps.${k}.hint`),
+          }))}
+          stepLabel={(n, total) => t('stepOf', { n, total })}
+          onSelect={goTo}
+        />
+      </div>
 
       {state.status === 'error' && state.formError ? (
         <div ref={errorRef} tabIndex={-1} role="alert">

@@ -3,15 +3,15 @@
 import { useState, type Ref } from 'react'
 import { Combobox } from '@/components/ui/Combobox'
 import { control, FieldWrap } from '@/components/ui/Field'
-import type { DialOption } from '@/lib/dial-codes'
+import { formatNational, toE164, type DialOption } from '@/lib/dial-codes'
 import { cn } from '@/lib/cn'
 
-const digitsOnly = (s: string) => s.replace(/[^\d٠-٩۰-۹]/g, '')
-
 /**
- * Country code + national number as one field. What the form receives, and what the
- * hidden input carries, is the joined value `+216 20000000`. Until the visitor picks a
- * code, it follows `defaultCountry` (residence, then nationality), so most never touch it.
+ * Country (flag + calling code) beside the national number, the way phone fields are
+ * usually built, on the site's own combobox. libphonenumber groups the digits as the
+ * visitor types and produces the stored E.164 value (`+21620000000`) that the hidden
+ * input carries. Until the visitor picks a country, it follows `defaultCountry`
+ * (residence, then nationality), so most never touch it.
  */
 export function PhoneField({
   id,
@@ -48,11 +48,7 @@ export function PhoneField({
   const [number, setNumber] = useState('')
   const fallback = options.some((o) => o.value === defaultCountry) ? defaultCountry! : ''
   const country = chosen || fallback
-  const code = options.find((o) => o.value === country)?.short ?? ''
-  const joined = (c: string, n: string) => {
-    const d = digitsOnly(n)
-    return d ? (c ? `${c} ${d}` : d) : ''
-  }
+  const stored = toE164(number, country)
 
   return (
     <FieldWrap {...{ label, hint, error, required, id }}>
@@ -65,12 +61,14 @@ export function PhoneField({
           value={country}
           onChange={(v) => {
             setChosen(v)
-            onChange(joined(options.find((o) => o.value === v)?.short ?? '', number))
+            const next = formatNational(number, v)
+            setNumber(next)
+            onChange(toE164(next, v))
           }}
           placeholder="+"
           noResultsLabel={noResultsLabel}
           error={error}
-          className="w-36 shrink-0"
+          className="w-40 shrink-0"
         />
         <input
           id={id}
@@ -85,17 +83,18 @@ export function PhoneField({
           required={required}
           value={number}
           onChange={(e) => {
-            setNumber(e.target.value)
-            onChange(joined(code, e.target.value))
+            const next = formatNational(e.target.value, country)
+            setNumber(next)
+            onChange(toE164(next, country))
           }}
           onBlur={() => {
-            // The code may have followed the country since the last keystroke.
-            onChange(joined(code, number))
+            // The country may have followed the residence field since the last keystroke.
+            onChange(toE164(number, country))
             onBlur?.()
           }}
           className={cn(control, 'h-11 min-w-0 flex-1')}
         />
-        <input type="hidden" name={name} value={joined(code, number)} />
+        <input type="hidden" name={name} value={stored} />
       </div>
     </FieldWrap>
   )

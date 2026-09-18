@@ -270,16 +270,18 @@ export function countryName(code: string, locale: Locale): string {
   }
 }
 
-const sorted = new Map<Locale, { value: CountryCode; label: string }[]>()
+const sorted = new Map<Locale, { value: CountryCode; label: string; flag: string }[]>()
 
-/** `{ value, label }` pairs sorted by the localised name, memoised per locale. */
+/** `{ value, label, flag }` rows sorted by the localised name, memoised per locale; `flag` is the flag-icons key. */
 export function countryOptions(locale: Locale) {
   let list = sorted.get(locale)
   if (!list) {
     const collator = new Intl.Collator(locale)
-    list = COUNTRY_CODES.map((value) => ({ value, label: countryName(value, locale) })).sort(
-      (a, b) => collator.compare(a.label, b.label),
-    )
+    list = COUNTRY_CODES.map((value) => ({
+      value,
+      label: countryName(value, locale),
+      flag: value.toLowerCase(),
+    })).sort((a, b) => collator.compare(a.label, b.label))
     sorted.set(locale, list)
   }
   return list

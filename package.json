@@ -10,6 +10,7 @@
     "pnpm": "^10"
   },
   "scripts": {
+    "postinstall": "node scripts/sync-flags.mjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
@@ -45,7 +46,9 @@
     "clsx": "2.1.1",
     "cross-env": "10.1.0",
     "dotenv": "17.4.2",
+    "flag-icons": "^7.5.0",
     "graphql": "^16.8.1",
+    "libphonenumber-js": "^1.13.13",
     "lucide-react": "1.44.0",
     "next": "16.3.5",
     "next-intl": "4.14.3",

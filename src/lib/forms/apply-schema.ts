@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { isCountryCode } from '@/lib/countries'
+import { isValidPhoneNumber } from 'libphonenumber-js/min'
 import { normalizePhone } from '@/lib/dial-codes'
 
 /**
@@ -88,7 +89,7 @@ export const applyObject = z.object({
     .trim()
     .max(40, 'tooLong')
     .transform(normalizePhone)
-    .refine((v) => /^\+\d{1,4}\d{6,14}$/.test(v), 'phone'),
+    .refine((v) => v.startsWith('+') && isValidPhoneNumber(v), 'phone'),
   nationality: country,
   country,
   profession: z.string().trim().min(2, 'required').max(120, 'tooLong'),
