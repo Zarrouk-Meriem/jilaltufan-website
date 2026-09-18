@@ -163,8 +163,12 @@ test('the organisation name is asked only after answering yes, and back keeps wh
   await page.getByRole('button', { name: L.en.next, exact: true }).click()
   await expect(page.getByText(L.en.step(2), { exact: true })).toBeVisible()
 
-  await expect(page.getByLabel(L.en.orgName)).toHaveCount(0)
+  // Mounted but collapsed until the answer is yes; it eases open rather than popping in.
+  // (Clipped by the collapsed wrapper, so it intersects nothing; a hidden check would pass
+  // on a merely off-screen element too.)
+  await expect(page.getByLabel(L.en.orgName)).not.toBeInViewport()
   await page.getByLabel(L.en.yes, { exact: true }).check()
+  await expect(page.getByLabel(L.en.orgName)).toBeInViewport()
   await expect(page.getByLabel(L.en.orgName)).toBeVisible()
   await page.getByRole('button', { name: L.en.next, exact: true }).click()
   await expect(page.locator('form').getByRole('alert').first()).toContainText(L.en.required)

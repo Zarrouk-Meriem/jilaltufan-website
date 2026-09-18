@@ -30,7 +30,7 @@ export function ApplySection({
       <div
         role="status"
         aria-live="polite"
-        className="rounded-brand border border-line bg-paper-2 p-8 md:p-12"
+        className="enter rounded-brand border border-line bg-paper-2 p-8 md:p-12"
       >
         <SectionHeading
           locale={locale}

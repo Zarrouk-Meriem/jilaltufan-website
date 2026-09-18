@@ -28,11 +28,11 @@ export function Message({
   return (
     <div className={cn('text-xs leading-5', lines === 2 ? 'min-h-10' : 'min-h-5')}>
       {error ? (
-        <p id={`${id}-error`} role="alert" className="font-medium text-red-700">
+        <p id={`${id}-error`} role="alert" className="enter-fade font-medium text-red-700">
           {error}
         </p>
       ) : hint ? (
-        <p id={`${id}-hint`} className="text-ink-500">
+        <p id={`${id}-hint`} className="enter-fade text-ink-500">
           {hint}
         </p>
       ) : null}

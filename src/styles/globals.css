@@ -160,6 +160,55 @@
   }
 }
 
+/* Things that show, hide, or toggle ease in; nothing pops (CLAUDE.md → Motion).
+   `enter` restarts whenever the element goes from display:none to shown, so a
+   panel toggled with `hidden` animates on every reveal. `collapse-y` keeps the
+   child mounted and animates its height; pair it with `inert` while collapsed. */
+@utility enter {
+  animation: enter-up var(--dur) var(--ease-out) both;
+}
+@utility enter-fade {
+  animation: enter-fade var(--dur) var(--ease-out) both;
+}
+@utility collapse-y {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur) var(--ease-out);
+  & > * {
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+@utility collapse-y-open {
+  grid-template-rows: 1fr;
+}
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation-name: enter-fade;
+  }
+  .collapse-y {
+    transition: none;
+  }
+}
+
 /* Components ---------------------------------------------------------- */
 @layer components {
   .link-grow::after {

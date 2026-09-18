@@ -204,7 +204,7 @@ export function Combobox({
           id={listId}
           role="listbox"
           hidden={!open}
-          className="absolute start-0 end-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-brand border border-line-strong bg-paper py-1 shadow-[0_12px_32px_rgb(5_7_8_/_0.12)]"
+          className="absolute start-0 end-0 top-full z-20 mt-1 max-h-64 enter overflow-y-auto rounded-brand border border-line-strong bg-paper py-1 shadow-[0_12px_32px_rgb(5_7_8_/_0.12)]"
         >
           {filtered.length ? (
             filtered.map((o, i) => {

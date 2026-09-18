@@ -150,7 +150,7 @@ export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
   const last = step === STEP_KEYS.length - 1
   const BackIcon = locale === 'ar' ? ArrowRight : ArrowLeft
   const NextIcon = locale === 'ar' ? ArrowLeft : ArrowRight
-  const panel = (i: number) => cn('flex flex-col gap-6', step === i ? undefined : 'hidden')
+  const panel = (i: number) => cn('flex flex-col gap-6', step === i ? 'enter' : 'hidden')
 
   return (
     <form
@@ -306,16 +306,19 @@ export function ApplyForm({ action, countries, turnstileSiteKey }: Props) {
           ]}
           {...register('affiliated')}
         />
-        {affiliated === 'yes' ? (
-          <Input
-            id="affiliationName"
-            label={t('fields.affiliationName')}
-            required
-            autoComplete="organization"
-            error={err('affiliationName')}
-            {...register('affiliationName')}
-          />
-        ) : null}
+        {/* Stays mounted and eases open; the schema ignores it unless the answer is yes. */}
+        <div className={cn('collapse-y', affiliated === 'yes' && 'collapse-y-open')}>
+          <div inert={affiliated !== 'yes'}>
+            <Input
+              id="affiliationName"
+              label={t('fields.affiliationName')}
+              required
+              autoComplete="organization"
+              error={err('affiliationName')}
+              {...register('affiliationName')}
+            />
+          </div>
+        </div>
         <div className="border-t border-line pt-6">
           <p className="text-sm font-medium text-ink-900">{t('linksTitle')}</p>
           <p className="mt-1 text-xs text-ink-500">{t('hints.links')}</p>

@@ -63,6 +63,13 @@ Use `PORT=3001 scripts/dev-restart.sh [--clean]`. Never poll the server with req
 - Buttons and badges: 2px radius. The brand is angular; no pills.
 - Section rhythm: 128px desktop / 72px mobile. Content max-width 1200px; reading pages narrower.
 
+## Motion — non-negotiable (user feedback, 2026-09-18)
+
+- **Nothing appears, disappears, or changes abruptly.** Anything that shows, hides, toggles, expands, swaps, or moves in response to the visitor (a conditional field, a step panel, an error line, a dropdown, a confirmation, a filter result) eases: opacity plus a 4–8 px lift, or height through `grid-template-rows`, 150–250 ms on `--ease-out`. Use the utilities in `globals.css`: `enter` (fade-up on show), `enter-fade` (fade only, for text inside a reserved slot), `collapse-y` (height 0fr/1fr, keep the child mounted and `inert` while collapsed). The Accordion is the model for height; `.reveal` for first view.
+- **No layout jumps.** Reserve the space (every field has a message line, `FieldWrap`) or animate the height; never let content below hop when something above toggles.
+- `prefers-reduced-motion` keeps the fade and drops the movement; it never shortens a duration to hide the problem.
+- Instant is only acceptable for state that must not lag: focus rings and the live badge.
+
 ## Code conventions
 
 - Server Components by default. `'use client'` only where interaction genuinely requires it — and then at the smallest possible leaf.
