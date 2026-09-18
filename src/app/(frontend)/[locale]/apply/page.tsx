@@ -3,6 +3,7 @@ import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ApplySection } from '@/components/forms/ApplySection'
 import { PageIntro } from '@/components/sections/PageIntro'
+import { FlagStyles } from '@/components/ui/FlagStyles'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { countryOptions } from '@/lib/countries'
@@ -34,6 +35,7 @@ export default async function ApplyPage({ params }: PageProps<'/[locale]/apply'>
   const t = await getTranslations()
   return (
     <>
+      <FlagStyles />
       <PageIntro
         locale={locale}
         title={t('apply.title')}

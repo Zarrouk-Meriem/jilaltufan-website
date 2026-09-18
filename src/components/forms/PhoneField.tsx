@@ -68,7 +68,7 @@ export function PhoneField({
           placeholder="+"
           noResultsLabel={noResultsLabel}
           error={error}
-          className="w-40 shrink-0"
+          className="w-32 shrink-0"
         />
         <input
           id={id}

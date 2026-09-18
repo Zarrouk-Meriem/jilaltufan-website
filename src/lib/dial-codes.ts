@@ -11,7 +11,13 @@ import { COUNTRY_CODES, countryName, type CountryCode } from './countries'
  * metadata, the `min` build): no hand-kept table, real validation, and formatting
  * as the visitor types. Flags are `flag-icons` classes keyed by the lower-case ISO code.
  */
-export type DialOption = { value: CountryCode; label: string; short: string; flag: string }
+export type DialOption = {
+  value: CountryCode
+  label: string
+  short: string
+  display: string
+  flag: string
+}
 
 const cache = new Map<'ar' | 'en', DialOption[]>()
 
@@ -33,6 +39,7 @@ export function dialOptions(locale: 'ar' | 'en'): DialOption[] {
           value,
           label: `${countryName(value, locale)} ${short}`,
           short,
+          display: short,
           flag: value.toLowerCase(),
         },
       ]
