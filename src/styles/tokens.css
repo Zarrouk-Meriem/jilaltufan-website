@@ -5,6 +5,11 @@
   --red-700: #a11f25;
   --red-50: #fbedee;
 
+  /* Errors are not the brand red: a deeper brick, so a mistake never reads as identity. */
+  --error-700: #8c2f24;
+  --error-600: #a8402f;
+  --error-50: #fbeeea;
+
   --ink-900: #050708;
   --ink-700: #2b3439;
   --ink-500: #5f6b72;

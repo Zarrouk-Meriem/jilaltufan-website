@@ -84,7 +84,10 @@ export function Combobox({
   /** Text the visitor is typing; null shows the chosen option's label instead. */
   const [query, setQuery] = useState<string | null>(null)
   const [active, setActive] = useState(-1)
+  /** Open upwards when the window has no room below the control. */
+  const [above, setAbove] = useState(false)
   const listRef = useRef<HTMLUListElement>(null)
+  const wrapRef = useRef<HTMLDivElement>(null)
 
   const selected = options.find((o) => o.value === value)
   const filtered = useMemo(() => {
@@ -107,6 +110,8 @@ export function Combobox({
     setActive(-1)
   }
   const show = (at?: number) => {
+    const r = wrapRef.current?.querySelector('input')?.getBoundingClientRect()
+    if (r) setAbove(window.innerHeight - r.bottom < 280 && r.top > 280)
     setOpen(true)
     const i =
       at ??
@@ -121,12 +126,18 @@ export function Combobox({
     close()
   }
 
-  // Keep the active option in view while arrowing through a long list.
+  // Keep the active option in view while arrowing through a long list. The list
+  // scrolls itself: scrollIntoView would also move the page, under the sticky header.
   useEffect(() => {
     if (!open || active < 0) return
-    listRef.current
-      ?.querySelector<HTMLElement>(`[data-index="${active}"]`)
-      ?.scrollIntoView({ block: 'nearest' })
+    const list = listRef.current
+    const el = list?.querySelector<HTMLElement>(`[data-index="${active}"]`)
+    if (!list || !el) return
+    const top = el.offsetTop
+    const bottom = top + el.offsetHeight
+    if (top < list.scrollTop) list.scrollTop = top
+    else if (bottom > list.scrollTop + list.clientHeight)
+      list.scrollTop = bottom - list.clientHeight
   }, [open, active])
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -178,7 +189,7 @@ export function Combobox({
   }
 
   const body = (
-    <div className={cn('relative', className)}>
+    <div ref={wrapRef} className={cn('relative', className)}>
       <input
         id={id}
         ref={inputRef}
@@ -216,7 +227,7 @@ export function Combobox({
           control,
           'h-11 pe-10',
           !searchable && 'cursor-pointer',
-          selected?.flag && query === null && 'ps-10',
+          selected?.flag && query === null && 'ps-12',
         )}
       />
       {selected?.flag && query === null ? (
@@ -238,7 +249,10 @@ export function Combobox({
         id={listId}
         role="listbox"
         hidden={!open}
-        className="absolute start-0 end-0 top-full z-20 mt-1 max-h-64 enter overflow-y-auto rounded-brand border border-line-strong bg-paper py-1 shadow-[0_12px_32px_rgb(5_7_8_/_0.12)]"
+        className={cn(
+          'absolute start-0 end-0 z-20 max-h-64 enter overflow-y-auto rounded-brand border border-line-strong bg-paper py-1 shadow-[0_12px_32px_rgb(5_7_8_/_0.12)]',
+          above ? 'bottom-full mb-1' : 'top-full mt-1',
+        )}
       >
         {filtered.length ? (
           filtered.map((o, i) => {

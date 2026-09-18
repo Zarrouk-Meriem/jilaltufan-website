@@ -6,6 +6,9 @@
   --color-red-600: var(--red-600);
   --color-red-700: var(--red-700);
   --color-red-50: var(--red-50);
+  --color-error-700: var(--error-700);
+  --color-error-600: var(--error-600);
+  --color-error-50: var(--error-50);
   --color-ink-900: var(--ink-900);
   --color-ink-700: var(--ink-700);
   --color-ink-500: var(--ink-500);

@@ -56,7 +56,7 @@ Use `PORT=3001 scripts/dev-restart.sh [--clean]`. Never poll the server with req
 
 - The font stack is `'Poppins', var(--font-arabic)` **by bare name on purpose** — `var(--font-latin)` would drag in next/font's Arial-aliased fallback, which has Arabic glyphs and hijacks Arabic text. Don't "fix" it.
 - Colours, spacing, and type come from tokens in `src/styles/tokens.css`. **No hard-coded hex, ever** — if a value isn't a token, either add a token or you're doing it wrong.
-- Red (`--red-600`) is ~5–10% of any screen: the mark, primary CTAs, rules, active states. Nothing else.
+- Red (`--red-600`) is ~5–10% of any screen: the mark, primary CTAs, rules, active states. Nothing else. **Errors never use it**: field errors are `--error-700` text and `--error-600` borders (a deeper brick), so a mistake is not painted in the identity colour (user feedback, 2026-09-18).
 - On navy: text is white or `rgb(255 255 255 / .78)`. **Red is decorative on navy** (mark and rules only) — it fails text contrast.
 - **The mark is never a small UI indicator** (nav, bullets, badges) — user feedback. It appears as logo, hero/timeline station, and card corner notch only. State is shown with weight, colour, or a hairline.
 - **No utility row above the header** (user feedback). The header is one row: logo · five nav items · language switch · CTA. Student/Instructor windows live in the footer, the mobile menu, and contextual links.

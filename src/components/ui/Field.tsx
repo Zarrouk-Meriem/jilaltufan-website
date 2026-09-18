@@ -5,7 +5,7 @@ export const control =
   'w-full rounded-brand border border-line-strong bg-paper px-3.5 text-ink-900 placeholder:text-ink-500 ' +
   'transition-[border-color,box-shadow] duration-150 ease-brand ' +
   'hover:border-ink-700 focus:border-ink-900 focus:outline-none focus:shadow-[var(--focus-ring)] ' +
-  'aria-[invalid=true]:border-red-600 disabled:bg-paper-2 disabled:opacity-60'
+  'aria-[invalid=true]:border-error-600 disabled:bg-paper-2 disabled:opacity-60'
 
 type Common = { label: string; hint?: string; error?: string; required?: boolean; id: string }
 
@@ -28,7 +28,7 @@ export function Message({
   return (
     <div className={cn('text-xs leading-5', lines === 2 ? 'min-h-10' : 'min-h-5')}>
       {error ? (
-        <p id={`${id}-error`} role="alert" className="enter-fade font-medium text-red-700">
+        <p id={`${id}-error`} role="alert" className="enter-fade font-medium text-error-700">
           {error}
         </p>
       ) : hint ? (
