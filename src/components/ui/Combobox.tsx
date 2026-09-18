@@ -18,7 +18,7 @@ export type ComboboxOption = {
   flag?: string
 }
 
-/** A country flag from flag-icons (4:3, SVG), decorative next to the name. */
+/** A country flag (3:2 SVG, embedded in /flags/flag-icons.css), decorative next to the name. */
 const Flag = ({ code }: { code: string }) => (
   <span aria-hidden className={`fi fi-${code} shrink-0 rounded-[1px] text-[1.1em]`} />
 )

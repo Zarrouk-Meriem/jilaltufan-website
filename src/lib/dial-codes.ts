@@ -9,7 +9,7 @@ import { COUNTRY_CODES, countryName, type CountryCode } from './countries'
 /**
  * Country calling codes and number handling come from libphonenumber (Google's
  * metadata, the `min` build): no hand-kept table, real validation, and formatting
- * as the visitor types. Flags are `flag-icons` classes keyed by the lower-case ISO code.
+ * as the visitor types. Flags are `.fi-xx` classes keyed by the lower-case ISO code.
  */
 export type DialOption = {
   value: CountryCode

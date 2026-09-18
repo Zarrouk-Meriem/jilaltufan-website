@@ -1,24 +1,35 @@
-// Copies flag-icons' 4:3 SVGs and a matching stylesheet into public/flags so the
-// flags load as plain static files. Importing the package CSS through the bundler
-// makes Turbopack process 500+ url() assets on every apply-route compile, which
-// widened the dev-server race documented in CLAUDE.md. Runs on postinstall.
-import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+// Builds public/flags/flag-icons.css: every flag embedded as a data URI, so the whole
+// set arrives in one cached request and flags never pop in row by row. Source:
+// country-flag-icons (the small, optimised 3:2 SVGs the phone-input libraries use).
+// Importing flag CSS through the bundler is avoided on purpose (CLAUDE.md). Runs on
+// postinstall; the output is git-ignored.
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const src = resolve(root, 'node_modules/flag-icons')
+const src = resolve(root, 'node_modules/country-flag-icons/3x2')
 const out = resolve(root, 'public/flags')
-mkdirSync(resolve(out, '4x3'), { recursive: true })
+mkdirSync(out, { recursive: true })
+
+// Minimal, URL-safe encoding for an SVG data URI (smaller than base64).
+const encode = (svg) =>
+  svg
+    .replace(/\s+/g, ' ')
+    .replace(/"/g, "'")
+    .replace(/[<>#%{}]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)
+
+const rules = [
+  '.fi{display:inline-block;width:1.5em;line-height:1em;background-size:contain;background-position:50%;background-repeat:no-repeat;position:relative}',
+  '.fi::before{content:"\\00a0"}',
+]
 let n = 0
-for (const f of readdirSync(resolve(src, 'flags/4x3'))) {
-  if (!f.endsWith('.svg')) continue
-  copyFileSync(resolve(src, 'flags/4x3', f), resolve(out, '4x3', f))
+for (const f of readdirSync(src)) {
+  const m = /^([A-Z]{2})\.svg$/.exec(f)
+  if (!m) continue
+  const svg = readFileSync(resolve(src, f), 'utf8')
+  rules.push(`.fi-${m[1].toLowerCase()}{background-image:url("data:image/svg+xml,${encode(svg)}")}`)
   n++
 }
-// Keep only the 4:3 rules; the 1:1 set is not used.
-const css = readFileSync(resolve(src, 'css/flag-icons.min.css'), 'utf8')
-  .replace(/url\(\.\.\/flags\/4x3\//g, 'url(/flags/4x3/')
-  .replace(/\.fi-[a-z-]+\.fis\{[^}]*\}/g, '')
-writeFileSync(resolve(out, 'flag-icons.css'), css)
-console.log(`flags: ${n} files → public/flags`)
+writeFileSync(resolve(out, 'flag-icons.css'), rules.join('\n') + '\n')
+console.log(`flags: ${n} embedded → public/flags/flag-icons.css`)

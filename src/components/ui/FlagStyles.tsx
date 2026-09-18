@@ -1,7 +1,7 @@
 /**
- * The flag-icons stylesheet, a static copy in public/flags (scripts/sync-flags.mjs).
- * Rendered by the server pages that show flags so it is in the first HTML, not hoisted
- * after hydration (which is when flags would otherwise pop in).
+ * Every flag embedded in one stylesheet (public/flags, built by scripts/sync-flags.mjs
+ * from country-flag-icons). Rendered by the server pages that show flags so it is in
+ * the first HTML: one cached request, and no flag ever pops in after its row.
  */
 export function FlagStyles() {
   // eslint-disable-next-line @next/next/no-css-tags -- a static file on purpose, see above
