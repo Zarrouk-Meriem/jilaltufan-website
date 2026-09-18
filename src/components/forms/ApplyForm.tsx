@@ -186,7 +186,8 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
       <div ref={sentinelRef} aria-hidden className="-mb-px h-px" />
       <div
         className={cn(
-          'sticky top-20 z-30 -mx-[var(--gutter)] bg-paper px-[var(--gutter)] py-4 transition-shadow duration-200 ease-brand motion-reduce:transition-none md:top-24',
+          // top-16 = the header bar once it has compacted on scroll, which is when this sticks.
+          'sticky top-16 z-30 -mx-[var(--gutter)] bg-paper px-[var(--gutter)] py-4 transition-shadow duration-200 ease-brand motion-reduce:transition-none',
           stuck && 'shadow-[0_1px_0_0_var(--line)]',
         )}
       >
