@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, ChevronDown } from 'lucide-react'
+import { Icon } from '@/components/icons/Icon'
 import { useEffect, useId, useMemo, useRef, useState, type Ref } from 'react'
 import { cn } from '@/lib/cn'
 import { control, FieldWrap } from './Field'
@@ -236,9 +236,8 @@ export function Combobox({
         </span>
       ) : null}
       {name ? <input type="hidden" name={name} value={value} /> : null}
-      <ChevronDown
-        aria-hidden
-        strokeWidth={1.5}
+      <Icon
+        name="chevron"
         className={cn(
           'pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-700 transition-transform duration-200 ease-brand motion-reduce:transition-none',
           open && 'rotate-180',
@@ -281,9 +280,7 @@ export function Combobox({
                   {o.flag ? <Flag code={o.flag} /> : null}
                   <span className="truncate">{o.display ?? o.label}</span>
                 </span>
-                {isSelected ? (
-                  <Check aria-hidden strokeWidth={2} className="size-4 shrink-0 text-red-600" />
-                ) : null}
+                {isSelected ? <Icon name="check" className="size-4 text-red-600" /> : null}
               </li>
             )
           })

@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUpRight } from 'lucide-react'
+import { Icon } from '@/components/icons/Icon'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
@@ -88,7 +88,7 @@ export function PageNav({
               className="inline-flex items-center gap-1.5 rounded-brand border border-line px-3 py-1.5 text-sm text-ink-700 hover:border-ink-900"
             >
               {extra.label}
-              <ArrowUpRight aria-hidden strokeWidth={1.5} className="size-3.5 rtl:-scale-x-100" />
+              <Icon name="arrow-diagonal" tone="mono" className="size-3.5" />
             </Link>
           </li>
         ) : null}
@@ -130,10 +130,10 @@ export function PageNav({
             className="group mt-6 inline-flex items-center gap-2 border-t border-line pt-4 text-sm font-medium text-ink-900"
           >
             <span className="link-grow relative">{extra.label}</span>
-            <ArrowUpRight
-              aria-hidden
-              strokeWidth={1.5}
-              className="size-4 text-red-700 transition-transform duration-200 ease-brand group-hover:-translate-y-0.5 motion-reduce:transition-none rtl:-scale-x-100"
+            <Icon
+              name="arrow-diagonal"
+              tone="mono"
+              className="size-4 text-red-700 transition-transform duration-200 ease-brand group-hover:-translate-y-0.5 motion-reduce:transition-none"
             />
           </Link>
         ) : null}

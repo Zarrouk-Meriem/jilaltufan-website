@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { Icon } from '@/components/icons/Icon'
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
@@ -14,12 +14,11 @@ export async function AnnouncementBar({ locale }: { locale: Locale }) {
   if (!settings.announcementEnabled || !text) return null
   const href = settings.announcementLink?.trim()
   const external = !!href && /^https?:\/\//.test(href)
-  const Arrow = locale === 'ar' ? ArrowLeft : ArrowRight
   const body = (
     <span className="inline-flex flex-wrap items-center gap-x-3 gap-y-1">
       <span aria-hidden className="inline-block h-4 w-0.5 shrink-0 bg-red-600" />
       <span className="text-sm font-medium text-ink-900">{text}</span>
-      {href ? <Arrow aria-hidden strokeWidth={1.5} className="size-4 text-red-700" /> : null}
+      {href ? <Icon name="arrow" tone="mono" className="size-4 text-red-700" /> : null}
     </span>
   )
   return (

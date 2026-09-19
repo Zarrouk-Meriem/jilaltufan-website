@@ -1,4 +1,4 @@
-import { ArrowUpLeft } from 'lucide-react'
+import { Icon } from '@/components/icons/Icon'
 import { Mark } from '@/components/brand/Mark'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import { DuotoneImage } from '@/components/ui/DuotoneImage'
@@ -133,10 +133,10 @@ export function ProgramCard({
           {featured && featuredCta ? (
             <span className="link-grow relative">{featuredCta}</span>
           ) : null}
-          <ArrowUpLeft
-            aria-hidden
-            strokeWidth={1.5}
-            className="size-4 transition-transform duration-200 ease-brand group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none ltr:rotate-90"
+          <Icon
+            name="arrow-diagonal"
+            tone="mono"
+            className="size-4 transition-transform duration-200 ease-brand group-hover:-translate-y-0.5 motion-reduce:transition-none"
           />
         </span>
       </div>

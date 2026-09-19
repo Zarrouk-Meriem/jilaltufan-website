@@ -53,6 +53,7 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 - [ ] **P2 — Registration mode per program.** Default is `application` for all six. Confirm, or mark specific programs `open`.
 - [ ] **P2 — Join-link policy.** Default is `window` (link appears 30 min before start). Alternatives: `always`, `email-only`. _Enforced in the query layer: the Zoom URL is not in the HTML outside the window._
 - [ ] **P2 — Academy time zone.** Default `Asia/Hebron`, labelled «بتوقيت القدس». Confirm.
+- [ ] **P3 — Icon set.** The site's icons are drawn in-house in the Icons8 «Stencil» language the academy picked on 2026-09-19 (sharp, two-tone: navy body, red accent, `src/components/icons/Icon.tsx`). Icons8's own SVGs are a paid format (their public endpoint answers `PAID_FORMAT`); if a licence is bought, the glyph paths can be swapped one for one without touching any page.
 - [ ] **P3 — Red display type on navy** — brand does it (refs 07, 08), WCAG fails it. See `PLAN.md` §2.2 for the compromise; confirm or override.
 
 ## Infrastructure (at deploy time, not now)

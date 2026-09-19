@@ -19,6 +19,9 @@
   --paper: #ffffff;
   --paper-2: #f7f7f5;
 
+  /* Icon accent (the second tone of the stencil icon set); navy surfaces switch it to white. */
+  --icon-accent: var(--red-600);
+
   /* Navy surfaces open in Academy Blue and deepen; the lighter blue is for the portrait backdrop. */
   --navy-900: #032a3f;
   --navy-800: #004569;

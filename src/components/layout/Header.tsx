@@ -1,6 +1,6 @@
 'use client'
 
-import { Menu, X } from 'lucide-react'
+import { Icon } from '@/components/icons/Icon'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { ButtonLink } from '@/components/ui/Button'
@@ -144,7 +144,7 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
               onClick={() => setOpen(true)}
               className="inline-flex size-11 items-center justify-center rounded-brand text-ink-900 hover:bg-paper-2 md:hidden"
             >
-              <Menu strokeWidth={1.5} className="size-6" aria-hidden />
+              <Icon name="menu" className="size-6" />
             </button>
           </div>
         </div>
@@ -168,7 +168,7 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
             onClick={() => setOpen(false)}
             className="inline-flex size-11 items-center justify-center rounded-brand text-on-navy hover:bg-white/10"
           >
-            <X strokeWidth={1.5} className="size-6" aria-hidden />
+            <Icon name="close" className="size-6" />
           </button>
         </div>
         <nav aria-label={labels.mainNav} className="container-site mt-6 flex flex-1 flex-col">

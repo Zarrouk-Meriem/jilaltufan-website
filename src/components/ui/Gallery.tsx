@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Icon } from '@/components/icons/Icon'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/cn'
@@ -107,7 +107,7 @@ export function Gallery({
               onClick={close}
               className="absolute end-4 top-4 inline-flex size-11 items-center justify-center rounded-brand text-on-navy hover:bg-white/10"
             >
-              <X strokeWidth={1.5} aria-hidden />
+              <Icon name="close" />
             </button>
             {images.length > 1 ? (
               <>
@@ -119,8 +119,7 @@ export function Gallery({
                   }
                   className="absolute start-2 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-brand text-on-navy hover:bg-white/10"
                 >
-                  <ChevronRight strokeWidth={1.5} aria-hidden className="rtl:hidden" />
-                  <ChevronLeft strokeWidth={1.5} aria-hidden className="ltr:hidden" />
+                  <Icon name="chevron" direction="forward" />
                 </button>
                 <button
                   type="button"
@@ -128,8 +127,7 @@ export function Gallery({
                   onClick={() => setIndex((i) => (i === null ? i : (i + 1) % images.length))}
                   className="absolute end-2 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-brand text-on-navy hover:bg-white/10"
                 >
-                  <ChevronLeft strokeWidth={1.5} aria-hidden className="rtl:hidden" />
-                  <ChevronRight strokeWidth={1.5} aria-hidden className="ltr:hidden" />
+                  <Icon name="chevron" direction="back" />
                 </button>
               </>
             ) : null}

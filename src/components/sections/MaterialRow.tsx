@@ -1,4 +1,4 @@
-import { ExternalLink, FileText, BookOpen } from 'lucide-react'
+import { Icon, type IconName } from '@/components/icons/Icon'
 import { Badge } from '@/components/ui/Badge'
 
 export function MaterialRow({
@@ -18,10 +18,10 @@ export function MaterialRow({
   programTitle?: string | null
   actionLabel: string
 }) {
-  const Icon = type === 'pdf' ? FileText : type === 'link' ? ExternalLink : BookOpen
+  const icon: IconName = type === 'pdf' ? 'file' : type === 'link' ? 'external' : 'book'
   return (
     <div className="flex items-start gap-4 py-5">
-      <Icon aria-hidden strokeWidth={1.5} className="mt-1 size-5 shrink-0 text-ink-500" />
+      <Icon name={icon} className="mt-1 size-5 text-navy-800" />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-md font-semibold text-ink-900">{title}</h3>

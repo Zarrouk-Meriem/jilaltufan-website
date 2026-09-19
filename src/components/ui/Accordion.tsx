@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronDown } from 'lucide-react'
+import { Icon } from '@/components/icons/Icon'
 import { useCallback, useEffect, useId, useState } from 'react'
 import { cn } from '@/lib/cn'
 
@@ -108,9 +108,8 @@ export function Accordion({
                   <span className="text-md font-semibold text-ink-900">{item.heading}</span>
                   {item.meta ? <span className="text-sm text-ink-500">{item.meta}</span> : null}
                 </span>
-                <ChevronDown
-                  aria-hidden
-                  strokeWidth={1.5}
+                <Icon
+                  name="chevron"
                   className={cn(
                     'mt-1 size-5 shrink-0 text-ink-500 transition-transform duration-200 ease-brand motion-reduce:transition-none',
                     expanded && 'rotate-180',

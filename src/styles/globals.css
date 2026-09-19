@@ -122,10 +122,16 @@
 @utility surface-navy {
   background: var(--navy-surface);
   color: var(--on-navy);
+  --icon-accent: var(--on-navy);
 }
 @utility surface-navy-blue {
   background: var(--navy-surface-blue);
   color: var(--on-navy);
+  --icon-accent: var(--on-navy);
+}
+/* Folds an icon's accent into its body colour (icons inside buttons, on red, in dense chrome). */
+@utility icon-mono {
+  --icon-accent: currentColor;
 }
 @utility eyebrow-latin {
   font-size: var(--text-xs);

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { alternatesFor } from '@/lib/seo'
-import { Lock } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { Icon } from '@/components/icons/Icon'
 import { MaterialRow } from '@/components/sections/MaterialRow'
 import { PageIntro } from '@/components/sections/PageIntro'
 import { ProgramFilter } from '@/components/sections/ProgramFilter'
@@ -241,7 +241,7 @@ export default async function StudentsPage({
             <div className="rounded-brand border border-line bg-paper-2 p-6" aria-disabled="true">
               <div className="flex items-center justify-between gap-3">
                 <span className="inline-flex items-center gap-2 text-md font-semibold text-ink-900">
-                  <Lock aria-hidden strokeWidth={1.5} className="size-4 text-ink-500" />
+                  <Icon name="lock" className="size-4 text-navy-800" />
                   {t('students.accountTitle')}
                 </span>
                 <Badge tone="muted">{t('students.accountSoon')}</Badge>

@@ -1,8 +1,8 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
+import { Icon } from '@/components/icons/Icon'
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react'
 import { useController, useForm, useWatch, type FieldErrors as FormErrors } from 'react-hook-form'
 import { z } from 'zod'
@@ -198,8 +198,6 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
   }
 
   const last = step === STEP_KEYS.length - 1
-  const BackIcon = locale === 'ar' ? ArrowRight : ArrowLeft
-  const NextIcon = locale === 'ar' ? ArrowLeft : ArrowRight
   const panel = (i: number) => cn('flex flex-col gap-6', step === i ? 'enter' : 'hidden')
 
   return (
@@ -526,7 +524,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6">
         {step > 0 ? (
           <Button type="button" variant="ghost" size="lg" onClick={() => goTo(step - 1)}>
-            <BackIcon aria-hidden strokeWidth={1.5} className="size-4" />
+            <Icon name="arrow" direction="back" tone="mono" className="size-4" />
             {t('back')}
           </Button>
         ) : (
@@ -543,7 +541,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
         ) : (
           <Button key="next" type="button" size="lg" onClick={next}>
             {t('next')}
-            <NextIcon aria-hidden strokeWidth={1.5} className="size-4" />
+            <Icon name="arrow" tone="mono" className="size-4" />
           </Button>
         )}
       </div>

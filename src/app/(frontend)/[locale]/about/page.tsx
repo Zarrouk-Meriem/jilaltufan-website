@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Compass, GraduationCap, Target } from 'lucide-react'
 import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Prose } from '@/components/content/Prose'
+import { Icon, type IconName } from '@/components/icons/Icon'
 import { PageIntro } from '@/components/sections/PageIntro'
 import { PageNav } from '@/components/ui/PageNav'
 import { SectionHeading } from '@/components/ui/SectionHeading'
@@ -14,7 +14,7 @@ import { ordinalFor } from '@/lib/view'
 export const revalidate = 300
 
 /** One icon per value, in the order the academy lists them. */
-const VALUE_ICONS = [Compass, GraduationCap, Target]
+const VALUE_ICONS: IconName[] = ['compass', 'graduation', 'target']
 
 export async function generateMetadata({
   params,
@@ -107,13 +107,13 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
               {about.pillars?.length ? (
                 <ul className="mt-10 grid gap-4 sm:grid-cols-3">
                   {about.pillars.map((p, i) => {
-                    const Icon = VALUE_ICONS[i % VALUE_ICONS.length]!
+                    const icon = VALUE_ICONS[i % VALUE_ICONS.length]!
                     return (
                       <li
                         key={p.id ?? i}
                         className="rounded-brand border border-line p-5 transition-colors duration-200 ease-brand hover:border-ink-900"
                       >
-                        <Icon aria-hidden strokeWidth={1.5} className="size-6 text-red-700" />
+                        <Icon name={icon} className="size-6 text-navy-800" />
                         <h3 className="mt-4 text-base font-semibold text-ink-900">{p.title}</h3>
                         {p.text ? (
                           <p className="mt-2 text-sm leading-relaxed text-ink-700">{p.text}</p>

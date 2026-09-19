@@ -1,4 +1,4 @@
-import { ChevronLeft } from 'lucide-react'
+import { Icon } from '@/components/icons/Icon'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 
@@ -32,13 +32,7 @@ export function Breadcrumbs({
                   {item.label}
                 </span>
               )}
-              {!last ? (
-                <ChevronLeft
-                  aria-hidden
-                  className="size-4 rotate-180 rtl:rotate-0"
-                  strokeWidth={1.5}
-                />
-              ) : null}
+              {!last ? <Icon name="chevron" direction="forward" className="size-4" /> : null}
             </li>
           )
         })}
