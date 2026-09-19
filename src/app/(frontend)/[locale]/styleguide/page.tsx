@@ -174,7 +174,7 @@ export default async function StyleguidePage({ params }: PageProps<'/[locale]/st
               locale={locale}
               ordinal={ordinals[1]}
               onNavy
-              title={ar ? 'مخيمات **جيل الطوفان**' : 'The **Jeel Al-Toufan** Camp'}
+              title={ar ? 'مخيمات **جيل الطوفان**' : 'The **Jil Altufan** Camp'}
               intro={
                 ar
                   ? 'على الكحلي: الكلمة المميّزة بيضاء والخط أبيض.'

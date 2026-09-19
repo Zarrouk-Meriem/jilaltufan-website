@@ -23,7 +23,7 @@ export const Events: CollectionConfig = {
     },
     description: {
       ar: 'مخيمات جيل الطوفان (نوع "مخيم") والأنشطة والندوات.',
-      en: 'The Jeel Al-Toufan Camp (type "camp"), activities, and seminars.',
+      en: 'The Jil Altufan Camp (type "camp"), activities, and seminars.',
     },
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },

@@ -4,8 +4,8 @@ import React from 'react'
 export function Logo() {
   return (
     <span className="jaa-admin-logo" aria-label="أكاديمية جيل الطوفان" role="img">
-      <img className="jaa-admin-logo__light" src="/brand/logo-color.png" alt="" />
-      <img className="jaa-admin-logo__dark" src="/brand/logo-on-dark.png" alt="" />
+      <img className="jaa-admin-logo__light" src="/brand/logo.svg" alt="" />
+      <img className="jaa-admin-logo__dark" src="/brand/logo-on-dark.svg" alt="" />
     </span>
   )
 }

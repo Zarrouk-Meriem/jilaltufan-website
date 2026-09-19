@@ -1,4 +1,4 @@
-# PLAN.md — أكاديمية جيل الطوفان / Jeel Al-Toufan Academy
+# PLAN.md — أكاديمية جيل الطوفان / Jil Altufan Academy
 
 **Status:** M0 — awaiting approval. No application code written yet.
 **Date:** 2026-09-11 · **Season referenced by seed data:** 2026/2027 (Sep 2026 → Apr 2027)

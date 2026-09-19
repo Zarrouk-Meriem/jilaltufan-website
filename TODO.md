@@ -10,14 +10,14 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 
 ## Brand assets
 
-- [ ] **P1 — SVG logo files.** `_context/brand/logo-color.png` and `logo-on-dark.png` are raster exports. Request vector originals from the designer (Haythem Makhlouf). _Swap is a one-file change in `/public/brand/`._
-- [ ] **P1 — English lockup.** Reference 03 shows `ACADEMY / FLOOD'S GENERATION` but no file was supplied. Until it arrives, `/en` uses the mark + type-set Poppins. Confirm this is acceptable, or send the file.
+- [x] **SVG logo.** The designer's vector lockup arrived 2026-09-19 (`public/brand/logo.svg`; `logo-on-dark.svg` is the same paths with a white wordmark; `logo.png`/`logo-on-dark.png` are rasters for JSON-LD, mail clients, and the image-wedge probe).
+- [ ] **P1 — English lockup.** Still with the designer (2026-09-19). Until it arrives, `/en` uses the mark + type-set «Jil Altufan Academy» in Poppins.
 - [ ] **P2 — Confirm the mark.** `mark.svg` is the Prop 1 arrow, not the inverted triangle described in the brief (see `PLAN.md` §2.1). Confirm the arrow is the intended standalone mark, or supply the triangle as a second asset.
 - [ ] **P3 — Mono / single-colour logo** for print and low-colour contexts (reference 03 shows a grey variant).
 
 ## Typography
 
-- [ ] **P1 — Janna LT webfont licence.** Commercial font. Until licensed files land in `/public/fonts/janna/`, the site uses **IBM Plex Sans Arabic** as the stand-in. Swap = one `next/font/local` declaration in `src/styles/fonts.ts`.
+- [ ] **P1 — Arabic typeface decision.** Janna LT (the brand references' face) is a commercial Monotype font: about $41 per style on MyFonts, and the webfont licence is sold per monthly-pageview tier, so it is a recurring cost the moment traffic grows. The site runs on **IBM Plex Sans Arabic** (free, OFL) and will stay on a free face unless the academy chooses to pay; the closest free candidates in spirit (humanist Kufi) are Noto Kufi Arabic and Cairo. Swap = one `next/font` declaration in `src/styles/fonts.ts`. Decision pending (2026-09-19).
 - [ ] **P2 — Confirm weights needed** (the references use at least a light/regular for eyebrows and a heavy for display).
 
 ## Content the academy must supply
@@ -44,12 +44,12 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 
 ## Decisions still with the client
 
-- [ ] **P1 — Final English name usage.** _"Academy · Flood's Generation"_ per the brief vs _"Jeel Al-Toufan Academy"_. Currently both appear in different places; pick one for `/en`.
+- [x] **English name: «Jil Altufan Academy»** (decided 2026-09-19; the spelling used on email and social media). Applied everywhere on `/en`, in emails, calendar files, JSON-LD, and the OG image. Derived names follow the same spelling: «Jil Altufan Camp», «Minbar Altufan».
 - [x] **Domain: `jilaltufan.org`** is the official one (non-profit); `.com` is registered too and should 301 to `.org` at the DNS/CDN layer.
 - [x] **Mail:** `admin@jilaltufan.org` is the official mailbox; `contact@jilaltufan.org` (alias) receives contact-form messages; `no-reply@jilaltufan.org` sends — needs the domain verified in Resend (SPF + DKIM) before launch.
 - [x] **Mail for applications:** `applications@jilaltufan.org` exists in Zoho (created 2026-09-18). Application notifications go there and it is the Reply-To on every applicant confirmation; Site settings → Applications email is seeded with it and falls back to `contact@` if emptied.
-- [ ] **P2 — Is the CV required?** The intake sheet lists «اختر CV»; the form asks for it as optional (PDF/Word ≤ 5 MB) so a missing CV never blocks a young applicant. Making it required is one line in `src/lib/forms/apply-schema.ts`. Open Training never asks for one.
-- [ ] **P2 — Social links** (Instagram, X, YouTube, Telegram…) for the footer and JSON-LD `sameAs`. _Enter in admin → Site settings → Social links; WhatsApp number in the same tab._
+- [x] **CV is optional** (confirmed 2026-09-19): PDF/Word ≤ 5 MB, never blocks an applicant.
+- [ ] **P2 — Social links** (Instagram, X, YouTube, Telegram…) for the footer and JSON-LD `sameAs`. None have been supplied yet (checked 2026-09-19: not in the brief, the references, or any session). _Enter in admin → Site settings → Social links; WhatsApp number in the same tab. The footer's «تابعنا» row stays hidden until one exists._
 - [ ] **P2 — Registration mode per program.** Default is `application` for all six. Confirm, or mark specific programs `open`.
 - [ ] **P2 — Join-link policy.** Default is `window` (link appears 30 min before start). Alternatives: `always`, `email-only`. _Enforced in the query layer: the Zoom URL is not in the HTML outside the window._
 - [ ] **P2 — Academy time zone.** Default `Asia/Hebron`, labelled «بتوقيت القدس». Confirm.

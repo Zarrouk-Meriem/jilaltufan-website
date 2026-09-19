@@ -577,7 +577,7 @@ export interface Material {
   createdAt: string;
 }
 /**
- * The Jeel Al-Toufan Camp (type "camp"), activities, and seminars.
+ * The Jil Altufan Camp (type "camp"), activities, and seminars.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".

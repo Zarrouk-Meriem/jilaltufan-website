@@ -119,8 +119,8 @@ export function seasonMonths(season: ProgramSeed['season']) {
 }
 
 export const MISSION = {
-  ar: 'تقوم رسالة الأكاديمية على تمكين الشباب العربي والإسلامي، من خلال برامج تربوية ومعرفية وسياسية مكثّفة ومواكبة لتحديات ورهانات الطوفان، حيث تعتمد على مناهج علمية وأدوات عملية، لتعزيز الهوية ونصرة القضية الفلسطينية في مختلف الميادين.',
-  en: "The Academy's mission is to empower Arab and Muslim youth through intensive educational, cognitive, and political programs that keep pace with the challenges and stakes of the flood, relying on scientific curricula and practical tools to strengthen identity and support the Palestinian cause in various fields.",
+  ar: 'نُعدّ الشباب العربي والمسلم لفهم القضية الفلسطينية ونصرتها بعلمٍ وكفاءة: برامج تربوية ومعرفية وسياسية مباشرة عبر الإنترنت، بمناهج علمية وأدوات عملية، تُرسّخ الهوية وتصنع الأثر في مختلف الميادين.',
+  en: 'We prepare young Arabs and Muslims to understand the Palestinian cause and serve it with knowledge and competence: live online programs in education, knowledge, and politics, built on sound curricula and practical tools, that strengthen identity and make an impact in every field.',
 }
 
 /**

@@ -1,4 +1,4 @@
-# Kickoff Prompt — Jeel Al-Toufan Academy Website (MVP)
+# Kickoff Prompt — Jil Altufan Academy Website (MVP)
 
 > Paste everything below the line into Claude Code, from the root of an empty repository that contains the `_context/` folder.
 > Before pasting, replace every `{{…}}` placeholder (domain, contact email). Anything you leave unfilled, Claude will keep as a placeholder and list in `TODO.md`.
@@ -7,7 +7,7 @@
 
 ## 0. Your role and how we work
 
-You are a senior full-stack engineer and a pixel-precise UI/UX designer building the official website of **أكاديمية جيل الطوفان — Jeel Al-Toufan Academy** (brand English lockup: _Academy · Flood's Generation_). The site is Arabic-first, bilingual (Arabic + English) from day one, and must feel **classical, minimal, and editorial**, grounded in the academy's visual identity (هوية) rather than in generic "EdTech" templates.
+You are a senior full-stack engineer and a pixel-precise UI/UX designer building the official website of **أكاديمية جيل الطوفان — Jil Altufan Academy** (brand English lockup: _Academy · Flood's Generation_). The site is Arabic-first, bilingual (Arabic + English) from day one, and must feel **classical, minimal, and editorial**, grounded in the academy's visual identity (هوية) rather than in generic "EdTech" templates.
 
 Working rules:
 
@@ -39,8 +39,8 @@ Working rules:
    - **التدريب المفتوح / Open Training** — an independent track for a wider audience: 8 lectures per season, one per month, September → April.
    - **البرامج الموجّهة / Directed Programs** — five programs, each 8 sessions per season, one per month, September → April:
      فلسطين بوصلتنا (Palestine, Our Compass) · قادة الغد (Leaders of Tomorrow) · صنّاع الأثر (Impact Makers) · روّاد المجتمع (Community Pioneers) · سفراء القدس الشريف (Ambassadors of Al-Quds Al-Sharif).
-3. **المحتوى والمعرفة / Content & Knowledge** — منبر الطوفان (Minbar Al-Toufan), lectures and learning materials, articles (added later).
-4. **الفعاليات / Events** — مخيمات جيل الطوفان (the annual, week-long Jeel Al-Toufan Camp) and other academy activities.
+3. **المحتوى والمعرفة / Content & Knowledge** — منبر الطوفان (Minbar Altufan), lectures and learning materials, articles (added later).
+4. **الفعاليات / Events** — مخيمات جيل الطوفان (the annual, week-long Jil Altufan Camp) and other academy activities.
 
 **Delivery model:** all sessions are **live on Zoom**. There are no recorded videos and no video hosting. Operating budget target after launch: **≈ $25/month** — make choices that respect it.
 
@@ -105,7 +105,7 @@ All public routes live under `/[locale]`:
 | `/schedule`                                     | All upcoming live sessions, filterable by program                    |
 | `/events`, `/events/[slug]`                     | Events; the Camp is an event of type `camp` with its own rich layout |
 | `/knowledge`                                    | Content & Knowledge hub                                              |
-| `/knowledge/minbar`, `/knowledge/minbar/[slug]` | Minbar Al-Toufan posts                                               |
+| `/knowledge/minbar`, `/knowledge/minbar/[slug]` | Minbar Altufan posts                                                 |
 | `/knowledge/materials`                          | Lectures & learning materials                                        |
 | `/instructors`, `/instructors/[slug]`           | Instructor window + profiles                                         |
 | `/students`                                     | Student window                                                       |
@@ -142,7 +142,7 @@ Localize every human-readable field. Every public collection has `status` (draft
 4. _The season_ — a distinctive horizontal timeline September → April with eight monthly stations (vertical on mobile), expressing "one session every month". Rising, stepped rhythm; the current month is marked with the red mark.
 5. _Upcoming sessions_ — next three sessions across programs.
 6. _The Camp_ — full-bleed navy band for مخيمات جيل الطوفان.
-7. _From Minbar Al-Toufan_ — latest three posts (hidden if none are published).
+7. _From Minbar Altufan_ — latest three posts (hidden if none are published).
 8. _Instructors_ — a quiet strip of portraits (hidden if none are published).
 9. _Closing CTA_ then footer.
    Do not include a statistics band until real numbers exist (keep the component; toggle it off by default).

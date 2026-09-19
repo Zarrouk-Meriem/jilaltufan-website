@@ -12,16 +12,16 @@ type Props = {
   priority?: boolean
 }
 
-const RATIO = 1556 / 875
+const RATIO = 363.9 / 200.34
 
 /**
- * The lockup. Arabic uses the supplied Prop-1 PNGs (swap for SVG in /public/brand
- * when the designer delivers them). English has no supplied lockup yet, so it is
- * type-set after reference 03: small ACADEMY over bold FLOOD'S GENERATION.
+ * The lockup. Arabic uses the designer's SVG (/public/brand/logo.svg, white wordmark
+ * variant for navy). English has no supplied lockup yet, so it is the mark plus a
+ * type-set "Jil Altufan Academy" in Poppins until the designer delivers one.
  */
 export function Logo({ locale, surface = 'light', height = 56, className, priority }: Props) {
   if (locale === 'ar') {
-    const src = surface === 'dark' ? '/brand/logo-on-dark.png' : '/brand/logo-color.png'
+    const src = surface === 'dark' ? '/brand/logo-on-dark.svg' : '/brand/logo.svg'
     return (
       <Image
         src={src}
@@ -46,7 +46,7 @@ export function Logo({ locale, surface = 'light', height = 56, className, priori
           className="font-bold uppercase"
           style={{ fontSize: height * 0.34, letterSpacing: '0.02em', lineHeight: 1.05 }}
         >
-          Flood&rsquo;s Generation
+          Jil Altufan
         </span>
       </span>
     </span>

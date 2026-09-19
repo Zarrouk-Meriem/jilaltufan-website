@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
         <Mark />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: 28, fontWeight: 700 }}>Jeel Al-Toufan Academy</span>
+          <span style={{ fontSize: 28, fontWeight: 700 }}>Jil Altufan Academy</span>
           <span style={{ fontSize: 18, color: MUTED }}>Through knowledge, we are liberated</span>
         </div>
       </div>

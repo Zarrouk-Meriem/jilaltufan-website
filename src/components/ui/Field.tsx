@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 export const control =
-  'w-full rounded-brand border border-line-strong bg-paper px-3.5 text-ink-900 placeholder:text-ink-500 ' +
+  'w-full scroll-mt-44 rounded-brand border border-line-strong bg-paper px-3.5 text-ink-900 placeholder:text-ink-500 ' +
   'transition-[border-color,box-shadow] duration-150 ease-brand ' +
   'hover:border-ink-700 focus:border-ink-900 focus:outline-none focus:shadow-[var(--focus-halo)] ' +
   'aria-[invalid=true]:border-error-600 disabled:bg-paper-2 disabled:opacity-60'
@@ -128,7 +128,12 @@ export function Textarea({
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(id, hint, error)}
         required={required}
-        className={cn(control, 'min-h-32 py-2.5', className)}
+        // Grows with what is typed (no browser resize grip), within a sane range.
+        className={cn(
+          control,
+          'field-sizing-content max-h-96 min-h-32 resize-none py-2.5',
+          className,
+        )}
         {...rest}
       />
     </FieldWrap>
@@ -151,7 +156,7 @@ export function Checkbox({
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className={cn(
-            'mt-1 size-4 shrink-0 rounded-brand accent-red-600 focus:outline-none focus-visible:shadow-[var(--focus-halo)]',
+            'check-brand mt-1 size-4 shrink-0 cursor-pointer scroll-mt-44 appearance-none rounded-brand border border-line-strong bg-paper transition-[background-color,border-color] duration-150 ease-brand checked:border-red-600 checked:bg-red-600 hover:border-ink-700 focus:outline-none focus-visible:border-ink-900 focus-visible:shadow-[var(--focus-halo)] motion-reduce:transition-none',
             className,
           )}
           {...rest}
@@ -210,7 +215,7 @@ export function RadioGroup({
               id={`${id}-${o.value}`}
               type="radio"
               value={o.value}
-              className="size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-line-strong bg-paper transition-[border-color,border-width] duration-150 ease-brand checked:border-[5px] checked:border-red-600 hover:border-ink-700 focus:outline-none focus-visible:border-ink-900 focus-visible:shadow-[var(--focus-halo)]"
+              className="size-4 shrink-0 cursor-pointer scroll-mt-44 appearance-none rounded-full border border-line-strong bg-paper transition-[border-color,border-width] duration-150 ease-brand checked:border-[5px] checked:border-red-600 hover:border-ink-700 focus:outline-none focus-visible:border-ink-900 focus-visible:shadow-[var(--focus-halo)]"
               {...rest}
             />
             {o.label}

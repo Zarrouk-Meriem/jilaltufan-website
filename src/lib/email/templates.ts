@@ -31,7 +31,7 @@ export function applicantEmail(locale: Locale, name: string) {
       ]),
     }
   }
-  const subject = 'We received your application to Jeel Al-Toufan Academy'
+  const subject = 'We received your application to Jil Altufan Academy'
   return {
     subject,
     ...wrap('en', subject, [
@@ -39,7 +39,7 @@ export function applicantEmail(locale: Locale, name: string) {
       "We received your application to the Academy. The Academy's team will review it and be in touch at this address; once accepted, you choose your program.",
       'All sessions are live on Zoom, in Al-Quds time.',
       'If you have a question, simply reply to this email.',
-      'Jeel Al-Toufan Academy — Through knowledge, we are liberated',
+      'Jil Altufan Academy — Through knowledge, we are liberated',
     ]),
   }
 }

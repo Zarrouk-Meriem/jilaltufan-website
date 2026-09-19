@@ -1,10 +1,10 @@
 {
   "site": {
-    "name": "Jeel Al-Toufan Academy",
-    "nameShort": "Jeel Al-Toufan",
+    "name": "Jil Altufan Academy",
+    "nameShort": "Jil Altufan",
     "tagline": "Through knowledge, we are liberated.",
-    "mission": "The Academy's mission is to empower Arab and Muslim youth through intensive educational, cognitive, and political programs that keep pace with the challenges and stakes of the flood, relying on scientific curricula and practical tools to strengthen identity and support the Palestinian cause in various fields.",
-    "description": "The digital home of Jeel Al-Toufan Academy: training programs, live sessions, content and knowledge, and events."
+    "mission": "We prepare young Arabs and Muslims to understand the Palestinian cause and serve it with knowledge and competence: live online programs in education, knowledge, and politics, built on sound curricula and practical tools, that strengthen identity and make an impact in every field.",
+    "description": "The digital home of Jil Altufan Academy: training programs, live sessions, content and knowledge, and events."
   },
   "a11y": {
     "skipToContent": "Skip to content",
@@ -14,7 +14,7 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "switchLanguage": "Switch language",
-    "logoHome": "Jeel Al-Toufan Academy, home",
+    "logoHome": "Jil Altufan Academy, home",
     "placeholderContent": "Placeholder content",
     "announcement": "Announcement"
   },
@@ -38,12 +38,12 @@
     "about": "About the Academy",
     "structure": "Structure & councils",
     "projects": "Projects & initiatives",
-    "minbar": "Minbar Al-Toufan",
+    "minbar": "Minbar Altufan",
     "materials": "Lectures & materials",
-    "camp": "Jeel Al-Toufan Camp",
+    "camp": "Jil Altufan Camp",
     "privacy": "Privacy policy",
     "terms": "Terms",
-    "rights": "© {year} Jeel Al-Toufan Academy. All rights reserved.",
+    "rights": "© {year} Jil Altufan Academy. All rights reserved.",
     "timeNote": "All times are Al-Quds time unless stated otherwise.",
     "follow": "Follow us",
     "whatsapp": "WhatsApp"
@@ -81,7 +81,7 @@
     "breadcrumb": "Breadcrumb"
   },
   "home": {
-    "title": "Jeel Al-Toufan Academy",
+    "title": "Jil Altufan Academy",
     "heroTitle": "Through knowledge, we are **liberated**",
     "exploreCta": "Explore programs",
     "applyCta": "Apply now",
@@ -99,7 +99,7 @@
       },
       "political": {
         "title": "Political",
-        "text": "Understanding balances of power and the stakes of the flood, and acting on them."
+        "text": "Understanding the balance of power and what changed after the Flood, and acting on that understanding."
       }
     },
     "programsTitle": "Training **programs**",
@@ -110,13 +110,13 @@
     "seasonIntro": "October to June: Open Training meets once a month from October to May, and the directed programs once a month from January to June. The current station is marked in red.",
     "upcomingTitle": "Upcoming **sessions**",
     "upcomingIntro": "The next three sessions across all programs, in Al-Quds time and yours.",
-    "campTitle": "The **Jeel Al-Toufan** Camp",
+    "campTitle": "The **Jil Altufan** Camp",
     "campIntro": "A full week of meeting, work, and formation, once a year.",
     "campCta": "About the camp",
-    "minbarTitle": "From **Minbar Al-Toufan**",
+    "minbarTitle": "From **Minbar Altufan**",
     "instructorsTitle": "Instructors",
     "closingTitle": "Your place is **with us**",
-    "closingText": "Apply today; once accepted, choose the program that fits you and begin your season with Jeel Al-Toufan.",
+    "closingText": "Apply today; once accepted, choose the program that fits you and begin your season with Jil Altufan.",
     "viewSchedule": "Full schedule",
     "allPrograms": "All programs",
     "nextSessionEmpty": "The session schedule hasn't been published yet.",
@@ -213,7 +213,7 @@
     "emailOnly": "Link sent by email",
     "ics": "Calendar file (.ics)",
     "google": "Google Calendar",
-    "calendarDescription": "Live session on Zoom from {program}, Jeel Al-Toufan Academy. The link is sent to registered participants.",
+    "calendarDescription": "Live session on Zoom from {program}, Jil Altufan Academy. The link is sent to registered participants.",
     "calendarLocation": "Live on Zoom"
   },
   "schedule": {
@@ -232,7 +232,7 @@
   },
   "events": {
     "title": "Events",
-    "intro": "The Jeel Al-Toufan camps, activities, and seminars connected to the Academy.",
+    "intro": "The Jil Altufan camps, activities, and seminars connected to the Academy.",
     "camp": "Camp",
     "activity": "Activity",
     "seminar": "Seminar",
@@ -258,7 +258,7 @@
   },
   "projects": {
     "title": "Projects & **initiatives**",
-    "intro": "The Academy does not rely on conventional exams: every participant or team in a directed program graduates with a practical engagement project (a media campaign, a political study, or a field initiative) that serves the effort of comprehensive liberation, presented in September each year. The Jeel Al-Toufan incubator selects ten projects a year and provides mentoring, networking, and legal, administrative, and technical support, with six months of follow-up.",
+    "intro": "The Academy does not rely on conventional exams: every participant or team in a directed program graduates with a practical engagement project (a media campaign, a political study, or a field initiative) that serves the effort of comprehensive liberation, presented in September each year. The Jil Altufan incubator selects ten projects a year and provides mentoring, networking, and legal, administrative, and technical support, with six months of follow-up.",
     "empty": "No projects have been published yet.",
     "ongoing": "Ongoing",
     "upcoming": "Upcoming",
@@ -453,8 +453,8 @@
   },
   "knowledge": {
     "title": "Content & **knowledge**",
-    "intro": "Minbar Al-Toufan, and lectures and learning materials.",
-    "minbarTitle": "Minbar Al-Toufan",
+    "intro": "Minbar Altufan, and lectures and learning materials.",
+    "minbarTitle": "Minbar Altufan",
     "minbarIntro": "An intellectual space that reads current events and issues concerning Palestine, the nation, and the world, with analysis and foresight: independent lectures and specialised sessions by experts and researchers. We read the event, understand the context, and anticipate what follows.",
     "minbarEmpty": "No posts have been published yet.",
     "allPosts": "All posts",
@@ -558,7 +558,7 @@
       {
         "h": "Using the site",
         "p": [
-          "This site is the digital home of Jeel Al-Toufan Academy. Its content is for reading and learning; please don't republish it without permission."
+          "This site is the digital home of Jil Altufan Academy. Its content is for reading and learning; please don't republish it without permission."
         ]
       },
       {

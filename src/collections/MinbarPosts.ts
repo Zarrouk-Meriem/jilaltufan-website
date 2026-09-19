@@ -13,7 +13,7 @@ export const MinbarPosts: CollectionConfig = {
   slug: 'minbar-posts',
   labels: {
     singular: { ar: 'مقال', en: 'Post' },
-    plural: { ar: 'منبر الطوفان', en: 'Minbar Al-Toufan' },
+    plural: { ar: 'منبر الطوفان', en: 'Minbar Altufan' },
   },
   admin: {
     group: { ar: 'المعرفة', en: 'Knowledge' },

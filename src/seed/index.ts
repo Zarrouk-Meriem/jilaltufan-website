@@ -275,7 +275,7 @@ async function seed() {
         location: '[المكان]',
       },
       en: {
-        title: 'Jeel Al-Toufan Camp',
+        title: 'Jil Altufan Camp',
         summary: CAMP.summary.en,
         body: richText(CAMP.body.en),
         location: '[Location]',

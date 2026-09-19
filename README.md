@@ -1,4 +1,4 @@
-# أكاديمية جيل الطوفان — Jeel Al-Toufan Academy
+# أكاديمية جيل الطوفان — Jil Altufan Academy
 
 The academy's website and content platform. Arabic-first, bilingual (ar / en), built with Next.js 16, Payload CMS 3, and Postgres.
 

@@ -19,24 +19,24 @@ export const ABOUT_INTRO: Record<'ar' | 'en', Block[]> = {
     { type: 'h', text: 'من نحن' },
     {
       type: 'p',
-      text: 'أكاديمية جيل الطوفان مؤسسة تربوية ومعرفية تتوجّه إلى الشباب العربي والمسلم أينما كانوا، لتُعدّهم لحمل القضية الفلسطينية بوعيٍ وعلمٍ وكفاءةٍ ومسؤولية. تقدّم الأكاديمية برامج تدريبية مباشرة عبر الإنترنت، تجمع بين أصالة الوعي التربوي وحداثة أدوات الفهم والتحليل والفعل: الثقافية منها والسياسية والإعلامية والميدانية.',
+      text: 'أكاديمية جيل الطوفان مؤسسة تربوية ومعرفية تتوجّه إلى الشباب العربي والمسلم أينما كانوا، وتُعدّهم لحمل القضية الفلسطينية بوعيٍ وعلمٍ وكفاءةٍ ومسؤولية. نقدّم برامج تدريبية مباشرة عبر الإنترنت، تجمع بين رسوخ التربية وحداثة أدوات الفهم والتحليل والعمل، في الثقافة والسياسة والإعلام والميدان.',
     },
     {
       type: 'p',
-      text: 'وُلدت الأكاديمية من قناعة بأن لحظة طوفان الأقصى لحظة فارقة في تاريخ القضية الفلسطينية وتاريخ الأمة؛ لحظة أعادت تعريف حدود القوة، وشكّلت وعيًا جديدًا بطبيعة الصراع، ووضعت فلسطين في صدارة الاهتمام العالمي. وهذا الواقع الجديد يستدعي حواضن معرفية وتربوية منظّمة وعصرية، تعيد بناء الوعي الجمعي لشباب الأمة، وتصنع قوة فكرية ومقاومة ثقافية تواجه روايات الاحتلال المضلِّلة وتحديات الاستلاب الثقافي والسياسي.',
+      text: 'وُلدت الأكاديمية بعد طوفان الأقصى، من قناعةٍ بأن هذه اللحظة الفارقة غيّرت فهم الصراع، ووضعت فلسطين في صدارة اهتمام العالم، وبأن جيلًا جديدًا يحتاج إلى فضاء منظّم يتعلّم فيه ويفكّر ويعمل؛ فضاءٍ يبني وعيًا جمعيًا راسخًا، ويصنع قوة فكرية وثقافية تواجه روايات الاحتلال المضلِّلة. هذا الفضاء هو الأكاديمية.',
     },
     { type: 'h', text: 'منطلقاتنا' },
     {
       type: 'p',
-      text: 'لا تنطلق الأكاديمية من ردّ فعل على الأحداث، بل من فلسفة تربوية ومعرفية تستلهم دلالات الطوفان ورهاناته:',
+      text: 'ليست الأكاديمية ردّ فعل على الأحداث، بل مشروع تربوي ومعرفي يقوم على أربع قناعات:',
     },
     {
       type: 'ul',
       items: [
-        'الإرادة تصنع الفارق: أثبت الطوفان أن التفوق المادي والعسكري والتكنولوجي قابل للانكسار أمام إرادة واعية ومنظّمة ومسؤولة؛ ولذلك نعمل على تحرير الشباب من عقدة النقص ومن الشعور بحتمية الهزيمة والتبعية.',
-        'من الدفاع إلى المبادرة: نقلت هذه اللحظة القضية من مسار التفاوض العبثي إلى مسار الحسم؛ ولذلك ننتقل بالوعي الشبابي من عقلية تحسين شروط العيش تحت الاحتلال إلى عقلية الفعل الواعي والمنظّم في اتجاه التحرير الشامل.',
-        'بديل معرفي وأخلاقي أصيل: كشف الطوفان ازدواجية المعايير في منظومة القيم الغربية وخطاب حقوق الإنسان والقانون الدولي؛ ولذلك نبني بديلًا معرفيًا وأخلاقيًا ينطلق من أصالة الأمة وحضارتها وإرثها الأخلاقي.',
-        'قضية أمّة لا حدود لها: أعاد الطوفان ربط الأمة كلّها بفلسطين، وبيّن أن الحدود الحقيقية تُرسم في العقول قبل الخرائط؛ ولذلك نتجاوز الحدود الجغرافية والسياسية المصطنعة، ونجعل من كل شابّ عربي ومسلم شريكًا مباشرًا وفاعلًا في معركة التحرير.',
+        'الإرادة تصنع الفارق: التفوّق المادي والعسكري والتقني ليس قدرًا، والإرادة الواعية المنظّمة قادرة على تغيير الموازين. لذلك نُربّي الثقة بالنفس، ونرفض الشعور بحتمية الهزيمة والتبعية.',
+        'من التكيّف إلى الفعل: لا نعلّم كيف نتعايش مع الواقع، بل كيف نغيّره بعملٍ واعٍ ومنظّم في اتجاه التحرير الشامل.',
+        'مرجعية أصيلة: كشفت الأحداث ازدواجية المعايير في الخطاب الدولي عن حقوق الإنسان والقانون الدولي؛ لذلك نبني وعينا المعرفي والأخلاقي على قيم الأمة وحضارتها وإرثها، لا على معايير مستعارة.',
+        'قضية لا تعرف الحدود: فلسطين قضية الأمة كلّها، والحدود الحقيقية تُرسم في العقول قبل الخرائط. لذلك نفتح أبوابنا لكل شابّ وشابة من العرب والمسلمين أينما كانوا، شركاء فاعلين في معركة التحرير.',
       ],
     },
   ],
@@ -44,24 +44,24 @@ export const ABOUT_INTRO: Record<'ar' | 'en', Block[]> = {
     { type: 'h', text: 'Who we are' },
     {
       type: 'p',
-      text: 'Jeel Al-Toufan Academy is an educational institution for young Arabs and Muslims wherever they are, preparing them to carry the Palestinian cause with awareness, knowledge, competence, and responsibility. The Academy delivers live online training programs that join the authenticity of educational awareness with contemporary tools of understanding, analysis, and action: cultural, political, media, and field.',
+      text: 'Jil Altufan Academy is an educational institution for young Arabs and Muslims wherever they are, preparing them to carry the Palestinian cause with awareness, knowledge, competence, and responsibility. We deliver live online training programs that join a firm educational grounding with contemporary tools of understanding, analysis, and action, in culture, politics, media, and the field.',
     },
     {
       type: 'p',
-      text: 'The Academy was born of the conviction that the Al-Aqsa Flood is a turning point in the history of the Palestinian cause and of the nation: a moment that redrew the boundaries of power, shaped a new awareness of the nature of the conflict, and placed Palestine at the forefront of global attention. This new reality calls for organised, contemporary spaces of knowledge and education that rebuild the collective awareness of the nation’s youth and build an intellectual strength and a cultural resistance able to confront the occupation’s misleading narratives and the challenges of cultural and political alienation.',
+      text: 'The Academy was born after the Al-Aqsa Flood, from the conviction that this turning point changed how the conflict is understood and placed Palestine at the forefront of the world’s attention, and that a new generation needs an organised space in which to learn, think, and act: a space that builds a firm shared awareness and an intellectual and cultural strength able to confront the occupation’s misleading narratives. That space is the Academy.',
     },
     { type: 'h', text: 'Where we start from' },
     {
       type: 'p',
-      text: 'The Academy is not a reaction to events. It rests on an educational philosophy drawn from the meanings and stakes of the Flood:',
+      text: 'The Academy is not a reaction to events. It is an educational project that rests on four convictions:',
     },
     {
       type: 'ul',
       items: [
-        'Will makes the difference: the Flood proved that material, military, and technological superiority can be broken by a conscious, organised, responsible will. We therefore work to free young people from the inferiority complex and from the sense that defeat and dependence are inevitable.',
-        'From defence to initiative: the moment moved the cause from futile negotiation to the path of resolution. We therefore move young people from a mindset of improving life under occupation to one of conscious, organised action towards comprehensive liberation.',
-        'An authentic moral and intellectual alternative: the Flood exposed the double standards of the Western moral order and of the discourse of human rights and international law. We therefore build an alternative rooted in the nation’s authenticity, civilisation, and ethical heritage.',
-        'A cause without borders: the Flood reconnected the whole nation with Palestine and showed that real borders are drawn in minds before maps. We therefore cross artificial geographic and political borders and make every young Arab and Muslim a direct, effective partner in the battle for liberation.',
+        'Will makes the difference: material, military, and technological superiority is not destiny, and a conscious, organised will can change the balance. So we build self-confidence and reject the sense that defeat and dependence are inevitable.',
+        'From adapting to acting: we do not teach how to live with reality, but how to change it through conscious, organised work towards comprehensive liberation.',
+        'An authentic frame of reference: events exposed the double standards of the international discourse on human rights and international law. So we build our intellectual and moral awareness on the nation’s values, civilisation, and heritage, not on borrowed standards.',
+        'A cause that knows no borders: Palestine is the cause of the whole nation, and real borders are drawn in minds before maps. So our doors are open to every young Arab and Muslim, wherever they are, as active partners in the battle for liberation.',
       ],
     },
   ],
@@ -69,8 +69,8 @@ export const ABOUT_INTRO: Record<'ar' | 'en', Block[]> = {
 
 /** Three lines: a statement, the «quoted» official formulation, and the three pillars. */
 export const VISION: L = {
-  ar: 'تقوم رؤية الأكاديمية على الريادة في بناء جيل شبابي واعٍ فكريًا، متمكّن سياسيًا، مسؤول أخلاقيًا، ومستمسك بالحق الفلسطيني قضيةً مركزية للأمة.\n«أن تكون أكاديمية جيل الطوفان منصة رائدة في بناء جيل عربي ومسلم واعٍ بالقضية الفلسطينية، مؤهَّل معرفيًا وقياديًا، وقادر على صناعة الأثر.»\nثلاث ركائز نبني عليها هذا الجيل: العمق الفكري، والتوازن النفسي، والرؤية الاستراتيجية؛ لتكون المحصّلة إسهامًا فعليًا في التحرر والتحرير.',
-  en: 'The Academy’s vision is leadership in building a generation of young people who are intellectually aware, politically capable, morally responsible, and committed to the Palestinian right as the nation’s central cause.\n“To be a leading platform in building an Arab and Muslim generation aware of the Palestinian cause, qualified in knowledge and leadership, and able to make an impact.”\nThree pillars carry this generation: intellectual depth, psychological balance, and strategic vision; together they add up to a real contribution to liberation.',
+  ar: '«أن تكون أكاديمية جيل الطوفان منصة رائدة في بناء جيل عربي ومسلم واعٍ بالقضية الفلسطينية، مؤهَّل معرفيًا وقياديًا، وقادر على صناعة الأثر.»\nجيل واعٍ فكريًا، متمكّن سياسيًا، مسؤول أخلاقيًا، يرى في فلسطين قضية الأمة المركزية.\nنبنيه على ثلاث ركائز: العمق الفكري، والتوازن النفسي، والرؤية الاستراتيجية؛ ليكون إسهامه في التحرر والتحرير إسهامًا حقيقيًا.',
+  en: '“To be a leading platform in building an Arab and Muslim generation aware of the Palestinian cause, qualified in knowledge and leadership, and able to make an impact.”\nA generation that is intellectually aware, politically capable, and morally responsible, and that sees Palestine as the nation’s central cause.\nWe build it on three pillars: intellectual depth, psychological balance, and strategic vision, so that its contribution to liberation is a real one.',
 }
 
 /** «القيم الحاكمة» — the three values the academy names. */
@@ -100,24 +100,24 @@ export const VALUES: { title: L; text: L }[] = [
 
 export const GOALS: LL = {
   ar: [
-    'بناء الوعي السياسي وتفكيك السرديات الصهيونية: فهم عميق للصراع في أبعاده التاريخية والسياسية والقانونية، وقدرة على تفنيد الدعاية المضلِّلة.',
-    'التزكية التربوية والروحية والنفسية: ترسيخ القيم الأخلاقية والصلابة النفسية وروح المبادرة والمسؤولية لدى الشباب.',
-    'تطوير المهارات القيادية والعملية: التدريب على المناصرة الرقمية والميدانية، والدبلوماسية الشعبية، وصناعة المحتوى المؤثر.',
-    'بناء شبكة معرفية عابرة للحدود: مجتمع شبابي مترابط يشكّل جبهة إسناد دائمة للقضية الفلسطينية، ونواةً للتحرير الشامل.',
-    'إعادة قراءة التاريخ والواقع: قراءة قائمة على سنن التدافع والتحرير، لا على سرديات الاستسلام والواقعية السياسية المشوَّهة.',
-    'تحويل المعرفة إلى أدوات فعل: نقل المعارف النظرية عن فلسطين إلى أدوات اشتباك معرفي وسياسي وإعلامي في الفضاءات المحلية والدولية.',
-    'إعداد نخبة قيادية: جمع الطاقات الشبابية المتميزة في الأمة في بوتقة فكرية واحدة، تكون نواةً لقيادة العمل التحرري في مجتمعاتها.',
-    'ترسيخ عقيدة الصمود والمقاومة: تأهيل الشباب لمواجهة الحرب النفسية وحملات تشويه الوعي ومحاولات التطبيع الفكري.',
+    'وعي سياسي راسخ: تفهم الصراع في أبعاده التاريخية والسياسية والقانونية، وتقدر على تفكيك السرديات الصهيونية وتفنيد الدعاية المضلِّلة.',
+    'بناء تربوي وروحي ونفسي: قيم أخلاقية راسخة، وصلابة نفسية، وروح مبادرة ومسؤولية.',
+    'مهارات قيادية وعملية: تدريب على المناصرة الرقمية والميدانية، والدبلوماسية الشعبية، وصناعة المحتوى المؤثر.',
+    'شبكة معرفية عابرة للحدود: مجتمع شبابي مترابط يشكّل جبهة إسناد دائمة للقضية الفلسطينية، ونواةً للتحرير الشامل.',
+    'قراءة جديدة للتاريخ والواقع: قراءة تقوم على سنن التدافع والتحرير، لا على روايات الاستسلام والواقعية السياسية المشوَّهة.',
+    'من المعرفة إلى الفعل: تتحوّل معارفك عن فلسطين إلى أدوات اشتباك معرفي وسياسي وإعلامي، في محيطك وفي الفضاء الدولي.',
+    'نخبة قيادية: نجمع الطاقات الشبابية المتميزة في الأمة في فضاء فكري واحد، لتكون نواة قيادة العمل التحرري في مجتمعاتها.',
+    'عقيدة الصمود والمقاومة: تأهيل لمواجهة الحرب النفسية وحملات تشويه الوعي ومحاولات التطبيع الفكري.',
   ],
   en: [
-    'Building political awareness and dismantling Zionist narratives: a deep grasp of the conflict in its historical, political, and legal dimensions, and the ability to refute misleading propaganda.',
-    'Educational, spiritual, and psychological formation: instilling moral values, resilience, initiative, and responsibility in young people.',
-    'Developing leadership and practical skills: training in digital and field advocacy, popular diplomacy, and impactful content creation.',
-    'Building a knowledge network across borders: a connected youth community that forms a permanent support front for the Palestinian cause and a nucleus for comprehensive liberation.',
-    'Rereading history and the present: a reading built on the laws of struggle and liberation, not on narratives of surrender and distorted political realism.',
-    'Turning knowledge into tools of action: carrying theoretical knowledge of Palestine into intellectual, political, and media engagement in local and international spaces.',
-    'Forming a leadership elite: gathering the nation’s outstanding young talents into one intellectual crucible that becomes the nucleus for leading liberation work in their societies.',
-    'Establishing a doctrine of steadfastness and resistance: preparing young people to face psychological warfare, campaigns that distort awareness, and attempts at intellectual normalisation.',
+    'A firm political awareness: you understand the conflict in its historical, political, and legal dimensions, and can dismantle Zionist narratives and refute misleading propaganda.',
+    'Educational, spiritual, and psychological formation: firm moral values, resilience, initiative, and responsibility.',
+    'Leadership and practical skills: training in digital and field advocacy, popular diplomacy, and impactful content creation.',
+    'A knowledge network across borders: a connected youth community that forms a permanent support front for the Palestinian cause and a nucleus for comprehensive liberation.',
+    'A new reading of history and the present: one built on the laws of struggle and liberation, not on narratives of surrender and distorted political realism.',
+    'From knowledge to action: what you know about Palestine becomes tools of intellectual, political, and media engagement, around you and on the international stage.',
+    'A leadership elite: we gather the nation’s outstanding young talents into one intellectual space, to become the nucleus for leading liberation work in their societies.',
+    'A doctrine of steadfastness and resistance: preparation for facing psychological warfare, campaigns that distort awareness, and attempts at intellectual normalisation.',
   ],
 }
 
@@ -318,7 +318,7 @@ export const PROGRAM_CONTENT: Record<
         },
         {
           type: 'p',
-          text: 'يسير البرنامج في المسار المعرفي والسياسي على ثلاثة محاور: تاريخ فلسطين وفقه الصراع، من الجذور إلى طوفان الأقصى وتداعياته الاستراتيجية؛ والنظام الدولي والقضية الفلسطينية، من المؤسسات الدولية والقانون الدولي إلى المنظومة السياسية الحاكمة وموقع فلسطين منها؛ والمنظومة الصهيونية، بتفكيك بنية الكيان ونقاط قوته وضعفه، ومشاريع التطبيع وسبل مواجهتها ومقاومتها.',
+          text: 'يقوم البرنامج، في المسار المعرفي والسياسي، على ثلاثة محاور. الأول: تاريخ فلسطين وفقه الصراع، من الجذور إلى طوفان الأقصى وتداعياته الاستراتيجية. الثاني: النظام الدولي والقضية الفلسطينية، من المؤسسات الدولية والقانون الدولي إلى موقع فلسطين من النظام السياسي العالمي. الثالث: المنظومة الصهيونية، ببنية الكيان ونقاط قوته وضعفه، ومشاريع التطبيع وسبل مواجهتها ومقاومتها.',
         },
       ],
       en: [
@@ -328,7 +328,7 @@ export const PROGRAM_CONTENT: Record<
         },
         {
           type: 'p',
-          text: 'It follows the knowledge and politics track along three axes: the history of Palestine and the anatomy of the conflict, from its roots to the Al-Aqsa Flood and its strategic consequences; the international order and the Palestinian cause, from international institutions and international law to the governing political system and Palestine’s place in it; and the Zionist system, dismantling the entity’s structure, its strengths and weaknesses, and normalisation projects and how to confront and resist them.',
+          text: 'On the knowledge and politics track, the program rests on three axes. First: the history of Palestine and the anatomy of the conflict, from its roots to the Al-Aqsa Flood and its strategic consequences. Second: the international order and the Palestinian cause, from international institutions and international law to Palestine’s place in the world political system. Third: the Zionist system, its structure, its strengths and weaknesses, and normalisation projects and how to confront and resist them.',
         },
       ],
     },
@@ -347,7 +347,7 @@ export const PROGRAM_CONTENT: Record<
         { type: 'p', text: 'برنامج نظري غايته صناعة الشخصية القيادية.' },
         {
           type: 'p',
-          text: 'يسير البرنامج في المسار التربوي والقيمي على ثلاثة محاور: بناء الشخصية القيادية الرسالية، بقيم التضحية والصمود والمقاومة، والارتباط بالمسجد الأقصى والقدس مركزًا للهوية؛ والصلابة النفسية ومواجهة الإحباط، بأدوات التعامل مع الأزمات الإنسانية والسياسية وضمان استمرارية العمل الفكري والميداني؛ وأخلاقيات المدافعة والعمل الجماعي، بفقه العمل المؤسسي والتعاون بين مكوّنات الأمة المختلفة.',
+          text: 'يقوم البرنامج، في المسار التربوي والقيمي، على ثلاثة محاور. الأول: بناء الشخصية القيادية الرسالية، بقيم التضحية والصمود والمقاومة، والارتباط بالمسجد الأقصى والقدس مركزًا للهوية. الثاني: الصلابة النفسية ومواجهة الإحباط، بأدوات التعامل مع الأزمات الإنسانية والسياسية، واستمرارية العمل الفكري والميداني. الثالث: أخلاقيات المدافعة والعمل الجماعي، بفقه العمل المؤسسي والتعاون بين مكوّنات الأمة.',
         },
       ],
       en: [
@@ -357,7 +357,7 @@ export const PROGRAM_CONTENT: Record<
         },
         {
           type: 'p',
-          text: 'It follows the educational and values track along three axes: building the mission-driven leader, with the values of sacrifice, steadfastness, and resistance and attachment to Al-Aqsa and Al-Quds as the centre of identity; resilience and facing despair, with tools for handling human and political crises and sustaining intellectual and field work; and the ethics of advocacy and teamwork, with the practice of institutional work and cooperation among the nation’s components.',
+          text: 'On the educational and values track, the program rests on three axes. First: building the mission-driven leader, with the values of sacrifice, steadfastness, and resistance, and attachment to Al-Aqsa and Al-Quds as the centre of identity. Second: resilience and facing despair, with tools for handling human and political crises and sustaining intellectual and field work. Third: the ethics of advocacy and teamwork, with the practice of institutional work and cooperation among the nation’s components.',
         },
       ],
     },
@@ -467,17 +467,17 @@ export const CAMP = {
       },
       {
         type: 'p',
-        text: 'والمخيم مرحلة تجربة وتطبيق واندماج، لا رحلة ولا نشاط ترفيهي: فضاءات تفاعلية مباشرة تنقل المشاركين والمشاركات من التعلّم النظري إلى التجربة الجماعية والتطبيق العملي، على مدى أسبوع كامل يجمع المعرفة والحوار وبناء الشخصية والعمل الجماعي والمهارات، وإدارة المبادرات والمشاريع التحريرية.',
+        text: 'والمخيم ليس رحلة ولا نشاطًا ترفيهيًا، بل مرحلة تجربة وتطبيق واندماج: أسبوع كامل ينتقل فيه المشاركون والمشاركات من التعلّم النظري إلى التجربة الجماعية والتطبيق العملي، ويجمع المعرفة والحوار وبناء الشخصية والمهارات، وإدارة المبادرات والمشاريع التحريرية.',
       },
     ] as Block[],
     en: [
       {
         type: 'p',
-        text: 'The Jeel Al-Toufan camps crown the whole training season: a practical conclusion held each September, after Open and Directed Training end, binding the Academy’s educational and training system together.',
+        text: 'The Jil Altufan camps crown the whole training season: a practical conclusion held each September, after Open and Directed Training end, binding the Academy’s educational and training system together.',
       },
       {
         type: 'p',
-        text: 'The camp is a stage of experience, application, and integration, not a trip or a leisure activity: direct, interactive spaces that move participants from theoretical learning to collective experience and practical application, over a full week that brings together knowledge, dialogue, character building, teamwork, skills, and the management of initiatives and liberation projects.',
+        text: 'The camp is not a trip or a leisure activity but a stage of experience, application, and integration: a full week in which participants move from theoretical learning to collective experience and practical application, bringing together knowledge, dialogue, character building, skills, and the management of initiatives and liberation projects.',
       },
     ] as Block[],
   },
