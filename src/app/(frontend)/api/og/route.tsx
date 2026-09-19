@@ -7,9 +7,10 @@ import { shapeArabic } from '@/lib/og-arabic'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const NAVY = '#0B3246'
-const NAVY_DEEP = '#052C40'
-const RED = '#C3272E'
+// Brand sheet values (tokens.css is the source of truth; Satori cannot read CSS variables).
+const NAVY = '#004569'
+const NAVY_DEEP = '#032A3F'
+const RED = '#AD2E39'
 const MUTED = 'rgba(255,255,255,0.78)'
 
 /** Poppins for English text (Satori shapes Latin fine). Arabic is shaped by opentype.js — see og-arabic.ts. */

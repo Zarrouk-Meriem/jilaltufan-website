@@ -7,7 +7,7 @@ function wrap(locale: Locale, title: string, paragraphs: string[]): { text: stri
   const text = [title, '', ...paragraphs].join('\n')
   const html = `<!doctype html><html lang="${locale}" dir="${dir(locale)}"><body style="margin:0;padding:32px;background:#f7f7f5;font-family:Poppins,'Noto Kufi Arabic',system-ui,sans-serif;color:#2b3439;line-height:1.7">
 <div style="max-width:560px;margin:0 auto;background:#fff;padding:32px;border:1px solid rgba(5,7,8,.12)">
-<div style="width:48px;height:3px;background:#c3272e;margin-bottom:20px"></div>
+<div style="width:48px;height:3px;background:#ad2e39;margin-bottom:20px"></div>
 <h1 style="margin:0 0 16px;font-size:20px;color:#050708">${esc(title)}</h1>
 ${paragraphs.map((p) => `<p style="margin:0 0 12px;white-space:pre-line">${esc(p)}</p>`).join('\n')}
 </div></body></html>`

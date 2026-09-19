@@ -4,7 +4,7 @@ import React from 'react'
 export function Icon() {
   return (
     <svg viewBox="0 0 675 814" width="20" height="24" aria-hidden="true" focusable="false">
-      <polygon points="481,0 675,326 480,326 194,814 0,814" fill="#C3272E" />
+      <polygon points="481,0 675,326 480,326 194,814 0,814" fill="#AD2E39" />
     </svg>
   )
 }

@@ -1,9 +1,9 @@
 /* Design tokens — the single source of truth. No hex values anywhere else. */
 :root {
-  /* Brand */
-  --red-600: #c3272e;
-  --red-700: #a11f25;
-  --red-50: #fbedee;
+  /* Brand — from the brand sheet (2026-09-19): Heritage Red #AD2E39, Academy Blue #004569. */
+  --red-600: #ad2e39;
+  --red-700: #8c232d;
+  --red-50: #f8ecee;
 
   /* Errors are not the brand red: a deeper brick, so a mistake never reads as identity. */
   --error-700: #8c2f24;
@@ -19,9 +19,10 @@
   --paper: #ffffff;
   --paper-2: #f7f7f5;
 
-  --navy-900: #052c40;
-  --navy-800: #0b3246;
-  --blue-700: #024a70;
+  /* Navy surfaces open in Academy Blue and deepen; the lighter blue is for the portrait backdrop. */
+  --navy-900: #032a3f;
+  --navy-800: #004569;
+  --blue-700: #0f5a80;
 
   /* On-navy text */
   --on-navy: #ffffff;
