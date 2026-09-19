@@ -1,10 +1,10 @@
-import { IBM_Plex_Sans_Arabic, Poppins } from 'next/font/google'
+import { Noto_Kufi_Arabic, Poppins } from 'next/font/google'
 
 /**
- * Latin: Poppins (brand). Arabic: IBM Plex Sans Arabic as the stand-in for
- * Janna LT until licensed files exist in /public/fonts/janna/.
+ * Latin: Poppins (brand). Arabic: Noto Kufi Arabic (OFL), chosen 2026-09-19 as the
+ * free face closest to the humanist Kufi of Janna LT in the brand references.
  *
- * To swap in Janna LT, replace `arabic` below with:
+ * To swap in a licensed local font, replace `arabic` below with:
  *   import localFont from 'next/font/local'
  *   const arabic = localFont({ src: [...], variable: '--font-arabic', display: 'swap' })
  * Nothing else changes — every stylesheet reads var(--font-arabic).
@@ -19,9 +19,10 @@ export const latin = Poppins({
   // falls through to var(--font-arabic). Keep this in mind if you ever rename the font.
 })
 
-export const arabic = IBM_Plex_Sans_Arabic({
+export const arabic = Noto_Kufi_Arabic({
   subsets: ['arabic'],
-  weight: ['400', '500', '600', '700'],
+  // Variable font: one file covers every weight the site uses.
+  weight: 'variable',
   variable: '--font-arabic',
   display: 'swap',
 })

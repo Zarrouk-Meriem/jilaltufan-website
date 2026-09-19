@@ -65,8 +65,13 @@ function findExtensions() {
     const page = await ctx.newPage()
     const msgs = []
     page.on('console', (m) => {
-      if (m.type() === 'error' || m.type() === 'warning')
-        msgs.push(m.type() + ': ' + m.text().split('\n')[0].slice(0, 140))
+      if (m.type() !== 'error' && m.type() !== 'warning') return
+      // An error logged from an extension's own script (chrome-extension:// source) is the
+      // extension talking to itself, not something our page did; it is shown, not counted.
+      const src = m.location()?.url ?? ''
+      const ext = /^chrome-extension:\/\//.test(src)
+      const label = ext ? `ext-${m.type()} (ignored, ${src.slice(0, 60)})` : m.type()
+      msgs.push(label + ': ' + m.text().split('\n')[0].slice(0, 140))
     })
     page.on('pageerror', (e) => {
       // Only an error with a frame of ours is ours; extension content scripts throw into the page too

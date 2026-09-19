@@ -107,8 +107,8 @@ export default async function StyleguidePage({ params }: PageProps<'/[locale]/st
         <p className="mb-6 text-sm text-ink-500">
           Poppins →{' '}
           {ar
-            ? 'IBM Plex Sans Arabic (بديل Janna LT مؤقتًا)'
-            : 'IBM Plex Sans Arabic (stand-in for Janna LT)'}
+            ? 'Noto Kufi Arabic (بديل مجاني لـ Janna LT)'
+            : 'Noto Kufi Arabic (free stand-in for Janna LT)'}
         </p>
         <ul className="flex flex-col gap-4">
           {scale.map((s) => (

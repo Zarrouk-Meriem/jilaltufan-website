@@ -17,7 +17,7 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 
 ## Typography
 
-- [ ] **P1 — Arabic typeface decision.** Janna LT (the brand references' face) is a commercial Monotype font: about $41 per style on MyFonts, and the webfont licence is sold per monthly-pageview tier, so it is a recurring cost the moment traffic grows. The site runs on **IBM Plex Sans Arabic** (free, OFL) and will stay on a free face unless the academy chooses to pay; the closest free candidates in spirit (humanist Kufi) are Noto Kufi Arabic and Cairo. Swap = one `next/font` declaration in `src/styles/fonts.ts`. Decision pending (2026-09-19).
+- [x] **Arabic typeface: Noto Kufi Arabic** (decided 2026-09-19, free under the OFL, the closest free face to Janna LT's humanist Kufi). Janna LT itself is a commercial Monotype font (about $41 per style, webfont licence per monthly-pageview tier, recurring as traffic grows) and stays out unless the academy chooses to pay. Al Jazeera's typeface was compared too but is exclusive to Al Jazeera (Tarek Atrissi Design, 2013) and cannot be used. Swap = one `next/font` declaration in `src/styles/fonts.ts`.
 - [ ] **P2 — Confirm weights needed** (the references use at least a light/regular for eyebrows and a heavy for display).
 
 ## Content the academy must supply
@@ -65,7 +65,7 @@ Legend: **P1** blocks launch · **P2** needed before real content goes live · *
 - [x] **Email:** Zoho SMTP live (`no-reply@` sender, `contact@` reply-to); the same six values go on the host.
 - [ ] **P2 — Cloudflare Turnstile keys** if spam becomes a problem. The integration is behind an env flag and inert without keys.
 - [ ] **P2 — Backups** for Postgres and media.
-- [ ] **P3 — Lighthouse performance 94 → ≥95 (mobile).** Everything else is 100. The gap is simulated bytes: Next's client runtime (≈150 kB gz, not ours) and eight preloaded woff2 files (four IBM Plex Sans Arabic weights ≈ 34 kB each). The honest lever is a self-hosted subset of the Arabic font (drop presentation forms FB50–FEFF, keep 400/500/600/700) via `next/font/local` — halves font bytes with no visible change; needs `fonttools` once. Do it when Janna LT arrives, since that swap touches the same file (`src/styles/fonts.ts`).
+- [ ] **P3 — Lighthouse performance 94 → ≥95 (mobile).** Everything else is 100. The gap is simulated bytes: Next's client runtime (≈150 kB gz, not ours) and the Arabic webfont. Noto Kufi Arabic is one variable woff2 (re-measure after the 2026-09-19 swap; it replaced four Plex weights). The honest lever if it is still short is a self-hosted subset (drop presentation forms FB50–FEFF) via `next/font/local`; needs `fonttools` once.
 
 ## Unexplained errors (dev only so far)
 
