@@ -75,6 +75,13 @@ Use `PORT=3001 scripts/dev-restart.sh [--clean]`. Never poll the server with req
 - `prefers-reduced-motion` keeps the fade and drops the movement; it never shortens a duration to hide the problem.
 - Instant is only acceptable for state that must not lag: focus rings and the live badge.
 
+## Static rendering — the two traps (found 2026-09-20)
+
+- **`loading.tsx` must not read the request.** It receives no `params`, so it cannot call `setRequestLocale`; a server-side `getTranslations()` there makes next-intl read the locale from the request and Next then renders the whole segment on demand (`ƒ` in the build table, `Cache-Control: no-store`, 200 ms TTFB instead of 5). `RouteLoading` is a client leaf with `useTranslations` for that reason. After touching a loader or a layout, read the build table: public pages must not show `ƒ` unless they read `searchParams` or export `force-dynamic`.
+- **The loader's fallback is part of the prerendered HTML.** Next writes the Suspense fallback before the page content even for a static route, and swaps the content in as the document streams. The fallback is therefore at least viewport-tall (`min-h-dvh`), so the footer is never on screen when the swap lands — with a 60 dvh fallback it was, and every third Lighthouse run recorded a 0.30 layout shift.
+- **Anything that renders only after hydration reserves its space** (Motion rules): `LocalTime` keeps a one-line slot on the server and fades the text in.
+- **Fonts are measured, not assumed.** The Arabic face is a self-hosted subset (`scripts/subset-arabic-font.sh`); keep a–z in any subset or next/font emits `size-adjust: 100%` for the fallback and paragraphs grow when the font lands. Re-measure with the recipe in DEPLOY.md after any change to fonts, loaders, or the locale layout.
+
 ## Code conventions
 
 - Server Components by default. `'use client'` only where interaction genuinely requires it — and then at the smallest possible leaf.
