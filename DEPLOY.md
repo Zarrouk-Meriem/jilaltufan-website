@@ -53,15 +53,38 @@ What is different on Vercel and why it is fine for a preview: the Next image-opt
 
 ## Path A — one small VPS with Docker (at launch, ≈ $6–10 / month)
 
-Fits the ≈ $25/month target with room to spare. E.g. Hetzner CX22 (2 vCPU, 4 GB) ≈ €4–5, Cloudflare in front for TLS/CDN (free), R2 for media (free tier covers this volume), Resend free tier for < 3,000 emails/month.
+Fits the ≈ $25/month target with room to spare. E.g. Hetzner CX22 (2 vCPU, 4 GB) ≈ €4–5, R2 for media (free tier covers this volume), Zoho for mail. Cloudflare in front is optional: Caddy in the compose file terminates HTTPS itself with Let's Encrypt.
+
+`docker-compose.prod.yml` runs five containers: **app** (the standalone Next image, unprivileged, healthchecked on `/ar`), **postgres** 17 on a volume (not exposed), **caddy** (80/443, certificates, `www` → apex), **backup** (`pg_dump` nightly at 03:00 UTC + a tar of local uploads, kept 14 days, copied to a private R2 bucket when `BACKUP_S3_BUCKET` is set), and **tools** (profile `ops`, only for one-off jobs: migrations and the seed). Every command takes the same two flags, so define an alias on the server:
 
 ```bash
-# on the server
-docker compose -f docker-compose.prod.yml up -d      # app + postgres + a volume
-docker compose exec app pnpm migrate && docker compose exec app pnpm seed
+alias dc='docker compose --env-file .env.prod -f docker-compose.prod.yml'
 ```
 
-`docker-compose.prod.yml` is not written yet (deploy-time task); the `Dockerfile` builds the standalone image (`DOCKER_BUILD=1`). Put Caddy or Cloudflare Tunnel in front for HTTPS. Back up Postgres nightly (`pg_dump` to R2) — a one-line cron.
+**One constraint shapes the order below: `next build` prerenders pages from Payload, so building the image needs a reachable, migrated database.** The build gets it through `BUILD_DATABASE_URL`, passed as a BuildKit secret (never stored in a layer). A peak of ≈ 1 GB RAM measured on 2026-09-20 means a 4 GB VPS can build the image itself; the steps below do that. Building on the laptop instead (against the local dev database, `postgresql://jaa:jaa@host.docker.internal:5432/jaa`) works the same way, but the laptop is arm64 and the VPS amd64, so add `--platform linux/amd64` and push to a registry (`APP_IMAGE=` in `.env.prod`) — slower under emulation, only worth it if the server is too small to build.
+
+1. **Server:** Ubuntu LTS, Docker Engine + Compose plugin (`curl -fsSL https://get.docker.com | sh`), a non-root user in the `docker` group, a firewall allowing 22/80/443. Point `jilaltufan.org` and `www` A/AAAA records at it (Caddy needs this before it can get a certificate; until then set `SITE_DOMAIN=<server-ip>.sslip.io` or accept certificate errors).
+2. **Checkout + env:** `git clone` the repository, `cp .env.prod.example .env.prod`, fill it in (`POSTGRES_PASSWORD` and `PAYLOAD_SECRET` from `openssl rand -hex 32`; the R2 and Zoho values are the same ones the preview uses). The file is git-ignored and is read both by Compose and by the containers.
+3. **Database first:** `dc up -d postgres`, then migrate it with the tools image (built from the source checkout, no database needed to build it):
+   ```bash
+   dc --profile ops build tools
+   dc run --rm tools                                       # pnpm payload:tsx migrate
+   dc run --rm tools pnpm payload:tsx run src/seed/index.ts  # once; idempotent
+   ```
+   Moving from the Vercel preview instead of seeding: `pg_dump --format=custom` Neon from the laptop and `dc exec -T postgres pg_restore -U jaa -d jaa --no-owner < file.dump` (then no seed). Media stays on R2 and mail on Zoho, so neither moves.
+4. **Build the app image against that database.** The compose build uses host networking, so publish Postgres on localhost for the duration of the build:
+   ```bash
+   docker run --rm -d --name pgtunnel --network jaa-prod_default -p 127.0.0.1:5432:5432 alpine/socat TCP-LISTEN:5432,fork,reuseaddr TCP:postgres:5432
+   BUILD_DATABASE_URL="postgresql://jaa:<POSTGRES_PASSWORD>@127.0.0.1:5432/jaa" dc build app backup
+   docker rm -f pgtunnel
+   ```
+   The URL is a BuildKit secret that Compose reads from the shell environment (not from `.env.prod`), so it goes on the command line of the build and nowhere else.
+5. **Up:** `dc up -d`. Caddy fetches the certificate within a minute. Check: `https://jilaltufan.org/ar` renders, `/admin` shows the create-first-user form (the first account is always admin; if the database came from Neon, log in with the existing account), `/robots.txt` does **not** say `Disallow: /` (no `SITE_NOINDEX`), an upload lands in R2, a forgot-password email arrives, and `dc ps` shows `app` healthy.
+6. **Backups:** `dc run --rm -e BACKUP_NOW=1 backup` writes one immediately — confirm the file is in the `backups` volume (`dc exec backup ls -l /backups`) and, if `BACKUP_S3_BUCKET` is set, in the bucket. Restore drill: `dc exec -T postgres pg_restore -U jaa -d jaa --clean --no-owner < db-<stamp>.dump`.
+
+**Redeploying a new version** is the same loop: `git pull`, `dc --profile ops build tools && dc run --rm tools` (only needed when `src/migrations` changed, harmless otherwise), then step 4's build and `dc up -d app` — Compose swaps the container; a few seconds of downtime, no data touched. Migrations are run by hand, before the build, never by the container on start.
+
+**What runs where after launch:** the site on the VPS, media on R2, mail through Zoho, DNS at the registrar (or Cloudflare). Delete the Vercel project and the Neon database once the VPS has served a week without incident, or keep Vercel as a staging preview with `SITE_NOINDEX=1`.
 
 ## Path B — Vercel long-term (not planned)
 
@@ -73,7 +96,7 @@ Staying on Vercel past the preview would mean Vercel Pro: Vercel Pro is $20/seat
 
 ## The Next patch
 
-`patches/next@16.3.5.patch` is applied by `pnpm install` (the Dockerfile copies `patches/` before installing). It fixes an image-optimizer hang that would otherwise leave individual image variants broken for every visitor until the process restarts. Do not deploy an unpatched Next — see CLAUDE.md and TODO.md.
+`patches/next@16.3.5.patch` is applied by `pnpm install` (the Dockerfile copies `patches/` before installing; the image build fails loudly if the patch no longer applies). It fixes an image-optimizer hang that would otherwise leave individual image variants broken for every visitor until the process restarts. Do not deploy an unpatched Next — see CLAUDE.md and TODO.md.
 
 ## Security headers
 

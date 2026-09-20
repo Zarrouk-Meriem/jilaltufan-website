@@ -1,0 +1,35 @@
+# What never goes into the image build context.
+.git
+node_modules
+.pnpm-store
+.next*
+out
+
+# secrets and local state
+.env
+.env.*
+!.env.example
+
+# runtime data (volumes in production)
+media
+public/media
+application-files
+public/flags
+
+# tooling output
+.artifacts*
+playwright-report
+test-results
+coverage
+*.log
+tsconfig.tsbuildinfo
+.DS_Store
+.idea
+.vscode
+
+# not needed to build or run the app
+_context
+deploy
+docker-compose*.yml
+Dockerfile
+.dockerignore

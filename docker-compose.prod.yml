@@ -1,0 +1,124 @@
+# Production on one VPS: app + Postgres + Caddy (HTTPS) + nightly backups.
+# DEPLOY.md → Path A has the order of operations. Every command takes the same two flags:
+#
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml <command>
+#
+# `.env.prod` (never committed) is both the interpolation source for this file and the
+# environment of the containers. Copy .env.prod.example and fill it in.
+name: jaa-prod
+
+x-app-env: &app-env
+  DATABASE_URL: postgresql://jaa:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is missing from .env.prod}@postgres:5432/jaa
+
+services:
+  app:
+    image: ${APP_IMAGE:-jilaltufan-website:latest}
+    build:
+      context: .
+      target: runner
+      # The build prerenders pages from Payload, so it must reach a migrated database.
+      # BUILD_DATABASE_URL is handed in as a BuildKit secret (never a layer). Compose reads
+      # it from the *shell* environment, not from --env-file, so export it for the build:
+      #   BUILD_DATABASE_URL=postgresql://… docker compose --env-file .env.prod -f docker-compose.prod.yml build app
+      network: host
+      secrets: [database_url]
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://jilaltufan.org}
+    restart: unless-stopped
+    env_file: .env.prod
+    environment: *app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      # Only used while S3_* is unset; with R2 configured both stay empty.
+      - media:/app/media
+      - application-files:/app/application-files
+    expose: ['3000']
+    logging: &logging
+      driver: json-file
+      options: { max-size: '10m', max-file: '5' }
+
+  # One-off jobs, never running by themselves (profile `ops`):
+  #   docker compose … run --rm tools                              → migrate
+  #   docker compose … run --rm tools pnpm payload:tsx run src/seed/index.ts
+  tools:
+    image: ${TOOLS_IMAGE:-jilaltufan-website-tools:latest}
+    build:
+      context: .
+      target: tools
+      network: host
+    profiles: [ops]
+    env_file: .env.prod
+    environment: *app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jaa
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: jaa
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    shm_size: 256m
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U jaa -d jaa']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: *logging
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:-jilaltufan.org}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@jilaltufan.org}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    logging: *logging
+
+  # pg_dump every night at 03:00 UTC into the `backups` volume, plus a tar of the local
+  # upload folders; copies each file to an R2/S3 bucket when BACKUP_S3_BUCKET is set.
+  backup:
+    build: deploy/backup
+    image: ${BACKUP_IMAGE:-jilaltufan-backup:latest}
+    restart: unless-stopped
+    env_file: .env.prod
+    environment:
+      PGHOST: postgres
+      PGUSER: jaa
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: jaa
+    volumes:
+      - backups:/backups
+      - media:/data/media:ro
+      - application-files:/data/application-files:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *logging
+
+secrets:
+  database_url:
+    environment: BUILD_DATABASE_URL
+
+volumes:
+  pgdata:
+  media:
+  application-files:
+  caddy_data:
+  caddy_config:
+  backups:

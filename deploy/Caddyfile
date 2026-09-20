@@ -1,0 +1,20 @@
+# HTTPS in front of the app. Certificates come from Let's Encrypt automatically once the
+# domain's DNS points at this server (SITE_DOMAIN=localhost gets a local, self-signed one).
+{
+	email {$ACME_EMAIL}
+}
+
+{$SITE_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:3000
+}
+
+www.{$SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}
+
+# The .com is registered too and should land on the .org (TODO.md). Once its DNS points
+# here, uncomment — Caddy then also issues its certificate:
+# jilaltufan.com, www.jilaltufan.com {
+# 	redir https://{$SITE_DOMAIN}{uri} permanent
+# }
