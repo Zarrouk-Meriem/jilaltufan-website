@@ -72,15 +72,25 @@ export async function Footer({ locale }: { locale: string }) {
             </p>
             <p className="mt-6 text-sm font-medium text-on-navy">«{t('site.tagline')}»</p>
             {socials.length ? (
-              <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2" aria-label={t('footer.follow')}>
-                {socials.map((s) => (
-                  <li key={s.id ?? s.url}>
-                    <a href={s.url} className={linkClass} target="_blank" rel="noopener noreferrer">
-                      {t(`social.${s.platform}` as 'social.other')}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-8">
+                <h2 id="footer-follow" className="mb-3 text-sm font-semibold text-on-navy">
+                  {t('footer.follow')}
+                </h2>
+                <ul className="flex flex-wrap gap-x-5 gap-y-2" aria-labelledby="footer-follow">
+                  {socials.map((s) => (
+                    <li key={s.id ?? s.url}>
+                      <a
+                        href={s.url}
+                        className={linkClass}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {t(`social.${s.platform}` as 'social.other')}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : null}
           </div>
           <nav

@@ -30,6 +30,7 @@ import {
   RENAMED_PROGRAMS,
   SEASON,
   seasonMonths,
+  SOCIALS,
   WINDOWS,
 } from './data'
 
@@ -355,6 +356,13 @@ async function seed() {
   } else log('skip instructors window (editor-owned)')
 
   // ── Site settings + home page defaults ──
+  // The social links are the editor's once any exist; the seed only fills an empty list.
+  const settings = await payload.findGlobal({
+    slug: 'site-settings',
+    overrideAccess: true,
+    depth: 0,
+  })
+  const seedSocials = !settings.socials?.length
   await payload.updateGlobal({
     slug: 'site-settings',
     overrideAccess: true,
@@ -365,8 +373,10 @@ async function seed() {
       joinLinkVisibility: 'window',
       joinWindowMinutes: 30,
       statsEnabled: false,
+      ...(seedSocials ? { socials: SOCIALS } : {}),
     },
   })
+  if (!seedSocials) log('skip social links (editor-owned)')
   for (const locale of ['ar', 'en'] as const) {
     await payload.updateGlobal({
       slug: 'home-page',

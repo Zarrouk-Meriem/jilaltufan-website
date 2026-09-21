@@ -124,6 +124,19 @@ export const MISSION = {
 }
 
 /**
+ * The academy's official accounts, from «دليل الحضور الرقمي للأكاديمية» (September 2026):
+ * the only accounts that speak for it, in the guide's order. Instagram is being created
+ * under a new handle and joins the list once the academy announces it (TODO.md). The seed
+ * writes these only while Site settings → Social links is empty; after that the list is
+ * the editor's.
+ */
+export const SOCIALS: { platform: 'linkedin' | 'facebook' | 'youtube'; url: string }[] = [
+  { platform: 'linkedin', url: 'https://www.linkedin.com/company/jilaltufan' },
+  { platform: 'facebook', url: 'https://www.facebook.com/profile.php?id=61594463393542' },
+  { platform: 'youtube', url: 'https://www.youtube.com/@jilaltufan' },
+]
+
+/**
  * Student / instructor window copy — the same built-in text as messages/*.json, entered
  * into Payload so editors have a starting point. The seed only writes it while the
  * globals are empty; the conduct line is a marked placeholder until the academy sends its own.
