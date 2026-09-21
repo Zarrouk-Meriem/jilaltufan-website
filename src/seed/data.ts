@@ -124,16 +124,19 @@ export const MISSION = {
 }
 
 /**
- * The academy's official accounts, from «دليل الحضور الرقمي للأكاديمية» (September 2026):
- * the only accounts that speak for it, in the guide's order. Instagram is being created
- * under a new handle and joins the list once the academy announces it (TODO.md). The seed
- * writes these only while Site settings → Social links is empty; after that the list is
- * the editor's.
+ * The academy's official accounts: the only ones that speak for it. LinkedIn, Facebook,
+ * and YouTube in the order of «دليل الحضور الرقمي للأكاديمية» (September 2026); Instagram
+ * was announced afterwards (2026-09-21). The seed adds any of these that Site settings →
+ * Social links lacks and never removes or reorders what an editor has entered.
  */
-export const SOCIALS: { platform: 'linkedin' | 'facebook' | 'youtube'; url: string }[] = [
+export const SOCIALS: {
+  platform: 'linkedin' | 'facebook' | 'youtube' | 'instagram'
+  url: string
+}[] = [
   { platform: 'linkedin', url: 'https://www.linkedin.com/company/jilaltufan' },
   { platform: 'facebook', url: 'https://www.facebook.com/profile.php?id=61594463393542' },
   { platform: 'youtube', url: 'https://www.youtube.com/@jilaltufan' },
+  { platform: 'instagram', url: 'https://www.instagram.com/jilaltufanacademy/' },
 ]
 
 /**

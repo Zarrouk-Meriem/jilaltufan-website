@@ -1,5 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { Logo } from '@/components/brand/Logo'
+import { BrandIcon, type Brand } from '@/components/icons/Brand'
+import { Icon } from '@/components/icons/Icon'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { textOr } from '@/lib/cms'
@@ -76,19 +78,28 @@ export async function Footer({ locale }: { locale: string }) {
                 <h2 id="footer-follow" className="mb-3 text-sm font-semibold text-on-navy">
                   {t('footer.follow')}
                 </h2>
-                <ul className="flex flex-wrap gap-x-5 gap-y-2" aria-labelledby="footer-follow">
-                  {socials.map((s) => (
-                    <li key={s.id ?? s.url}>
-                      <a
-                        href={s.url}
-                        className={linkClass}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {t(`social.${s.platform}` as 'social.other')}
-                      </a>
-                    </li>
-                  ))}
+                <ul className="flex flex-wrap gap-2" aria-labelledby="footer-follow">
+                  {socials.map((s) => {
+                    const label = t(`social.${s.platform}` as 'social.other')
+                    return (
+                      <li key={s.id ?? s.url}>
+                        <a
+                          href={s.url}
+                          aria-label={label}
+                          title={label}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex size-10 items-center justify-center rounded-brand border border-on-navy-line text-on-navy-muted transition-colors duration-150 ease-brand hover:border-on-navy hover:bg-on-navy hover:text-navy-900"
+                        >
+                          {s.platform === 'other' ? (
+                            <Icon name="globe" tone="mono" className="size-5" />
+                          ) : (
+                            <BrandIcon brand={s.platform as Brand} className="size-[18px]" />
+                          )}
+                        </a>
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             ) : null}

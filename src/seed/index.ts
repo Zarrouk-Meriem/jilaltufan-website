@@ -356,13 +356,15 @@ async function seed() {
   } else log('skip instructors window (editor-owned)')
 
   // ── Site settings + home page defaults ──
-  // The social links are the editor's once any exist; the seed only fills an empty list.
+  // Social links: add any official account the list lacks; keep the editor's rows and order.
   const settings = await payload.findGlobal({
     slug: 'site-settings',
     overrideAccess: true,
     depth: 0,
   })
-  const seedSocials = !settings.socials?.length
+  const existing = settings.socials ?? []
+  const missing = SOCIALS.filter((o) => !existing.some((s) => s.platform === o.platform))
+  const seedSocials = missing.length > 0
   await payload.updateGlobal({
     slug: 'site-settings',
     overrideAccess: true,
@@ -373,10 +375,14 @@ async function seed() {
       joinLinkVisibility: 'window',
       joinWindowMinutes: 30,
       statsEnabled: false,
-      ...(seedSocials ? { socials: SOCIALS } : {}),
+      ...(seedSocials ? { socials: [...existing, ...missing] } : {}),
     },
   })
-  if (!seedSocials) log('skip social links (editor-owned)')
+  log(
+    seedSocials
+      ? `social links + ${missing.map((m) => m.platform).join(', ')}`
+      : 'skip social links (complete)',
+  )
   for (const locale of ['ar', 'en'] as const) {
     await payload.updateGlobal({
       slug: 'home-page',

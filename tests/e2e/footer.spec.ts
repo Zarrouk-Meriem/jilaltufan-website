@@ -3,15 +3,19 @@ import { expect, test } from '@playwright/test'
 /**
  * The footer's «تابعنا» row and the Organization JSON-LD `sameAs` both come from
  * Site settings → Social links, seeded with the academy's official accounts
- * («دليل الحضور الرقمي للأكاديمية», September 2026; `src/seed/data.ts`). This pins
- * that the seeded list reaches the page in both locales, opens in a new tab safely,
- * and reaches search engines.
+ * (`src/seed/data.ts`). This pins that the seeded list reaches the page in both
+ * locales as labelled icon tiles, opens in a new tab safely, and reaches search engines.
  */
 const official = [
   { platform: 'linkedin', url: 'https://www.linkedin.com/company/jilaltufan' },
   { platform: 'facebook', url: 'https://www.facebook.com/profile.php?id=61594463393542' },
   { platform: 'youtube', url: 'https://www.youtube.com/@jilaltufan' },
+  { platform: 'instagram', url: 'https://www.instagram.com/jilaltufanacademy/' },
 ]
+const names = {
+  ar: { linkedin: 'لينكدإن', facebook: 'فيسبوك', youtube: 'يوتيوب', instagram: 'إنستغرام' },
+  en: { linkedin: 'LinkedIn', facebook: 'Facebook', youtube: 'YouTube', instagram: 'Instagram' },
+} as const
 
 for (const locale of ['ar', 'en'] as const) {
   test.describe(`[${locale}] footer social links`, () => {
@@ -30,8 +34,16 @@ for (const locale of ['ar', 'en'] as const) {
         await expect(a).toHaveAttribute('href', account.url)
         await expect(a).toHaveAttribute('target', '_blank')
         await expect(a).toHaveAttribute('rel', /noopener/)
-        await expect(a).not.toHaveText('')
+        // An icon tile: the platform name is the accessible name, the logo is decorative.
+        await expect(a).toHaveAccessibleName(
+          names[locale][account.platform as keyof typeof names.ar],
+        )
+        await expect(a.locator('svg[aria-hidden]')).toHaveCount(1)
       }
+
+      // Hover inverts the tile (white on navy), like the on-navy button.
+      await links.first().hover()
+      await expect(links.first()).toHaveCSS('background-color', 'rgb(255, 255, 255)')
     })
 
     test('the same accounts are the organization’s sameAs', async ({ page }) => {
