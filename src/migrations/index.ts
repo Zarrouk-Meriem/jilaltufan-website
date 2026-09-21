@@ -5,6 +5,7 @@ import * as migration_20260916_120441_programs_projects_track from './20260916_1
 import * as migration_20260917_204927_application_intake from './20260917_204927_application_intake'
 import * as migration_20260917_212451_application_program_optional from './20260917_212451_application_program_optional'
 import * as migration_20260921_152214_hero_cutout from './20260921_152214_hero_cutout'
+import * as migration_20260921_185210_acceptance_email_sent_at from './20260921_185210_acceptance_email_sent_at'
 
 export const migrations = [
   {
@@ -41,5 +42,10 @@ export const migrations = [
     up: migration_20260921_152214_hero_cutout.up,
     down: migration_20260921_152214_hero_cutout.down,
     name: '20260921_152214_hero_cutout',
+  },
+  {
+    up: migration_20260921_185210_acceptance_email_sent_at.up,
+    down: migration_20260921_185210_acceptance_email_sent_at.down,
+    name: '20260921_185210_acceptance_email_sent_at',
   },
 ]

@@ -665,6 +665,9 @@ export interface Application {
    * Applications are to the academy; set the program here after acceptance.
    */
   program?: (number | null) | Program;
+  /**
+   * Setting the status to Accepted emails the applicant automatically, in their language; the time appears below. The other statuses send nothing.
+   */
   applicationStatus: 'new' | 'reviewing' | 'accepted' | 'waitlisted' | 'rejected';
   fullName: string;
   gender?: ('female' | 'male') | null;
@@ -1150,6 +1153,7 @@ export interface Application {
   pledge: boolean;
   consent: boolean;
   locale?: ('ar' | 'en') | null;
+  acceptanceEmailSentAt?: string | null;
   /**
    * Staff only.
    */
@@ -1744,6 +1748,7 @@ export interface ApplicationsSelect<T extends boolean = true> {
   pledge?: T;
   consent?: T;
   locale?: T;
+  acceptanceEmailSentAt?: T;
   internalNotes?: T;
   updatedAt?: T;
   createdAt?: T;

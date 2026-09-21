@@ -47,6 +47,12 @@ Decided 2026-09-12: the site goes up on Vercel's free tier first so it can be re
 
 First-deploy lesson (2026-09-13): the admin rendered blank on Vercel while the site worked — the import map lacked the S3 plugin's client component because it had been generated on a machine without `S3_*`. Fixed for good via `admin.dependencies` (CLAUDE.md). If an admin page is ever blank with no console error, check the function logs for `PayloadComponent not found in importMap`.
 
+**Migrating Neon after a schema change** (rule since 2026-09-19: from this machine, _before_ the push — the build never migrates). Payload's own `migrate` prompts about the leftover `dev` row and hangs without a terminal, so apply the new migration's `up` SQL with psql in its idempotent form and record the row, e.g. for `20260921_185210_acceptance_email_sent_at`:
+
+```bash
+docker run --rm postgres:17-alpine psql "$(grep ^DATABASE_URL= .env.vercel | cut -d= -f2- | tr -d '"')" -v ON_ERROR_STOP=1 -c 'ALTER TABLE "applications" ADD COLUMN IF NOT EXISTS "acceptance_email_sent_at" timestamp(3) with time zone;' -c "INSERT INTO payload_migrations (name, batch, created_at, updated_at) SELECT '20260921_185210_acceptance_email_sent_at', (SELECT coalesce(max(batch),0)+1 FROM payload_migrations), now(), now() WHERE NOT EXISTS (SELECT 1 FROM payload_migrations WHERE name='20260921_185210_acceptance_email_sent_at');" -c "SELECT name, batch FROM payload_migrations ORDER BY id"
+```
+
 What is different on Vercel and why it is fine for a preview: the Next image-optimizer patch is irrelevant there (Vercel runs its own optimizer); the in-process rate limiter is per function instance (weaker, acceptable for a preview); Payload's admin is noticeably slower on serverless cold starts.
 
 **Moving to the VPS later** is: build the Docker image, `pg_dump` Neon → restore on the VPS, point DNS. Media stays on R2 and email stays on Zoho, so neither moves. Half a day, no code changes.

@@ -2,6 +2,7 @@ import type { CollectionConfig, Field } from 'payload'
 import { nobody, staffOnly } from '@/access'
 import { countryName, countryOptions } from '@/lib/countries'
 import { GENDERS, HEAR_ABOUT } from '@/lib/forms/apply-schema'
+import { sendAcceptanceEmail } from './hooks/acceptance-email'
 
 /**
  * Public create is deliberately `false`: submissions arrive through the apply
@@ -48,6 +49,7 @@ export const Applications: CollectionConfig = {
     },
   },
   access: { read: staffOnly, create: nobody, update: staffOnly, delete: staffOnly },
+  hooks: { afterChange: [sendAcceptanceEmail] },
   defaultSort: '-createdAt',
   fields: [
     {
@@ -71,7 +73,13 @@ export const Applications: CollectionConfig = {
       defaultValue: 'new',
       index: true,
       label: { ar: 'حالة الطلب', en: 'Status' },
-      admin: { position: 'sidebar' },
+      admin: {
+        position: 'sidebar',
+        description: {
+          ar: 'عند تغيير الحالة إلى «مقبول» يُرسَل بريد القبول تلقائيًا إلى المتقدّم بلغته، ويظهر وقت الإرسال أدناه. الحالات الأخرى لا تُرسل شيئًا.',
+          en: 'Setting the status to Accepted emails the applicant automatically, in their language; the time appears below. The other statuses send nothing.',
+        },
+      },
       options: [
         { label: { ar: 'جديد', en: 'New' }, value: 'new' },
         { label: { ar: 'قيد المراجعة', en: 'Reviewing' }, value: 'reviewing' },
@@ -223,6 +231,17 @@ export const Applications: CollectionConfig = {
       ],
       label: { ar: 'لغة المتقدّم', en: 'Applicant locale' },
       admin: { position: 'sidebar' },
+    },
+    {
+      name: 'acceptanceEmailSentAt',
+      type: 'date',
+      label: { ar: 'أُرسل بريد القبول في', en: 'Acceptance email sent' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => !!data?.acceptanceEmailSentAt,
+        date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm' },
+      },
     },
     {
       name: 'internalNotes',

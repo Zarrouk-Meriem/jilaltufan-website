@@ -67,3 +67,40 @@ export function academyNotification(a: {
     ),
   }
 }
+
+/**
+ * Sent once when staff move an application to «accepted». The program line appears only
+ * when one has been assigned; otherwise the team settles it with the applicant by email.
+ */
+export function acceptanceEmail(locale: Locale, name: string, program?: string) {
+  if (locale === 'ar') {
+    const subject = 'قُبِل طلب التحاقك بأكاديمية جيل الطوفان'
+    return {
+      subject,
+      ...wrap('ar', subject, [
+        `أهلًا ${name}،`,
+        'يسرّنا أن نبلغك بقبول طلب التحاقك بأكاديمية جيل الطوفان. مرحبًا بك بيننا.',
+        program
+          ? `برنامجك: ${program}.`
+          : 'سيتواصل معك فريق الأكاديمية على هذا البريد لتحديد برنامجك.',
+        'جميع الحصص مباشرة على Zoom بتوقيت القدس، وستصلك التفاصيل على هذا البريد قبل الانطلاق.',
+        'إن كان لديك سؤال، يكفي أن تردّ على هذه الرسالة.',
+        'أكاديمية جيل الطوفان — بالعلم نتحرّر',
+      ]),
+    }
+  }
+  const subject = 'Your application to Jil Altufan Academy has been accepted'
+  return {
+    subject,
+    ...wrap('en', subject, [
+      `Hello ${name},`,
+      'We are glad to let you know that your application to Jil Altufan Academy has been accepted. Welcome.',
+      program
+        ? `Your program: ${program}.`
+        : "The Academy's team will be in touch at this address to settle your program.",
+      'All sessions are live on Zoom, in Al-Quds time; the details will reach you at this address before the start.',
+      'If you have a question, simply reply to this email.',
+      'Jil Altufan Academy — Through knowledge, we are liberated',
+    ]),
+  }
+}
