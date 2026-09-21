@@ -16,6 +16,7 @@ export function DuotoneImage({
   treatment = 'navy',
   dim = 0,
   fade = false,
+  anchor = 'center',
   className,
   alt,
   ...img
@@ -23,8 +24,13 @@ export function DuotoneImage({
   treatment?: 'navy' | 'none'
   /** 0–1: darken the highlights for text legibility. */
   dim?: number
-  /** Navy gradients from the reading side and the bottom, for text on top. */
-  fade?: boolean
+  /** Navy gradients for text on top: from the reading side and the bottom, or the bottom only. */
+  fade?: boolean | 'bottom'
+  /**
+   * Which part survives when the frame crops the photo: the middle, the top (a dome),
+   * or the top with the subject pushed to the far side from the copy (`top-end`).
+   */
+  anchor?: 'center' | 'top' | 'top-end'
   className?: string
 }) {
   if (treatment === 'none') {
@@ -34,7 +40,11 @@ export function DuotoneImage({
     <span className={cn('relative block overflow-hidden bg-navy-900', className)}>
       <Image
         alt={alt}
-        className="h-full w-full object-cover opacity-90 mix-blend-screen brightness-95 contrast-[1.2] grayscale"
+        className={cn(
+          'h-full w-full object-cover opacity-90 mix-blend-screen brightness-95 contrast-[1.2] grayscale',
+          anchor === 'top' && 'object-top',
+          anchor === 'top-end' && 'object-[35%_0%] rtl:object-[65%_0%]',
+        )}
         {...img}
       />
       {dim > 0 ? (
@@ -42,10 +52,12 @@ export function DuotoneImage({
       ) : null}
       {fade ? (
         <>
-          <span
-            aria-hidden
-            className="absolute inset-0 bg-linear-to-r from-navy-800/92 via-navy-800/25 via-60% to-transparent rtl:bg-linear-to-l"
-          />
+          {fade === true ? (
+            <span
+              aria-hidden
+              className="absolute inset-0 bg-linear-to-r from-navy-800/92 via-navy-800/25 via-60% to-transparent rtl:bg-linear-to-l"
+            />
+          ) : null}
           <span
             aria-hidden
             className="absolute inset-0 bg-linear-to-t from-navy-900/85 to-transparent to-40%"

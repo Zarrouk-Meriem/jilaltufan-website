@@ -29,10 +29,21 @@ import {
 import { currentSeasonStartYear, formatInZone, monthKeyInZone, seasonMonthKeys } from '@/lib/time'
 import { ordinalFor, registrationBadge, sessionView } from '@/lib/view'
 import { SeasonRange } from '@/components/content/SeasonRange'
-import { mediaImage } from '@/lib/media'
+import { cn } from '@/lib/cn'
+import { mediaImage, optimizedImageUrl } from '@/lib/media'
 import { seasonMonths, seasonRange, sessionsCountLabel, trackLabel } from '@/lib/program'
 
 export const revalidate = 60
+
+/**
+ * The photograph and its silhouette mask share one box on the far side from the copy:
+ * it starts 40% in, so the picture mainly lives beside the text and reaches only a
+ * little under it, and its near edge dissolves into the surface through a mask (no
+ * seam, and the cascade behind is untouched). Wide frames only: on a phone the copy
+ * sits over the photo and the same dissolve simply darkens the near side.
+ */
+const HERO_BOX = 'md:start-[40%] [--edge:right] rtl:[--edge:left]'
+const HERO_EDGE = 'linear-gradient(to var(--edge), transparent, #000 30%)'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const { locale } = await params
@@ -96,6 +107,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const heroTitle = home.heroTitle || t('home.heroTitle')
   const hero = parseAccent(heroTitle)
   const heroImage = mediaImage(home.heroImage, 'hero')
+  const heroCutout = mediaImage(home.heroCutout, 'hero')
   // Two switches on purpose: Site settings holds the figures and the master toggle
   // ("keep off until real numbers exist"); the home page decides whether to show the band.
   const stats = (settings.stats ?? []).filter((s) => s.value?.trim() && s.label?.trim())
@@ -104,22 +116,51 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   return (
     <>
       {/* 1 · Hero */}
-      <section className="relative overflow-hidden surface-navy-blue pattern-marks-navy">
+      <section className="relative overflow-hidden surface-navy-blue">
+        {/* Three layers: the photograph, the cascade, then the same photo without its
+            background — so the cascade passes behind the subject and in front of the sky. */}
         {heroImage ? (
-          <div aria-hidden className="absolute inset-0">
+          <div
+            aria-hidden
+            className={cn('absolute inset-0', HERO_BOX)}
+            style={{ maskImage: HERO_EDGE }}
+          >
             <DuotoneImage
               src={heroImage.src}
               alt=""
               fill
               priority
-              fade
-              sizes="100vw"
+              fade="bottom"
+              anchor="top-end"
+              sizes="(min-width: 768px) 60vw, 100vw"
               className="h-full w-full"
             />
           </div>
         ) : null}
-        {/* Lighter over a photograph so the outlines never compete with it. */}
-        <LivingCascade className={heroImage ? 'opacity-40' : undefined} />
+        <LivingCascade className={heroImage && !heroCutout ? 'opacity-60' : undefined} />
+        {heroImage && heroCutout ? (
+          // The same photograph again, masked to the subject's silhouette, so the subject
+          // looks exactly like the layer below it and simply covers the cascade.
+          <div
+            aria-hidden
+            className={cn(
+              'absolute inset-0 mask-intersect mask-cover mask-position-[35%_0%] mask-no-repeat rtl:mask-position-[65%_0%]',
+              HERO_BOX,
+            )}
+            style={{ maskImage: `url(${optimizedImageUrl(heroCutout.src, 1920)}), ${HERO_EDGE}` }}
+          >
+            <DuotoneImage
+              src={heroImage.src}
+              alt=""
+              fill
+              priority
+              fade="bottom"
+              anchor="top-end"
+              sizes="(min-width: 768px) 60vw, 100vw"
+              className="h-full w-full"
+            />
+          </div>
+        ) : null}
         <div className="relative container-site flex min-h-[78vh] flex-col justify-end py-16 md:py-24">
           <div className="max-w-4xl">
             <p className="text-sm font-medium text-on-navy-muted">{t('site.name')}</p>
@@ -137,7 +178,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 </span>
               ))}
             </h1>
-            <p className="mt-8 measure text-md text-on-navy-muted">
+            <p className="mt-8 max-w-[34rem] text-base text-on-navy-muted">
               {home.heroSubtitle || t('site.mission')}
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
@@ -224,7 +265,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {/* 2b · Statistics band — off until real figures exist (Site settings → Statistics) */}
       {showStats ? (
-        <section className="surface-navy pattern-marks-navy">
+        <section className="pattern-marks-navy surface-navy">
           <div className="container-site py-14 md:py-20">
             <h2 className="sr-only">{t('home.statsTitle')}</h2>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
@@ -363,7 +404,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {/* 6 · The Camp */}
       {home.showCamp !== false && camp ? (
-        <section className="surface-navy pattern-marks-navy">
+        <section className="pattern-marks-navy surface-navy">
           <div className="container-site grid gap-10 section-y md:grid-cols-12 md:items-end">
             <div className="md:col-span-7">
               <SectionHeading

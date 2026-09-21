@@ -45,6 +45,27 @@ export const HomePage: GlobalConfig = {
                 ar: 'صورة الخلفية (تُعالَج بالكحلي)',
                 en: 'Background photo (navy duotone applied)',
               },
+              admin: {
+                description: {
+                  ar: 'الصورة الكاملة. تملأ الخلفية وتُعالَج بالكحلي.',
+                  en: 'The full photograph. Fills the background, navy duotone applied.',
+                },
+              },
+            },
+            {
+              name: 'heroCutout',
+              type: 'upload',
+              relationTo: 'media',
+              label: {
+                ar: 'الصورة نفسها بلا خلفية (PNG)',
+                en: 'The same photo without its background (PNG)',
+              },
+              admin: {
+                description: {
+                  ar: 'نسخة PNG بخلفية شفافة من الصورة نفسها وبالإطار نفسه. تُوضَع فوق النقش، فيبدو النقش وكأنه يمرّ خلف المعلم.',
+                  en: 'A transparent-background PNG of the same photo, same frame. It sits above the pattern, so the pattern seems to pass behind the subject.',
+                },
+              },
             },
             {
               type: 'row',

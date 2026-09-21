@@ -4,6 +4,7 @@ import * as migration_20260915_204945_navigation_cta_optional from './20260915_2
 import * as migration_20260916_120441_programs_projects_track from './20260916_120441_programs_projects_track'
 import * as migration_20260917_204927_application_intake from './20260917_204927_application_intake'
 import * as migration_20260917_212451_application_program_optional from './20260917_212451_application_program_optional'
+import * as migration_20260921_152214_hero_cutout from './20260921_152214_hero_cutout'
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260917_212451_application_program_optional.up,
     down: migration_20260917_212451_application_program_optional.down,
     name: '20260917_212451_application_program_optional',
+  },
+  {
+    up: migration_20260921_152214_hero_cutout.up,
+    down: migration_20260921_152214_hero_cutout.down,
+    name: '20260921_152214_hero_cutout',
   },
 ]

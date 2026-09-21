@@ -64,7 +64,7 @@ export async function Footer({ locale }: { locale: string }) {
   const external = (href: string) => /^https?:\/\//.test(href)
 
   return (
-    <footer className="mt-auto surface-navy pattern-marks-navy">
+    <footer className="mt-auto surface-navy">
       <div className="container-site py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">

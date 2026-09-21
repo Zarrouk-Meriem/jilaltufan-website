@@ -9,12 +9,35 @@ export type Station = {
   isPast: boolean
 }
 
+/** The mark's outline (mark.svg geometry), for the stations. */
+function StationMark({ height, className }: { height: number; className?: string }) {
+  const w = Math.round((height * 675) / 814)
+  return (
+    <svg
+      viewBox="-2 -2 679 818"
+      width={w}
+      height={height}
+      aria-hidden
+      className={cn('block shrink-0', className)}
+    >
+      <polygon
+        points="481,0 675,326 480,326 194,814 0,814"
+        fill="currentColor"
+        stroke="currentColor"
+        strokeWidth={1.25}
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  )
+}
+
 /**
- * The season's months as stations on a rising, stepped rhythm: each station
- * is a vertical stem from a shared baseline, one step taller than the last, with
- * a short cap. Past and current stations are ink, future ones hairline, and the
- * current station's stem is red with the mark at its foot — the one place on the
- * home page where the mark appears outside the logo. Vertical rail on mobile.
+ * The season's months as stations on a rising rhythm: each station is the mark,
+ * one step taller than the last, standing on a shared baseline — the timeline is
+ * one of the two places the mark appears outside the logo. Past stations are the
+ * outline in ink, future ones a hairline, and the current station is the solid
+ * red mark (the only red in the band). Vertical rail on mobile.
  */
 export function SeasonTimeline({
   stations,
@@ -40,23 +63,24 @@ export function SeasonTimeline({
     >
       {stations.map((s, i) => {
         const height = base + i * step
-        const stem = s.isCurrent ? 'bg-red-600' : s.isPast ? 'bg-ink-900' : 'bg-line-strong'
+        const tone = s.isCurrent
+          ? 'text-red-600 [&_polygon]:fill-current'
+          : s.isPast
+            ? 'text-ink-700 [&_polygon]:fill-transparent'
+            : 'text-line-strong [&_polygon]:fill-transparent'
         return (
           <li
             key={s.key}
             aria-current={s.isCurrent ? 'date' : undefined}
             className="relative flex items-center gap-5 border-s border-line py-4 ps-6 md:flex-col md:items-start md:gap-0 md:border-s-0 md:border-b md:border-b-ink-900 md:py-0 md:ps-0"
           >
-            {/* Desktop: rising stem + cap */}
+            {/* Desktop: the mark, one step taller per station, on the baseline */}
             <span
               aria-hidden
               className="hidden w-full items-end md:flex"
               style={{ height: height + 8 }}
             >
-              <span className="relative block h-full w-px" style={{ height }}>
-                <span className={cn('absolute inset-0', stem)} />
-                <span className={cn('absolute -start-0 top-0 h-px w-8', stem)} />
-              </span>
+              <StationMark height={height} className={tone} />
             </span>
             {/* Mobile: dot on the rail */}
             <span

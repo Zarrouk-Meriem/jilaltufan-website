@@ -35,3 +35,11 @@ export function mediaImage(ref: MediaRef, size: MediaSize = 'card'): ImageSource
     alt: ref.alt,
   }
 }
+
+/**
+ * The URL next/image would serve for `src` at `width` (AVIF/WebP, alpha kept), for the
+ * few places that need an image outside <Image>: a CSS mask. Same route, same cache.
+ */
+export function optimizedImageUrl(src: string, width: 1920 | 1080 | 640 = 1920): string {
+  return `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=75`
+}

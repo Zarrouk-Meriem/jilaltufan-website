@@ -2066,7 +2066,14 @@ export interface HomePage {
    */
   heroTitle?: string | null;
   heroSubtitle?: string | null;
+  /**
+   * The full photograph. Fills the background, navy duotone applied.
+   */
   heroImage?: (number | null) | Media;
+  /**
+   * A transparent-background PNG of the same photo, same frame. It sits above the pattern, so the pattern seems to pass behind the subject.
+   */
+  heroCutout?: (number | null) | Media;
   primaryCtaLabel?: string | null;
   secondaryCtaLabel?: string | null;
   showNextSession?: boolean | null;
@@ -2313,6 +2320,7 @@ export interface HomePageSelect<T extends boolean = true> {
   heroTitle?: T;
   heroSubtitle?: T;
   heroImage?: T;
+  heroCutout?: T;
   primaryCtaLabel?: T;
   secondaryCtaLabel?: T;
   showNextSession?: T;
