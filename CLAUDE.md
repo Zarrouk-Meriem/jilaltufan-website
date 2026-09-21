@@ -60,6 +60,8 @@ Use `PORT=3001 scripts/dev-restart.sh [--clean]`. Never poll the server with req
 - On navy: text is white or `rgb(255 255 255 / .78)`. **Red is decorative on navy** (mark and rules only) — it fails text contrast.
 - **The mark is never a small UI indicator** (nav, bullets, badges) — user feedback. It appears as logo, hero/timeline station, and card corner notch only. State is shown with weight, colour, or a hairline.
 - **No utility row above the header** (user feedback). The header is one row: logo · five nav items · language switch · CTA. Student/Instructor windows live in the footer, the mobile menu, and contextual links.
+- **Texture is the mark cascade** (`pattern-marks-navy` / `pattern-marks-paper`, `src/styles/patterns.css`): the designer's arrow mark on a staggered lattice, outlined, faint. The keffiyeh net stays defined but unused. The gradient cascade (`public/brand/patterns/cascade.svg`) is art, not texture: one placement per surface at most, never behind text.
+- **The English lockup is outlined type** (`public/brand/logo-en*.svg`, Inter Black + JetBrains Mono SemiBold, both OFL). Never re-export it from a file with live `<text>`; regenerate with the outlining step if the designer sends a new one.
 - Buttons and badges: 2px radius. The brand is angular; no pills.
 - Section rhythm: 128px desktop / 72px mobile. Content max-width 1200px; reading pages narrower.
 

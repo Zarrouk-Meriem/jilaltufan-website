@@ -103,7 +103,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   return (
     <>
       {/* 1 · Hero */}
-      <section className="relative overflow-hidden pattern-keffiyeh-navy surface-navy-blue">
+      <section className="relative overflow-hidden surface-navy-blue pattern-marks-navy">
         {heroImage ? (
           <div aria-hidden className="absolute inset-0">
             <DuotoneImage
@@ -111,7 +111,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               alt=""
               fill
               priority
-              dim={0.45}
+              fade
               sizes="100vw"
               className="h-full w-full"
             />
@@ -221,7 +221,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {/* 2b · Statistics band — off until real figures exist (Site settings → Statistics) */}
       {showStats ? (
-        <section className="pattern-keffiyeh-navy surface-navy">
+        <section className="surface-navy pattern-marks-navy">
           <div className="container-site py-14 md:py-20">
             <h2 className="sr-only">{t('home.statsTitle')}</h2>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
@@ -360,7 +360,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {/* 6 · The Camp */}
       {home.showCamp !== false && camp ? (
-        <section className="pattern-keffiyeh-navy surface-navy">
+        <section className="surface-navy pattern-marks-navy">
           <div className="container-site grid gap-10 section-y md:grid-cols-12 md:items-end">
             <div className="md:col-span-7">
               <SectionHeading

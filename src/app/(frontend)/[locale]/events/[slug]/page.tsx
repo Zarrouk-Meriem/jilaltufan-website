@@ -74,7 +74,7 @@ export default async function EventPage({ params }: PageProps<'/[locale]/events/
         })}
       />
       {/* Hero — navy for the camp, paper for other events */}
-      <header className={isCamp ? 'pattern-keffiyeh-navy surface-navy' : 'hairline-b'}>
+      <header className={isCamp ? 'surface-navy pattern-marks-navy' : 'hairline-b'}>
         <div className="container-site pt-10 pb-14 md:pt-14 md:pb-20">
           <Breadcrumbs
             label={t('common.breadcrumb')}

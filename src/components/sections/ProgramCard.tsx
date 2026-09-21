@@ -52,10 +52,8 @@ export function ProgramCard({
       className={cn(
         'group relative flex flex-col rounded-brand border border-line bg-paper transition-[border-color,box-shadow] duration-200 ease-brand',
         'hover:border-ink-900 focus-visible:border-ink-900',
-        featured
-          ? 'border-transparent pattern-keffiyeh-navy p-8 surface-navy md:p-12'
-          : 'p-7 md:p-8',
-        motif === 'keffiyeh' && !featured && 'pattern-keffiyeh-paper',
+        featured ? 'border-transparent surface-navy p-8 pattern-marks-navy md:p-12' : 'p-7 md:p-8',
+        motif === 'keffiyeh' && !featured && 'pattern-marks-paper',
         className,
       )}
     >

@@ -157,7 +157,7 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
         aria-modal="true"
         aria-label={labels.mainNav}
         hidden={!open}
-        className="pointer-events-auto fixed inset-0 z-[60] flex flex-col overflow-y-auto pattern-keffiyeh-navy surface-navy md:hidden"
+        className="pointer-events-auto fixed inset-0 z-[60] flex flex-col overflow-y-auto surface-navy pattern-marks-navy md:hidden"
       >
         <div className="container-site flex h-20 items-center justify-between">
           <Logo locale={locale} surface="dark" height={locale === 'ar' ? 44 : 36} />

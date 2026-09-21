@@ -288,6 +288,8 @@ export default async function ProgramPage({ params }: PageProps<'/[locale]/progr
               ) : (
                 <EmptyState title={t('program.noSessions')} />
               )}
+              {/* Instructors are guests, announced per session — one calm line, nothing more. */}
+              <p className="mt-6 text-sm text-ink-500">{t('program.guestNote')}</p>
             </div>
           </section>
 

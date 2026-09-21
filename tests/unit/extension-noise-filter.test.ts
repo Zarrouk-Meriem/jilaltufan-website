@@ -139,3 +139,29 @@ describe('extension error filter', () => {
   it('flags error events whose filename is an extension script', () =>
     expect(isExtensionError({ filename: 'chrome-extension://abc/content.js' })).toBe(true))
 })
+
+describe('Dark Reader on a next/image `fill` element (captured 2026-09-21, home hero)', () => {
+  // React prints the whole style object once the attribute was rewritten; `fill`
+  // passes objectFit/objectPosition as undefined, which have no server line at all.
+  const captured = [
+    '+                             position: "absolute"',
+    '-                             position: "absolute"',
+    '+                             left: 0',
+    '-                             left: "0px"',
+    '+                             objectFit: undefined',
+    '+                             objectPosition: undefined',
+    '+                             color: "transparent"',
+    '-                             color: "transparent"',
+    '-                             --darkreader-inline-color: "transparent"',
+    '-                           data-darkreader-inline-color=""',
+    '-                                     style={{--darkreader-inline-stroke:"currentColor"}}',
+  ].join('\n')
+  it('is all noise', () => expect(unmatchedLines(report(captured))).toEqual([]))
+  it('drops the report', () => expect(isNoise(report(captured))).toBe(true))
+  it('a client-only style with a real value still surfaces', () => {
+    const real = captured.replace('objectFit: undefined', 'objectFit: "cover"')
+    expect(unmatchedLines(report(real)).map((l) => l.replace(/\s+/g, ' '))).toEqual([
+      '+ objectFit: "cover"',
+    ])
+  })
+})

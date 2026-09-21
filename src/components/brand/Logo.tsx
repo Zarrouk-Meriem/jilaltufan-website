@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import { cn } from '@/lib/cn'
-import { Mark } from './Mark'
 
 type Props = {
   locale: string
@@ -12,43 +11,28 @@ type Props = {
   priority?: boolean
 }
 
-const RATIO = 363.9 / 200.34
+/** viewBox ratios of the two lockups; both sit on the designer's 364 × 196 grid. */
+const RATIO = { ar: 363.9 / 200.34, en: 362.85 / 195.82 } as const
 
 /**
- * The lockup. Arabic uses the designer's SVG (/public/brand/logo.svg, white wordmark
- * variant for navy). English has no supplied lockup yet, so it is the mark plus a
- * type-set "Jil Altufan Academy" in Poppins until the designer delivers one.
+ * The lockup, the designer's SVGs: Arabic (2026-09-19) and English (2026-09-21), each
+ * with a white-wordmark variant for navy. The English type is outlined from Inter Black
+ * and JetBrains Mono SemiBold, so the file needs no fonts. Composition mirrors: the
+ * mark sits on the outer side in each reading direction.
  */
 export function Logo({ locale, surface = 'light', height = 56, className, priority }: Props) {
-  if (locale === 'ar') {
-    const src = surface === 'dark' ? '/brand/logo-on-dark.svg' : '/brand/logo.svg'
-    return (
-      <Image
-        src={src}
-        alt=""
-        width={Math.round(height * RATIO)}
-        height={height}
-        priority={priority}
-        className={cn('block h-auto w-auto', className)}
-        style={{ height, width: 'auto' }}
-      />
-    )
-  }
-  const ink = surface === 'dark' ? 'text-on-navy' : 'text-ink-900'
+  const lang = locale === 'ar' ? 'ar' : 'en'
+  const file = lang === 'ar' ? 'logo' : 'logo-en'
+  const src = surface === 'dark' ? `/brand/${file}-on-dark.svg` : `/brand/${file}.svg`
   return (
-    <span className={cn('inline-flex items-center gap-3', ink, className)} style={{ height }}>
-      <Mark size={height} />
-      <span className="flex flex-col justify-center leading-none" lang="en" dir="ltr">
-        <span className="eyebrow-latin text-[0.55em]" style={{ fontSize: height * 0.2 }}>
-          Academy
-        </span>
-        <span
-          className="font-bold uppercase"
-          style={{ fontSize: height * 0.34, letterSpacing: '0.02em', lineHeight: 1.05 }}
-        >
-          Jil Altufan
-        </span>
-      </span>
-    </span>
+    <Image
+      src={src}
+      alt=""
+      width={Math.round(height * RATIO[lang])}
+      height={height}
+      priority={priority}
+      className={cn('block h-auto w-auto', className)}
+      style={{ height, width: 'auto' }}
+    />
   )
 }

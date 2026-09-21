@@ -126,6 +126,7 @@ export default async function SchedulePage({
         ) : (
           <EmptyState title={programSlug ? t('schedule.emptyForProgram') : t('schedule.empty')} />
         )}
+        <p className="mt-10 text-sm text-ink-500">{t('schedule.guestNote')}</p>
       </div>
     </>
   )

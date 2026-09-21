@@ -40,7 +40,11 @@ export function isNoise(args: ArrayLike<unknown>): boolean {
 /**
  * Dark Reader rewrites inline styles, so React prints the whole style object of
  * an element as +/- pairs even where values are equal in effect (48 vs "48px").
- * A pair is noise when both sides normalise to the same value.
+ * A pair is noise when both sides normalise to the same value. A client-only
+ * entry whose value is `undefined` is noise too: it renders nothing, so it can
+ * never differ from the server — next/image's `fill` passes `objectFit` and
+ * `objectPosition` as undefined, and React prints them once the style attribute
+ * has been touched (seen with Dark Reader on the hero photo, 2026-09-21).
  */
 const STYLE_ENTRY = /^([+-])\s+([\w-]+):\s+(.+)$/
 const normaliseStyleValue = (v: string) =>
@@ -56,7 +60,7 @@ function styleNoiseLines(diff: string[]): Set<string> {
     .filter((e): e is { l: string; m: RegExpExecArray } => !!e.m && !/=/.test(e.m[2]!))
   for (let i = 0; i < entries.length; i++) {
     const a = entries[i]!
-    if (a.m[2]!.startsWith('--darkreader-')) {
+    if (a.m[2]!.startsWith('--darkreader-') || (a.m[1] === '+' && a.m[3] === 'undefined')) {
       noise.add(a.l)
       continue
     }

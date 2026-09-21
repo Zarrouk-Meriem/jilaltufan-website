@@ -119,13 +119,23 @@
 @utility section-y {
   padding-block: var(--section-y);
 }
+/* Navy surfaces compose an optional texture over the gradient. A `pattern-*-navy`
+   utility only sets --surface-texture, so the two never fight over background-image
+   (they did: the surface's shorthand won and the net never showed on navy, found
+   2026-09-21). */
 @utility surface-navy {
-  background: var(--navy-surface);
+  background-color: var(--navy-900);
+  background-image: var(--surface-texture, none), var(--navy-surface);
+  background-size: var(--surface-texture-size, auto), auto;
+  background-repeat: repeat, no-repeat;
   color: var(--on-navy);
   --icon-accent: var(--on-navy);
 }
 @utility surface-navy-blue {
-  background: var(--navy-surface-blue);
+  background-color: var(--navy-900);
+  background-image: var(--surface-texture, none), var(--navy-surface-blue);
+  background-size: var(--surface-texture-size, auto), auto;
+  background-repeat: repeat, no-repeat;
   color: var(--on-navy);
   --icon-accent: var(--on-navy);
 }

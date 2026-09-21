@@ -26,7 +26,7 @@ export function EventCard({
       href={href as never}
       className={cn(
         'group flex flex-col gap-4 rounded-brand border border-line p-7 transition-[border-color] duration-200 hover:border-ink-900 md:flex-row md:items-start md:gap-10 md:p-8',
-        isCamp && 'border-transparent pattern-keffiyeh-navy surface-navy',
+        isCamp && 'border-transparent surface-navy pattern-marks-navy',
         className,
       )}
     >

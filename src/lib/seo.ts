@@ -36,7 +36,7 @@ export function organizationJsonLd(
     name,
     alternateName: locale === 'ar' ? 'Jil Altufan Academy' : 'أكاديمية جيل الطوفان',
     url: `${SITE_URL}/${locale}`,
-    logo: `${SITE_URL}/brand/logo.png`,
+    logo: `${SITE_URL}/brand/${locale === 'ar' ? 'logo' : 'logo-en'}.png`,
     description,
     email,
     ...(sameAs.length ? { sameAs } : {}),
