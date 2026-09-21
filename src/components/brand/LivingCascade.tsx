@@ -11,7 +11,14 @@ import { cn } from '@/lib/cn'
  * moves by transform only (`living-mark` in `patterns.css`). A client leaf
  * only because of the listener; it renders nothing for assistive tech.
  */
-export function LivingCascade({ className }: { className?: string }) {
+export function LivingCascade({
+  corner = 'far-top',
+  className,
+}: {
+  /** `far-top`: the corner away from the copy, at the top. `near-bottom`: on the copy's side, at the foot, smaller. */
+  corner?: 'far-top' | 'near-bottom'
+  className?: string
+}) {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const el = ref.current
@@ -24,11 +31,15 @@ export function LivingCascade({ className }: { className?: string }) {
         frame = 0
         const r = el.getBoundingClientRect()
         if (!r.width || !r.height) return
-        // Mirrored in LTR (the art sits top-right there), so mirror the pointer too.
+        // The layer may be mirrored or rotated into its corner; map the pointer through
+        // the same transform so the light still lands under it.
+        const m = /matrix\(([^)]+)\)/.exec(getComputedStyle(el).transform)?.[1]?.split(',')
+        const flipX = Number(m?.[0] ?? 1) < 0
+        const flipY = Number(m?.[3] ?? 1) < 0
         const x = (e.clientX - r.left) / r.width
-        const px = getComputedStyle(el).direction === 'ltr' ? 1 - x : x
-        el.style.setProperty('--px', `${(px * 100).toFixed(1)}%`)
-        el.style.setProperty('--py', `${(((e.clientY - r.top) / r.height) * 100).toFixed(1)}%`)
+        const y = (e.clientY - r.top) / r.height
+        el.style.setProperty('--px', `${((flipX ? 1 - x : x) * 100).toFixed(1)}%`)
+        el.style.setProperty('--py', `${((flipY ? 1 - y : y) * 100).toFixed(1)}%`)
       })
     }
     const onLeave = () => {
@@ -48,7 +59,13 @@ export function LivingCascade({ className }: { className?: string }) {
       ref={ref}
       aria-hidden
       className={cn(
-        'living-mark [--cascade-size:60vw] [--cascade-x:-22vw] [--cascade-y:-12vw] md:[--cascade-size:72vw] md:[--cascade-x:-18vw] md:[--cascade-y:-11vw]',
+        'living-mark',
+        corner === 'far-top'
+          ? '[--cascade-size:60vw] [--cascade-x:-22vw] [--cascade-y:-12vw] md:[--cascade-size:72vw] md:[--cascade-x:-18vw] md:[--cascade-y:-11vw]'
+          : // A small box in the corner itself (the pattern shows only there, dissolving at
+            // the box's inner edges), no idle drift of its own, wide frames only — on a
+            // phone it would sit behind the session strip.
+            'hidden [--cascade-size:22vw] [--cascade-x:-9vw] [--cascade-y:-4vw] [--mark-flip-ltr:scaleY(-1)] [--mark-flip:rotate(180deg)] md:inset-auto md:start-0 md:bottom-0 md:block md:h-[36%] md:w-[12vw] md:[&>*>*]:[animation:none]',
         className,
       )}
     >

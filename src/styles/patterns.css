@@ -133,10 +133,13 @@
     0 0;
   mask-composite: intersect;
   -webkit-mask-composite: source-in;
-  /* The far side from the copy: the top-left corner in Arabic, mirrored to the
-     top-right in English (LivingCascade mirrors the pointer to match). */
+  /* The file's arrangement rises into the top-left corner. --mark-flip turns the
+     whole layer into another corner (LivingCascade reads the resulting matrix and
+     maps the pointer through it): none for the far top corner in Arabic, mirrored
+     to the top-right in English; the near bottom corner is the layer rotated. */
+  transform: var(--mark-flip, none);
   [dir='ltr'] & {
-    transform: scaleX(-1);
+    --mark-flip: var(--mark-flip-ltr, scaleX(-1));
   }
   /* Everything moves by transform only — never by repainting the gradient. The
      pointer layer slides so the light's centre lands under the pointer (--px/--py,

@@ -116,8 +116,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   return (
     <>
       {/* 1 · Hero */}
-      {/* The edge texture on the copy's side, kept to the gutter outside the text frame. */}
-      <section className="pattern-marks-navy relative overflow-hidden surface-navy-blue [--edge-a-size:16%_64%] [--edge-b-size:12%_36%] [--edge-c-size:10%_28%]">
+      <section className="relative overflow-hidden surface-navy-blue">
         {/* Three layers: the photograph, the cascade, then the same photo without its
             background — so the cascade passes behind the subject and in front of the sky. */}
         {heroImage ? (
