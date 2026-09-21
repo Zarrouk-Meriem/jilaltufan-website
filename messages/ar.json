@@ -180,7 +180,7 @@
     "backToPrograms": "كل البرامج",
     "seeSchedule": "جدول هذا البرنامج",
     "otherPrograms": "برامج أخرى",
-    "seasonRange": "{start} ← {end}",
+    "seasonRange": "من {start} إلى {end}",
     "projects": "مشروع استراتيجي"
   },
   "programs": {

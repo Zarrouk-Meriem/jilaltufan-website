@@ -12,6 +12,7 @@ import { Accordion } from '@/components/ui/Accordion'
 import { Badge } from '@/components/ui/Badge'
 import { ButtonLink } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { SeasonRange } from '@/components/content/SeasonRange'
 import { LocalTime } from '@/components/ui/LocalTime'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { TextLink } from '@/components/ui/TextLink'
@@ -27,7 +28,7 @@ import { rels } from '@/lib/relations'
 import { formatInZone } from '@/lib/time'
 import { nextBoundaryMs, ordinalFor, registrationBadge, sessionView } from '@/lib/view'
 import { mediaImage } from '@/lib/media'
-import { seasonRange, sessionsCountLabel } from '@/lib/program'
+import { seasonMonths, seasonRange, sessionsCountLabel } from '@/lib/program'
 
 export const revalidate = 60
 
@@ -74,10 +75,14 @@ export default async function ProgramPage({ params }: PageProps<'/[locale]/progr
         : t('program.directed')
   const canApply = program.registrationMode !== 'closed'
 
+  const season = seasonMonths(program, t)
   const facts = [
     { k: t('program.track'), v: trackLabel },
     { k: t('program.sessions'), v: sessionsCountLabel(program, t) },
-    { k: t('program.season'), v: seasonRange(program, t) },
+    {
+      k: t('program.season'),
+      v: season ? <SeasonRange {...season} label={seasonRange(program, t) ?? ''} /> : null,
+    },
     { k: t('program.duration'), v: program.durationSummary || t('program.oneMonthly') },
   ]
 

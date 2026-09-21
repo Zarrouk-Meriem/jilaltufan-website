@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Icon } from '@/components/icons/Icon'
 import { Mark } from '@/components/brand/Mark'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
@@ -14,7 +15,7 @@ type Props = {
   trackLabel: string
   registration: { label: string; tone: BadgeTone }
   sessionsLabel?: string | null
-  seasonLabel?: string | null
+  seasonLabel?: ReactNode
   motif?: 'none' | 'keffiyeh' | 'mark' | null
   /** Cover image, navy-duotoned; the card stays typographic without one. */
   image?: ImageSource | null

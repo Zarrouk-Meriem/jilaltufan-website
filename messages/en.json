@@ -169,7 +169,7 @@
     "backToPrograms": "All programs",
     "seeSchedule": "This program's schedule",
     "otherPrograms": "Other programs",
-    "seasonRange": "{start} → {end}",
+    "seasonRange": "{start} to {end}",
     "projects": "Strategic project"
   },
   "programs": {

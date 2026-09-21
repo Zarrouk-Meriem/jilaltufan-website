@@ -27,8 +27,9 @@ import {
 } from '@/lib/queries'
 import { currentSeasonStartYear, formatInZone, monthKeyInZone, seasonMonthKeys } from '@/lib/time'
 import { ordinalFor, registrationBadge, sessionView } from '@/lib/view'
+import { SeasonRange } from '@/components/content/SeasonRange'
 import { mediaImage } from '@/lib/media'
-import { seasonRange, sessionsCountLabel, trackLabel } from '@/lib/program'
+import { seasonMonths, seasonRange, sessionsCountLabel, trackLabel } from '@/lib/program'
 
 export const revalidate = 60
 
@@ -48,6 +49,10 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   setRequestLocale(locale)
   const t = await getTranslations()
   const now = new Date()
+  const season = (p: (typeof programs)[number]) => {
+    const m = seasonMonths(p, t)
+    return m ? <SeasonRange {...m} label={seasonRange(p, t) ?? ''} /> : null
+  }
 
   const [home, settings, programs, upcoming, camp, posts, instructors] = await Promise.all([
     getHomePage(locale),
@@ -260,7 +265,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                   trackLabel={t('home.openTrackLabel')}
                   registration={registrationBadge(p.registrationMode, t)}
                   sessionsLabel={sessionsCountLabel(p, t)}
-                  seasonLabel={seasonRange(p, t)}
+                  seasonLabel={season(p)}
                   featuredCta={t('common.readMore')}
                 />
               ))}
@@ -276,7 +281,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                     trackLabel={trackLabel(p.track, t)}
                     registration={registrationBadge(p.registrationMode, t)}
                     sessionsLabel={sessionsCountLabel(p, t)}
-                    seasonLabel={seasonRange(p, t)}
+                    seasonLabel={season(p)}
                     motif={p.accentMotif}
                     className={i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'}
                   />
