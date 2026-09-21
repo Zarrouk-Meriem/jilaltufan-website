@@ -6,6 +6,7 @@ import { ProgramCard } from '@/components/sections/ProgramCard'
 import { SeasonTimeline, type Station } from '@/components/sections/SeasonTimeline'
 import { SessionRow } from '@/components/sections/SessionRow'
 import { ButtonLink } from '@/components/ui/Button'
+import { LivingCascade } from '@/components/brand/LivingCascade'
 import { DuotoneImage } from '@/components/ui/DuotoneImage'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Reveal } from '@/components/ui/Reveal'
@@ -117,6 +118,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             />
           </div>
         ) : null}
+        {/* Lighter over a photograph so the outlines never compete with it. */}
+        <LivingCascade className={heroImage ? 'opacity-40' : undefined} />
         <div className="relative container-site flex min-h-[78vh] flex-col justify-end py-16 md:py-24">
           <div className="max-w-4xl">
             <p className="text-sm font-medium text-on-navy-muted">{t('site.name')}</p>
