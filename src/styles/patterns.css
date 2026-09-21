@@ -17,14 +17,14 @@
  * The mark cascade — the designer's pattern (2026-09-21): the arrow mark on a staggered
  * diagonal lattice, outlined, faint. Drawn by a pseudo-element BEHIND the content
  * (`isolation` + z-index -1), zoomed, and masked to a few soft fields along the
- * inline-start edge only (the right in Arabic, the left in English) so it dissolves
- * before it reaches the copy, the badge, or the link: text never sits on it.
+ * inline-end edge only — the side away from the copy: the left in Arabic, the right
+ * in English — so it dissolves before it reaches the text, the badge, or the link.
  * One data-URI tile, no request. Two treatments: faint ink on paper-2, faint white on navy.
  */
 @utility pattern-marks-navy {
   position: relative;
   isolation: isolate;
-  [dir='ltr'] & {
+  [dir='rtl'] & {
     --edge-a: 0%;
     --edge-b: 2%;
   }
@@ -58,7 +58,7 @@
 @utility pattern-marks-paper {
   position: relative;
   isolation: isolate;
-  [dir='ltr'] & {
+  [dir='rtl'] & {
     --edge-a: 0%;
     --edge-b: 2%;
   }

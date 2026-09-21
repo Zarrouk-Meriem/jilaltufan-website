@@ -37,7 +37,9 @@ function StationMark({ height, className }: { height: number; className?: string
  * one step taller than the last, standing on a shared baseline — the timeline is
  * one of the two places the mark appears outside the logo. Past stations are the
  * outline in ink, future ones a hairline, and the current station is the solid
- * red mark (the only red in the band). Vertical rail on mobile.
+ * red mark (the only red in the band). Each station is centred, mark over label,
+ * because the mark never mirrors and its foot would otherwise drift from a
+ * start-aligned label in Arabic. Vertical rail on mobile.
  */
 export function SeasonTimeline({
   stations,
@@ -72,12 +74,12 @@ export function SeasonTimeline({
           <li
             key={s.key}
             aria-current={s.isCurrent ? 'date' : undefined}
-            className="relative flex items-center gap-5 border-s border-line py-4 ps-6 md:flex-col md:items-start md:gap-0 md:border-s-0 md:border-b md:border-b-ink-900 md:py-0 md:ps-0"
+            className="relative flex items-center gap-5 border-s border-line py-4 ps-6 md:flex-col md:items-center md:gap-0 md:border-s-0 md:border-b md:border-b-ink-900 md:py-0 md:ps-0"
           >
             {/* Desktop: the mark, one step taller per station, on the baseline */}
             <span
               aria-hidden
-              className="hidden w-full items-end md:flex"
+              className="hidden w-full items-end justify-center md:flex"
               style={{ height: height + 8 }}
             >
               <StationMark height={height} className={tone} />
@@ -94,7 +96,7 @@ export function SeasonTimeline({
                     : 'border border-line-strong bg-paper',
               )}
             />
-            <span className="flex min-w-0 flex-col md:py-4">
+            <span className="flex min-w-0 flex-col md:items-center md:py-4 md:text-center">
               <span className="flex items-center gap-2">
                 {s.isCurrent ? <Mark size={12} /> : null}
                 <span
