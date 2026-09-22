@@ -115,9 +115,41 @@ test('the log records create, update, and delete with the editor, the title, and
   await expect(page.locator('table')).toBeVisible()
   const rows = page.locator('table tbody tr').filter({ hasText: title })
   await expect(rows).toHaveCount(3)
-  await expect(rows.filter({ hasText: 'من «مسودّة» إلى «منشور»' })).toHaveCount(1)
+  // The list names the changed field; the row's page shows before and after, each in its own cell.
+  const updateRow = rows.filter({ hasText: 'الحالة' })
+  await expect(updateRow).toHaveCount(1)
+  await updateRow.locator('a[href*="/admin/collections/activity/"]').first().click()
+  await expect(page).toHaveURL(/\/admin\/collections\/activity\/\d+$/)
+  const table = page.locator('.jaa-changes__table')
+  await expect(table).toBeVisible()
+  const cells = table.locator('tbody tr').first().locator('th, td')
+  await expect(cells).toHaveText(['الحالة', 'مسودّة', 'منشور'])
+  await page.goto('/admin/collections/activity')
   const settingsRow = page.locator('table tbody tr').filter({ hasText: 'إعدادات الموقع' }).first()
   await expect(settingsRow.locator('a[href$="/admin/globals/site-settings"]')).toBeVisible()
+})
+
+test('the admin’s own fetches are authorised in dev: no console error on the log or a row', async ({
+  page,
+}) => {
+  // Cookie auth is accepted only from origins on Payload's CSRF list; with the site URL on
+  // port 3000 and dev on 3001, the preferences and relationship fetches answered 401/403 on
+  // every admin page (fixed in payload.config.ts by adding the dev origin).
+  const errors: string[] = []
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
+  page.on('response', (r) => r.status() >= 400 && errors.push(`${r.status()} ${r.url()}`))
+  await signIn(page, admin)
+  await page.goto('/admin/collections/activity')
+  await expect(page.locator('table')).toBeVisible()
+  await page
+    .locator('table tbody tr')
+    .first()
+    .locator('a[href*="/admin/collections/activity/"]')
+    .first()
+    .click()
+  await expect(page.locator('.jaa-changes')).toBeVisible()
+  await page.waitForTimeout(1500)
+  expect(errors).toEqual([])
 })
 
 test('a re-save with no change records the save and nothing else', async ({ page }) => {
@@ -152,6 +184,20 @@ test('screens', async ({ browser }) => {
     await shoot(page, `activity-${locale}-1440`)
     await page.setViewportSize({ width: 375, height: 812 })
     await shoot(page, `activity-${locale}-375`)
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page
+      .locator('table tbody tr')
+      .filter({ hasText: /الحالة|Status/ })
+      .first()
+      .locator('a')
+      .first()
+      .click()
+    await expect(page.locator('.jaa-changes__table')).toBeVisible()
+    // The read-only selects show their value once the client form state has loaded.
+    await expect(page.locator('#field-action').locator('xpath=..')).toContainText(/تعديل|Update/, {
+      timeout: 15_000,
+    })
+    await shoot(page, `activity-detail-${locale}-1440`)
     await context.close()
   }
 })

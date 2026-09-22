@@ -26,7 +26,9 @@ export type Action = 'create' | 'update' | 'delete'
 export type Label = { ar: string; en: string }
 export type Change = { field: string; label: Label; from?: unknown; to?: unknown }
 
-const MAX_TEXT = 120
+/** Stored text is clipped, so a before/after of a long paragraph stays readable and bounded. */
+const MAX_TEXT = 1000
+const MAX_TITLE = 120
 const MAX_CHANGES = 40
 /** Bookkeeping and auth internals: never a change worth recording. */
 const IGNORED = new Set([
@@ -53,8 +55,7 @@ type Value = unknown
 export function normalise(value: Value): Value {
   if (value === undefined) return null
   if (value === null || typeof value === 'number' || typeof value === 'boolean') return value
-  if (typeof value === 'string')
-    return value.length > MAX_TEXT ? value.slice(0, MAX_TEXT) + '…' : value
+  if (typeof value === 'string') return value
   if (Array.isArray(value)) return value.map(normalise)
   if (typeof value === 'object') {
     const o = value as Doc
@@ -66,6 +67,13 @@ export function normalise(value: Value): Value {
     return out
   }
   return String(value)
+}
+
+/** What is stored for a side: full comparison happened already; long text is clipped here. */
+const clip = (v: Value): Value => {
+  if (typeof v === 'string') return v.length > MAX_TEXT ? v.slice(0, MAX_TEXT) + '…' : v
+  if (Array.isArray(v)) return v.map(clip)
+  return v
 }
 
 const isScalar = (v: Value) =>
@@ -139,8 +147,8 @@ export function diffFields(prev: Doc | undefined, next: Doc, fields: Field[] = [
     const change: Change = { field: key, label: fieldLabel(field, key) }
     const restricted = !!(field && 'access' in field && field.access?.read)
     if (!restricted && showable(a) && showable(b)) {
-      change.from = a
-      change.to = b
+      change.from = clip(a)
+      change.to = clip(b)
     }
     changes.push(change)
     if (changes.length >= MAX_CHANGES) break
@@ -153,11 +161,11 @@ export function docTitle(doc: Doc, useAsTitle?: string): string {
   const candidates = [useAsTitle, 'title', 'name', 'fullName', 'subject', 'filename', 'email']
   for (const key of candidates) {
     const v = key ? doc[key] : undefined
-    if (typeof v === 'string' && v.trim()) return v.slice(0, MAX_TEXT)
+    if (typeof v === 'string' && v.trim()) return v.slice(0, MAX_TITLE)
     if (v && typeof v === 'object') {
       const l = v as Doc
       const s = l.ar ?? l.en
-      if (typeof s === 'string' && s.trim()) return s.slice(0, MAX_TEXT)
+      if (typeof s === 'string' && s.trim()) return s.slice(0, MAX_TITLE)
     }
   }
   return doc.id != null ? `#${String(doc.id)}` : ''

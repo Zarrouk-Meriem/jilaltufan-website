@@ -16,6 +16,7 @@ describe('admin import map', () => {
     '@/components/admin/ActivityCells#DocumentCell',
     '@/components/admin/ActivityCells#TimeCell',
     '@/components/admin/ActivityCells#ChangesCell',
+    '@/components/admin/ActivityCells#ChangesField',
   ])('contains %s', (key) => {
     expect(importMap).toContain(`"${key}"`)
   })

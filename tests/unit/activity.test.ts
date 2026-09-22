@@ -84,10 +84,13 @@ describe('activity — diffFields', () => {
   it('records nothing when nothing changed', () => {
     expect(diffFields({ title: 'a' }, { title: 'a', updatedAt: 'now' })).toEqual([])
   })
-  it('cuts long text', () => {
-    const v = normalise('x'.repeat(500)) as string
-    expect(v.length).toBe(121)
-    expect(v.endsWith('…')).toBe(true)
+  it('compares the whole text and clips only what it stores', () => {
+    const base = 'x'.repeat(1200)
+    const [c] = diffFields({ title: base + 'a' }, { title: base + 'b' }, fields)
+    expect(c?.field).toBe('title')
+    expect((c?.to as string).length).toBe(1001)
+    expect((c?.to as string).endsWith('…')).toBe(true)
+    expect(normalise('x'.repeat(1200))).toHaveLength(1200)
   })
   it('reaches named fields through tabs', () => {
     expect([...namedFields(fields).keys()]).toEqual(['title', 'status', 'zoomPasscode', 'body'])

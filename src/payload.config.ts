@@ -34,6 +34,15 @@ import { storagePlugins } from './lib/payload/storage'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// Cookie auth is accepted only from origins on this list (Payload's CSRF guard). It defaults
+// to the site URL alone, which points at port 3000 while `next dev` runs on 3001 — so every
+// admin page's own fetches (preferences, relationship options) answered 401/403 in dev.
+const siteURL = process.env.NEXT_PUBLIC_SITE_URL
+const devOrigin =
+  process.env.NODE_ENV !== 'production' && process.env.PORT
+    ? `http://localhost:${process.env.PORT}`
+    : undefined
+
 // Order = admin sidebar order within each group. Every collection and global is logged
 // to the activity log (`src/lib/payload/activity.ts`); the log itself is the last entry.
 const collections = [
@@ -61,7 +70,8 @@ const globals = [
 ]
 
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SITE_URL,
+  serverURL: siteURL,
+  csrf: [siteURL, devOrigin].filter((o): o is string => !!o),
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },

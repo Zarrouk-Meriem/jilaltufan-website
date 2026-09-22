@@ -37,7 +37,10 @@ export const Activity = (
       name: 'createdAt',
       type: 'date',
       label: { ar: 'الوقت', en: 'Time' },
-      admin: { components: { Cell: '@/components/admin/ActivityCells#TimeCell' } },
+      admin: {
+        date: { pickerAppearance: 'dayAndTime' },
+        components: { Cell: '@/components/admin/ActivityCells#TimeCell' },
+      },
     },
     {
       name: 'action',
@@ -90,7 +93,12 @@ export const Activity = (
       name: 'changes',
       type: 'json',
       label: { ar: 'التغييرات', en: 'Changes' },
-      admin: { components: { Cell: '@/components/admin/ActivityCells#ChangesCell' } },
+      admin: {
+        components: {
+          Cell: '@/components/admin/ActivityCells#ChangesCell',
+          Field: '@/components/admin/ActivityCells#ChangesField',
+        },
+      },
     },
   ],
 })

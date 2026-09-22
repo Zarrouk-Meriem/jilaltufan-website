@@ -25,6 +25,7 @@ import { ExportListMenuItem as ExportListMenuItem_cdf7e044479f899a31f804427d568b
 import { TimeCell as TimeCell_33539d16dcd5d7cd62f9f028859803a9 } from '@/components/admin/ActivityCells'
 import { DocumentCell as DocumentCell_33539d16dcd5d7cd62f9f028859803a9 } from '@/components/admin/ActivityCells'
 import { ChangesCell as ChangesCell_33539d16dcd5d7cd62f9f028859803a9 } from '@/components/admin/ActivityCells'
+import { ChangesField as ChangesField_33539d16dcd5d7cd62f9f028859803a9 } from '@/components/admin/ActivityCells'
 import { FormatField as FormatField_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { LimitField as LimitField_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { Page as Page_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
@@ -73,6 +74,7 @@ export const importMap = {
   "@/components/admin/ActivityCells#TimeCell": TimeCell_33539d16dcd5d7cd62f9f028859803a9,
   "@/components/admin/ActivityCells#DocumentCell": DocumentCell_33539d16dcd5d7cd62f9f028859803a9,
   "@/components/admin/ActivityCells#ChangesCell": ChangesCell_33539d16dcd5d7cd62f9f028859803a9,
+  "@/components/admin/ActivityCells#ChangesField": ChangesField_33539d16dcd5d7cd62f9f028859803a9,
   "@payloadcms/plugin-import-export/rsc#FormatField": FormatField_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#LimitField": LimitField_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#Page": Page_cdf7e044479f899a31f804427d568b36,
