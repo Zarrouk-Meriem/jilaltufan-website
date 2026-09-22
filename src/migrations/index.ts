@@ -8,6 +8,7 @@ import * as migration_20260921_152214_hero_cutout from './20260921_152214_hero_c
 import * as migration_20260921_185210_acceptance_email_sent_at from './20260921_185210_acceptance_email_sent_at'
 import * as migration_20260922_075008_status_emails from './20260922_075008_status_emails'
 import * as migration_20260922_124615_activity_log from './20260922_124615_activity_log'
+import * as migration_20260922_135917_activity_auth_actions from './20260922_135917_activity_auth_actions'
 
 export const migrations = [
   {
@@ -59,5 +60,10 @@ export const migrations = [
     up: migration_20260922_124615_activity_log.up,
     down: migration_20260922_124615_activity_log.down,
     name: '20260922_124615_activity_log',
+  },
+  {
+    up: migration_20260922_135917_activity_auth_actions.up,
+    down: migration_20260922_135917_activity_auth_actions.down,
+    name: '20260922_135917_activity_auth_actions',
   },
 ]

@@ -26,8 +26,8 @@ export const Activity = (
     pagination: { defaultLimit: 50 },
     hidden: ({ user }) => user?.role !== 'admin',
     description: {
-      ar: 'كل إنشاء أو تعديل أو حذف قام به أحد أعضاء الفريق، بالوقت والحساب والحقول التي تغيّرت. السجل للقراءة فقط.',
-      en: 'Every create, update, and delete made by a staff account, with the time, the account, and the fields that changed. Read-only.',
+      ar: 'كل إنشاء أو تعديل أو حذف قام به أحد أعضاء الفريق، بالوقت والحساب والحقول التي تغيّرت، إلى جانب تسجيلات الدخول والخروج ومحاولات الدخول الفاشلة. صفِّ حسب «الإجراء» لرؤية نوع واحد. السجل للقراءة فقط.',
+      en: 'Every create, update, and delete made by a staff account, with the time, the account, and the fields that changed — plus logins, logouts, and failed login attempts. Filter by Action to see one kind. Read-only.',
     },
   },
   access: { read: adminOnly, create: nobody, update: nobody, delete: nobody },
@@ -52,6 +52,9 @@ export const Activity = (
         { value: 'create', label: { ar: 'إنشاء', en: 'Create' } },
         { value: 'update', label: { ar: 'تعديل', en: 'Update' } },
         { value: 'delete', label: { ar: 'حذف', en: 'Delete' } },
+        { value: 'login', label: { ar: 'تسجيل دخول', en: 'Login' } },
+        { value: 'login-failed', label: { ar: 'محاولة دخول فاشلة', en: 'Failed login' } },
+        { value: 'logout', label: { ar: 'تسجيل خروج', en: 'Logout' } },
       ],
     },
     {

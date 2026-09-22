@@ -1,4 +1,4 @@
-import type { Field } from 'payload'
+import { AuthenticationError, LockedAuth, ValidationError, type Field } from 'payload'
 import { describe, expect, it, vi } from 'vitest'
 import {
   SKIP_ACTIVITY,
@@ -258,5 +258,109 @@ describe('activity — globals', () => {
       { value: 'programs', label: { ar: 'برنامج', en: 'Program' } },
       { value: 'footer', label: { ar: 'Footer', en: 'Footer' } },
     ])
+  })
+})
+
+describe('activity — sign-ins on an auth collection', () => {
+  const users = logActivity({ slug: 'users', auth: true, fields: [] })
+  const user = { id: 5, email: 'ed@example.test', role: 'editor', collection: 'users' }
+
+  it('adds login, logout, and error hooks only to an auth collection', () => {
+    expect(users.hooks!.afterLogin).toHaveLength(1)
+    expect(users.hooks!.afterLogout).toHaveLength(1)
+    expect(users.hooks!.afterError).toHaveLength(1)
+    expect(collection.hooks!.afterLogin).toHaveLength(0)
+    expect(collection.hooks!.afterError).toHaveLength(0)
+  })
+
+  it('records a login as the account that signed in', async () => {
+    const { req, create } = fakeReq(null)
+    await users.hooks!.afterLogin![0]!({
+      user,
+      req,
+      token: 't',
+      context: {},
+      collection: {},
+    } as never)
+    const [args] = create.mock.calls[0] as unknown as [
+      { data: Record<string, unknown>; req?: unknown },
+    ]
+    expect(args.data).toMatchObject({
+      action: 'login',
+      target: 'users',
+      docId: '5',
+      title: 'ed@example.test',
+      user: 5,
+      userEmail: 'ed@example.test',
+      changes: [],
+    })
+    expect(args.req).toBe(req)
+  })
+
+  it('records a logout', async () => {
+    const { req, create } = fakeReq(user)
+    await users.hooks!.afterLogout![0]!({ req, context: {}, collection: {} } as never)
+    const [args] = create.mock.calls[0] as unknown as [{ data: Record<string, unknown> }]
+    expect(args.data).toMatchObject({ action: 'logout', docId: '5', userEmail: 'ed@example.test' })
+  })
+
+  it('records a failed login under the attempted email, outside any transaction, with the reason', async () => {
+    const { req, create } = fakeReq(null)
+    ;(req as { data?: unknown }).data = { email: ' Someone@Example.test ', password: 'x' }
+    const error = new AuthenticationError()
+    await users.hooks!.afterError![0]!({
+      error,
+      req,
+      context: {},
+      collection: {},
+      result: {},
+    } as never)
+    const [args] = create.mock.calls[0] as unknown as [
+      { data: Record<string, unknown>; req?: unknown },
+    ]
+    expect(args.data).toMatchObject({
+      action: 'login-failed',
+      target: 'users',
+      docId: null,
+      title: 'someone@example.test',
+      user: null,
+      userEmail: 'someone@example.test',
+      changes: [{ field: 'reason', to: error.message }],
+    })
+    expect(args.req).toBeUndefined()
+  })
+
+  it('records a locked account the same way', async () => {
+    const { req, create } = fakeReq(null)
+    ;(req as { data?: unknown }).data = { email: 'ed@example.test', password: 'x' }
+    await users.hooks!.afterError![0]!({
+      error: new LockedAuth(),
+      req,
+      context: {},
+      collection: {},
+      result: {},
+    } as never)
+    expect(create).toHaveBeenCalledTimes(1)
+  })
+
+  it('ignores other errors, and an attempt with no email', async () => {
+    const { req, create } = fakeReq(null)
+    ;(req as { data?: unknown }).data = { email: 'ed@example.test' }
+    await users.hooks!.afterError![0]!({
+      error: new ValidationError({ errors: [] }),
+      req,
+      context: {},
+      collection: {},
+      result: {},
+    } as never)
+    ;(req as { data?: unknown }).data = { password: 'x' }
+    await users.hooks!.afterError![0]!({
+      error: new AuthenticationError(),
+      req,
+      context: {},
+      collection: {},
+      result: {},
+    } as never)
+    expect(create).not.toHaveBeenCalled()
   })
 })

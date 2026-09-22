@@ -54,7 +54,7 @@ export function DocumentCell({ cellData, rowData, payload }: DefaultServerCellCo
   const admin = payload.config.routes.admin
   const target = String(rowData.target ?? '')
   const href =
-    rowData.action === 'delete'
+    rowData.action === 'delete' || rowData.action === 'login-failed'
       ? null
       : isGlobal(payload, target)
         ? `${admin}/globals/${target}`

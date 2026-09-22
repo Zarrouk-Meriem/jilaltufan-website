@@ -6,6 +6,7 @@ import type {
   SanitizedCollectionConfig,
   SanitizedGlobalConfig,
 } from 'payload'
+import { AuthenticationError, LockedAuth } from 'payload'
 import { isStaffUser } from '@/access'
 import type { Activity } from '@/payload-types'
 
@@ -22,7 +23,7 @@ export const ACTIVITY_SLUG = 'activity' as const
 /** Set in `context` on a system write (e.g. the status-email stamp) so it is not logged as the editor's. */
 export const SKIP_ACTIVITY = 'skipActivity'
 
-export type Action = 'create' | 'update' | 'delete'
+export type Action = 'create' | 'update' | 'delete' | 'login' | 'login-failed' | 'logout'
 export type Label = { ar: string; en: string }
 export type Change = { field: string; label: Label; from?: unknown; to?: unknown }
 
@@ -178,27 +179,97 @@ type Entry = {
   title: string
   changes: Change[]
 }
+type Actor = { id: number | null; email: string }
 
-async function record(req: PayloadRequest, entry: Entry): Promise<void> {
-  if (!isStaffUser(req) || req.context?.[SKIP_ACTIVITY]) return
-  const user = req.user as { id: number; email?: string }
+/**
+ * Writes one row. `req` joins the operation's transaction when one is open, so a rolled-back
+ * edit leaves no trace; a failed login has no transaction left (Payload killed it before the
+ * error hooks run), so that path passes none.
+ */
+async function write(req: PayloadRequest, entry: Entry, actor: Actor, inTransaction = true) {
   try {
     await req.payload.create({
       collection: ACTIVITY_SLUG,
       data: {
         ...entry,
         docId: entry.docId ?? null,
-        user: user.id,
-        userEmail: user.email ?? '',
+        user: actor.id,
+        userEmail: actor.email,
         locale: typeof req.locale === 'string' ? req.locale : null,
         changes: entry.changes,
       },
-      req,
+      ...(inTransaction ? { req } : {}),
       overrideAccess: true,
       depth: 0,
     })
   } catch (err) {
     req.payload.logger.error({ msg: 'activity log write failed', entry, err })
+  }
+}
+
+/** A row for the signed-in staff user's own action; nothing for anyone else. */
+async function record(req: PayloadRequest, entry: Entry): Promise<void> {
+  if (!isStaffUser(req) || req.context?.[SKIP_ACTIVITY]) return
+  const user = req.user as { id: number; email?: string }
+  await write(req, entry, { id: user.id, email: user.email ?? '' })
+}
+
+const REASON: Label = { ar: 'السبب', en: 'Reason' }
+
+/**
+ * Sign-ins on an auth collection: a successful login, a logout, and a failed attempt. The
+ * failure is only visible to the collection's `afterError` hook; the attempted email is on
+ * the request body, and Payload's message (wrong credentials, or a locked account) is kept
+ * as the reason. Nothing else about the attempt is stored.
+ */
+function authHooks(slug: Activity['target']): NonNullable<CollectionConfig['hooks']> {
+  return {
+    afterLogin: [
+      async ({ user, req }) => {
+        const u = user as { id: number; email?: string }
+        await write(
+          req,
+          { action: 'login', target: slug, docId: String(u.id), title: u.email ?? '', changes: [] },
+          { id: u.id, email: u.email ?? '' },
+        )
+      },
+    ],
+    afterLogout: [
+      async ({ req }) => {
+        const u = req.user as { id: number; email?: string } | null
+        if (!u) return
+        await write(
+          req,
+          {
+            action: 'logout',
+            target: slug,
+            docId: String(u.id),
+            title: u.email ?? '',
+            changes: [],
+          },
+          { id: u.id, email: u.email ?? '' },
+        )
+      },
+    ],
+    afterError: [
+      async ({ error, req }) => {
+        if (!(error instanceof AuthenticationError || error instanceof LockedAuth)) return
+        const data = req.data as { email?: unknown } | undefined
+        const email = typeof data?.email === 'string' ? data.email.trim().toLowerCase() : ''
+        if (!email) return
+        await write(
+          req,
+          {
+            action: 'login-failed',
+            target: slug,
+            title: email,
+            changes: [{ field: 'reason', label: REASON, to: error.message }],
+          },
+          { id: null, email },
+          false,
+        )
+      },
+    ],
   }
 }
 
@@ -232,12 +303,16 @@ export function logActivity(collection: CollectionConfig): CollectionConfig {
       return doc
     },
   ]
+  const auth = collection.auth ? authHooks(collection.slug as Activity['target']) : {}
   return {
     ...collection,
     hooks: {
       ...collection.hooks,
       afterChange: [...(collection.hooks?.afterChange ?? []), ...afterChange],
       afterDelete: [...(collection.hooks?.afterDelete ?? []), ...afterDelete],
+      afterLogin: [...(collection.hooks?.afterLogin ?? []), ...(auth.afterLogin ?? [])],
+      afterLogout: [...(collection.hooks?.afterLogout ?? []), ...(auth.afterLogout ?? [])],
+      afterError: [...(collection.hooks?.afterError ?? []), ...(auth.afterError ?? [])],
     },
   }
 }

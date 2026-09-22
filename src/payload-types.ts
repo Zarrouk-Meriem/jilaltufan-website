@@ -1233,7 +1233,7 @@ export interface User {
   collection: 'users';
 }
 /**
- * Every create, update, and delete made by a staff account, with the time, the account, and the fields that changed. Read-only.
+ * Every create, update, and delete made by a staff account, with the time, the account, and the fields that changed — plus logins, logouts, and failed login attempts. Filter by Action to see one kind. Read-only.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activity".
@@ -1241,7 +1241,7 @@ export interface User {
 export interface Activity {
   id: number;
   createdAt: string;
-  action: 'create' | 'update' | 'delete';
+  action: 'create' | 'update' | 'delete' | 'login' | 'login-failed' | 'logout';
   target:
     | 'programs'
     | 'sessions'

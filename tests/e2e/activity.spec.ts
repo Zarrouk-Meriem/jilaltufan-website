@@ -152,6 +152,49 @@ test('the admin’s own fetches are authorised in dev: no console error on the l
   expect(errors).toEqual([])
 })
 
+test('a login, a failed login, and a logout are rows too, and the action filter isolates them', async ({
+  page,
+}) => {
+  const request = await api(page, admin)
+  const wrongEmail = `nobody-${Date.now()}@example.test`
+  const failed = await page.request.post('/api/users/login', {
+    data: { email: wrongEmail, password: 'not-the-password' },
+  })
+  expect(failed.status()).toBe(401)
+  const wrongPassword = await page.request.post('/api/users/login', {
+    data: { email: editor.email, password: 'not-the-password' },
+  })
+  expect(wrongPassword.status()).toBe(401)
+  const editorApi = await api(page, editor)
+  expect((await editorApi.post('/api/users/logout')).status()).toBe(200)
+
+  const failures = await request.get(
+    `/api/activity?where[action][equals]=login-failed&sort=-createdAt&limit=5&depth=0`,
+  )
+  const rows = (await failures.json()).docs as Row[]
+  expect(rows.every((r) => r.action === 'login-failed')).toBe(true)
+  expect(rows.find((r) => r.title === wrongEmail)).toMatchObject({
+    userEmail: wrongEmail,
+    docId: null,
+    changes: [expect.objectContaining({ field: 'reason' })],
+  })
+  expect(rows.find((r) => r.title === editor.email)).toBeTruthy()
+
+  const recent = await latest(request, 10)
+  const login = recent.find((r) => r.action === 'login' && r.userEmail === editor.email)
+  expect(login).toMatchObject({ target: 'users', title: editor.email })
+  const logout = recent.find((r) => r.action === 'logout' && r.userEmail === editor.email)
+  expect(logout).toMatchObject({ target: 'users', title: editor.email })
+
+  // The page: the filter on Action shows only the failed attempts.
+  await signIn(page, admin)
+  await page.goto('/admin/collections/activity?where[or][0][and][0][action][equals]=login-failed')
+  await expect(page.locator('table')).toBeVisible()
+  const cells = page.locator('table tbody tr')
+  await expect(cells.first()).toContainText('محاولة دخول فاشلة')
+  await expect(cells.filter({ hasNotText: 'محاولة دخول فاشلة' })).toHaveCount(0)
+})
+
 test('a re-save with no change records the save and nothing else', async ({ page }) => {
   const request = await api(page, admin)
   const settings = await request.get('/api/globals/site-settings?locale=ar&depth=0')
@@ -161,8 +204,53 @@ test('a re-save with no change records the save and nothing else', async ({ page
   expect(row).toMatchObject({ action: 'update', target: 'site-settings', changes: [] })
 })
 
+/**
+ * The Next dev overlay's badge turns red on any issue it collects (a runtime error, a
+ * hydration error, a compile diagnostic). Read its state, and the panel's text when set,
+ * so a screenshot never quietly carries a red badge.
+ */
+async function devIssues(page: Page): Promise<string | null> {
+  const portal = page.locator('nextjs-portal')
+  if ((await portal.count()) === 0) return null
+  return portal.evaluate((el) => {
+    const deep = (root: ParentNode, sel: string): Element | null => {
+      const hit = root.querySelector(sel)
+      if (hit) return hit
+      for (const n of root.querySelectorAll('*'))
+        if (n.shadowRoot) {
+          const h = deep(n.shadowRoot, sel)
+          if (h) return h
+        }
+      return null
+    }
+    const root = el.shadowRoot!
+    const badge = deep(root, '[data-next-badge]')
+    if (badge?.getAttribute('data-error') !== 'true') return null
+    ;(deep(root, '[data-issues-open]') as HTMLElement | null)?.click()
+    return new Promise<string>((resolve) =>
+      setTimeout(() => {
+        const dlg = deep(root, '[data-nextjs-dialog], [role="dialog"]')
+        resolve(
+          (dlg?.textContent ?? 'issue set, no panel text').replace(/\s+/g, ' ').slice(0, 1500),
+        )
+      }, 800),
+    )
+  })
+}
+
+/**
+ * `caret: 'initial'`: Playwright's default hides the text caret for a screenshot by setting
+ * `caret-color: transparent` inline on inputs, and a full-page shot taken while Payload's
+ * streamed table is still hydrating hands React that style as a server/client mismatch
+ * (seen 2026-09-22 as a red "1 Issue" badge in the screenshots, one run in three).
+ */
 async function shoot(page: Page, name: string) {
-  await page.screenshot({ path: `.artifacts/screens/activity/${name}.png`, fullPage: true })
+  expect(await devIssues(page), `dev overlay issue before ${name}`).toBeNull()
+  await page.screenshot({
+    path: `.artifacts/screens/activity/${name}.png`,
+    fullPage: true,
+    caret: 'initial',
+  })
 }
 
 test('screens', async ({ browser }) => {
