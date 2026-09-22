@@ -2,7 +2,7 @@ import type { CollectionConfig, Field } from 'payload'
 import { nobody, staffOnly } from '@/access'
 import { countryName, countryOptions } from '@/lib/countries'
 import { GENDERS, HEAR_ABOUT } from '@/lib/forms/apply-schema'
-import { sendAcceptanceEmail } from './hooks/acceptance-email'
+import { sendStatusEmail } from './hooks/status-email'
 
 /**
  * Public create is deliberately `false`: submissions arrive through the apply
@@ -49,7 +49,7 @@ export const Applications: CollectionConfig = {
     },
   },
   access: { read: staffOnly, create: nobody, update: staffOnly, delete: staffOnly },
-  hooks: { afterChange: [sendAcceptanceEmail] },
+  hooks: { afterChange: [sendStatusEmail] },
   defaultSort: '-createdAt',
   fields: [
     {
@@ -76,8 +76,8 @@ export const Applications: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: {
-          ar: 'عند تغيير الحالة إلى «مقبول» يُرسَل بريد القبول تلقائيًا إلى المتقدّم بلغته، ويظهر وقت الإرسال أدناه. الحالات الأخرى لا تُرسل شيئًا.',
-          en: 'Setting the status to Accepted emails the applicant automatically, in their language; the time appears below. The other statuses send nothing.',
+          ar: 'يُرسَل بريد إلى المتقدّم بلغته عند الانتقال إلى «قيد المراجعة» (من «جديد» فقط) و«مقبول» و«قائمة انتظار»، مرة واحدة عند التغيير؛ ويظهر وقت كل إرسال أدناه. «مرفوض» لا يُرسل شيئًا إلا بعد تفعيل خانة الإرسال.',
+          en: 'The applicant is emailed, in their language, on the move to Reviewing (from New only), Accepted, and Waitlisted — once, on the change; each send time appears below. Rejected sends nothing until the send box is ticked.',
         },
       },
       options: [
@@ -233,6 +233,31 @@ export const Applications: CollectionConfig = {
       admin: { position: 'sidebar' },
     },
     {
+      name: 'sendRejectionEmail',
+      type: 'checkbox',
+      defaultValue: false,
+      label: { ar: 'أرسل رسالة الرفض', en: 'Send the rejection email' },
+      admin: {
+        position: 'sidebar',
+        condition: (data) => data?.applicationStatus === 'rejected',
+        description: {
+          ar: 'لا يُرسَل شيء عند اختيار «مرفوض» وحده. فعّل هذه الخانة واحفظ لإرسال رسالة الرفض؛ لا يمكن التراجع عن الإرسال.',
+          en: 'Choosing Rejected alone sends nothing. Tick this and save to send the rejection email; it cannot be unsent.',
+        },
+      },
+    },
+    {
+      name: 'reviewingEmailSentAt',
+      type: 'date',
+      label: { ar: 'أُرسل بريد المراجعة في', en: 'Reviewing email sent' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => !!data?.reviewingEmailSentAt,
+        date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm' },
+      },
+    },
+    {
       name: 'acceptanceEmailSentAt',
       type: 'date',
       label: { ar: 'أُرسل بريد القبول في', en: 'Acceptance email sent' },
@@ -240,6 +265,28 @@ export const Applications: CollectionConfig = {
         position: 'sidebar',
         readOnly: true,
         condition: (data) => !!data?.acceptanceEmailSentAt,
+        date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm' },
+      },
+    },
+    {
+      name: 'waitlistEmailSentAt',
+      type: 'date',
+      label: { ar: 'أُرسل بريد قائمة الانتظار في', en: 'Waitlist email sent' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => !!data?.waitlistEmailSentAt,
+        date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm' },
+      },
+    },
+    {
+      name: 'rejectionEmailSentAt',
+      type: 'date',
+      label: { ar: 'أُرسل بريد الرفض في', en: 'Rejection email sent' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => !!data?.rejectionEmailSentAt,
         date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm' },
       },
     },

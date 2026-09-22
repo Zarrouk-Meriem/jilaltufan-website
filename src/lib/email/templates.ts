@@ -68,6 +68,43 @@ export function academyNotification(a: {
   }
 }
 
+const SIGN_AR = 'أكاديمية جيل الطوفان — بالعلم نتحرّر'
+const SIGN_EN = 'Jil Altufan Academy — Through knowledge, we are liberated'
+const REPLY_AR = 'إن كان لديك سؤال، يكفي أن تردّ على هذه الرسالة.'
+const REPLY_EN = 'If you have a question, simply reply to this email.'
+
+/**
+ * Sent once when staff move an application to «reviewing» (from «new» only): the applicant
+ * hears that a person is reading it and when to expect an answer. The two-week horizon was
+ * set by the academy on 2026-09-22.
+ */
+export function reviewingEmail(locale: Locale, name: string) {
+  if (locale === 'ar') {
+    const subject = 'طلب التحاقك قيد المراجعة'
+    return {
+      subject,
+      ...wrap('ar', subject, [
+        `أهلًا ${name}،`,
+        'طلبك الآن بين يدي فريق الأكاديمية. نقرأ كل طلب بعناية، وستصلك إجابتنا على هذا البريد خلال أسبوعين على الأكثر.',
+        'لا حاجة إلى أي خطوة من جهتك حاليًا.',
+        REPLY_AR,
+        SIGN_AR,
+      ]),
+    }
+  }
+  const subject = 'Your application is under review'
+  return {
+    subject,
+    ...wrap('en', subject, [
+      `Hello ${name},`,
+      "Your application is now with the Academy's team. We read every application carefully, and you will have our answer at this address within two weeks at most.",
+      'Nothing is needed from you for now.',
+      REPLY_EN,
+      SIGN_EN,
+    ]),
+  }
+}
+
 /**
  * Sent once when staff move an application to «accepted». The program line appears only
  * when one has been assigned; otherwise the team settles it with the applicant by email.
@@ -84,8 +121,8 @@ export function acceptanceEmail(locale: Locale, name: string, program?: string) 
           ? `برنامجك: ${program}.`
           : 'سيتواصل معك فريق الأكاديمية على هذا البريد لتحديد برنامجك.',
         'جميع الحصص مباشرة على Zoom بتوقيت القدس، وستصلك التفاصيل على هذا البريد قبل الانطلاق.',
-        'إن كان لديك سؤال، يكفي أن تردّ على هذه الرسالة.',
-        'أكاديمية جيل الطوفان — بالعلم نتحرّر',
+        REPLY_AR,
+        SIGN_AR,
       ]),
     }
   }
@@ -99,8 +136,67 @@ export function acceptanceEmail(locale: Locale, name: string, program?: string) 
         ? `Your program: ${program}.`
         : "The Academy's team will be in touch at this address to settle your program.",
       'All sessions are live on Zoom, in Al-Quds time; the details will reach you at this address before the start.',
-      'If you have a question, simply reply to this email.',
-      'Jil Altufan Academy — Through knowledge, we are liberated',
+      REPLY_EN,
+      SIGN_EN,
+    ]),
+  }
+}
+
+/** Sent once when staff move an application to «waitlisted»: still in, and what happens next. */
+export function waitlistEmail(locale: Locale, name: string) {
+  if (locale === 'ar') {
+    const subject = 'طلب التحاقك على قائمة الانتظار'
+    return {
+      subject,
+      ...wrap('ar', subject, [
+        `أهلًا ${name}،`,
+        'راجع فريق الأكاديمية طلبك، وطلبك مقبول من حيث المبدأ، غير أن المقاعد المتاحة الآن محدودة، فوضعناك على قائمة الانتظار.',
+        'ما إن يتوفر مقعد نكتب إليك على هذا البريد. لا حاجة إلى تقديم طلب جديد.',
+        REPLY_AR,
+        SIGN_AR,
+      ]),
+    }
+  }
+  const subject = 'Your application is on the waiting list'
+  return {
+    subject,
+    ...wrap('en', subject, [
+      `Hello ${name},`,
+      "The Academy's team has reviewed your application. It stands, but the places available right now are limited, so we have put you on the waiting list.",
+      'As soon as a place opens we will write to you at this address. There is no need to apply again.',
+      REPLY_EN,
+      SIGN_EN,
+    ]),
+  }
+}
+
+/**
+ * Sent only when staff tick «send the rejection email» on a rejected application — never
+ * on the status change alone, because it cannot be unsent.
+ */
+export function rejectionEmail(locale: Locale, name: string) {
+  if (locale === 'ar') {
+    const subject = 'بشأن طلب التحاقك بأكاديمية جيل الطوفان'
+    return {
+      subject,
+      ...wrap('ar', subject, [
+        `أهلًا ${name}،`,
+        'شكرًا لك على اهتمامك بأكاديمية جيل الطوفان وعلى الوقت الذي بذلته في طلبك. بعد المراجعة، لم نتمكن من منحك مقعدًا هذه المرة.',
+        'هذا لا يغلق الباب: يسعدنا أن تتقدم مجددًا في فرصة قادمة، وأن تتابع الأكاديمية على موقعها وصفحاتها.',
+        REPLY_AR,
+        SIGN_AR,
+      ]),
+    }
+  }
+  const subject = 'About your application to Jil Altufan Academy'
+  return {
+    subject,
+    ...wrap('en', subject, [
+      `Hello ${name},`,
+      'Thank you for your interest in Jil Altufan Academy and for the time you put into your application. After review, we were not able to offer you a place this time.',
+      'This does not close the door: we would be glad to see you apply again at a coming opportunity, and to have you follow the Academy on its site and pages.',
+      REPLY_EN,
+      SIGN_EN,
     ]),
   }
 }

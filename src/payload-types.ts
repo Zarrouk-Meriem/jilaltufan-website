@@ -666,7 +666,7 @@ export interface Application {
    */
   program?: (number | null) | Program;
   /**
-   * Setting the status to Accepted emails the applicant automatically, in their language; the time appears below. The other statuses send nothing.
+   * The applicant is emailed, in their language, on the move to Reviewing (from New only), Accepted, and Waitlisted — once, on the change; each send time appears below. Rejected sends nothing until the send box is ticked.
    */
   applicationStatus: 'new' | 'reviewing' | 'accepted' | 'waitlisted' | 'rejected';
   fullName: string;
@@ -1153,7 +1153,14 @@ export interface Application {
   pledge: boolean;
   consent: boolean;
   locale?: ('ar' | 'en') | null;
+  /**
+   * Choosing Rejected alone sends nothing. Tick this and save to send the rejection email; it cannot be unsent.
+   */
+  sendRejectionEmail?: boolean | null;
+  reviewingEmailSentAt?: string | null;
   acceptanceEmailSentAt?: string | null;
+  waitlistEmailSentAt?: string | null;
+  rejectionEmailSentAt?: string | null;
   /**
    * Staff only.
    */
@@ -1748,7 +1755,11 @@ export interface ApplicationsSelect<T extends boolean = true> {
   pledge?: T;
   consent?: T;
   locale?: T;
+  sendRejectionEmail?: T;
+  reviewingEmailSentAt?: T;
   acceptanceEmailSentAt?: T;
+  waitlistEmailSentAt?: T;
+  rejectionEmailSentAt?: T;
   internalNotes?: T;
   updatedAt?: T;
   createdAt?: T;
