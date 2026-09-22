@@ -79,6 +79,7 @@ export interface Config {
     'contact-messages': ContactMessage;
     users: User;
     media: Media;
+    activity: Activity;
     exports: Export;
     imports: Import;
     'payload-kv': PayloadKv;
@@ -106,6 +107,7 @@ export interface Config {
     'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    activity: ActivitySelect<false> | ActivitySelect<true>;
     exports: ExportsSelect<false> | ExportsSelect<true>;
     imports: ImportsSelect<false> | ImportsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -1231,6 +1233,55 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Every create, update, and delete made by a staff account, with the time, the account, and the fields that changed. Read-only.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activity".
+ */
+export interface Activity {
+  id: number;
+  createdAt: string;
+  action: 'create' | 'update' | 'delete';
+  target:
+    | 'programs'
+    | 'sessions'
+    | 'instructors'
+    | 'projects'
+    | 'minbar-posts'
+    | 'materials'
+    | 'events'
+    | 'applications'
+    | 'application-files'
+    | 'contact-messages'
+    | 'users'
+    | 'media'
+    | 'about-page'
+    | 'home-page'
+    | 'students-page'
+    | 'instructors-page'
+    | 'site-settings'
+    | 'navigation'
+    | 'footer';
+  title?: string | null;
+  docId?: string | null;
+  user?: (number | null) | User;
+  /**
+   * The email at the time of the action; kept even if the account is deleted later.
+   */
+  userEmail?: string | null;
+  locale?: string | null;
+  changes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "exports".
  */
@@ -1468,6 +1519,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'activity';
+        value: number | Activity;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1870,6 +1925,22 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activity_select".
+ */
+export interface ActivitySelect<T extends boolean = true> {
+  createdAt?: T;
+  action?: T;
+  target?: T;
+  title?: T;
+  docId?: T;
+  user?: T;
+  userEmail?: T;
+  locale?: T;
+  changes?: T;
+  updatedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2526,6 +2597,7 @@ export interface TaskCreateCollectionExport {
       | 'contact-messages'
       | 'users'
       | 'media'
+      | 'activity'
       | 'exports'
       | 'imports';
     drafts?: ('yes' | 'no') | null;

@@ -7,6 +7,7 @@ import * as migration_20260917_212451_application_program_optional from './20260
 import * as migration_20260921_152214_hero_cutout from './20260921_152214_hero_cutout'
 import * as migration_20260921_185210_acceptance_email_sent_at from './20260921_185210_acceptance_email_sent_at'
 import * as migration_20260922_075008_status_emails from './20260922_075008_status_emails'
+import * as migration_20260922_124615_activity_log from './20260922_124615_activity_log'
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260922_075008_status_emails.up,
     down: migration_20260922_075008_status_emails.down,
     name: '20260922_075008_status_emails',
+  },
+  {
+    up: migration_20260922_124615_activity_log.up,
+    down: migration_20260922_124615_activity_log.down,
+    name: '20260922_124615_activity_log',
   },
 ]

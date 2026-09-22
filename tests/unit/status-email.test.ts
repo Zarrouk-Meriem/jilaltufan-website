@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { STATUS_EMAIL_STAMP, sendStatusEmail } from '@/collections/hooks/status-email'
+import { SKIP_ACTIVITY } from '@/lib/payload/activity'
 import {
   acceptanceEmail,
   rejectionEmail,
@@ -71,7 +72,8 @@ describe('status email hook — accepted', () => {
         collection: 'applications',
         id: 7,
         data: { acceptanceEmailSentAt: expect.any(String) },
-        context: { [STATUS_EMAIL_STAMP]: true },
+        // The stamp is the system's write: it must stay out of the activity log.
+        context: { [STATUS_EMAIL_STAMP]: true, [SKIP_ACTIVITY]: true },
       }),
     )
     expect(result.acceptanceEmailSentAt).toEqual(expect.any(String))

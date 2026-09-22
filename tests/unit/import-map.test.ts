@@ -13,6 +13,9 @@ describe('admin import map', () => {
     '@payloadcms/storage-s3/client#S3ClientUploadHandler',
     '@/components/admin/Logo#Logo',
     '@/components/admin/Icon#Icon',
+    '@/components/admin/ActivityCells#DocumentCell',
+    '@/components/admin/ActivityCells#TimeCell',
+    '@/components/admin/ActivityCells#ChangesCell',
   ])('contains %s', (key) => {
     expect(importMap).toContain(`"${key}"`)
   })

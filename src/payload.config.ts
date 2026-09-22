@@ -8,6 +8,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { Activity } from './collections/Activity'
 import { ApplicationFiles } from './collections/ApplicationFiles'
 import { Applications } from './collections/Applications'
 import { ContactMessages } from './collections/ContactMessages'
@@ -27,10 +28,37 @@ import { InstructorsPage } from './globals/InstructorsPage'
 import { Navigation } from './globals/Navigation'
 import { SiteSettings } from './globals/SiteSettings'
 import { StudentsPage } from './globals/StudentsPage'
+import { logActivity, logGlobalActivity } from './lib/payload/activity'
 import { emailAdapter } from './lib/payload/email'
 import { storagePlugins } from './lib/payload/storage'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// Order = admin sidebar order within each group. Every collection and global is logged
+// to the activity log (`src/lib/payload/activity.ts`); the log itself is the last entry.
+const collections = [
+  Programs,
+  Sessions,
+  Instructors,
+  Projects,
+  MinbarPosts,
+  Materials,
+  Events,
+  Applications,
+  ApplicationFiles,
+  ContactMessages,
+  Users,
+  Media,
+]
+const globals = [
+  AboutPage,
+  HomePage,
+  StudentsPage,
+  InstructorsPage,
+  SiteSettings,
+  Navigation,
+  Footer,
+]
 
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SITE_URL,
@@ -74,22 +102,8 @@ export default buildConfig({
     defaultLocale: 'ar',
     fallback: true,
   },
-  // Order = admin sidebar order within each group.
-  collections: [
-    Programs,
-    Sessions,
-    Instructors,
-    Projects,
-    MinbarPosts,
-    Materials,
-    Events,
-    Applications,
-    ApplicationFiles,
-    ContactMessages,
-    Users,
-    Media,
-  ],
-  globals: [AboutPage, HomePage, StudentsPage, InstructorsPage, SiteSettings, Navigation, Footer],
+  collections: [...collections.map(logActivity), Activity(collections, globals)],
+  globals: globals.map(logGlobalActivity),
   editor: lexicalEditor(),
   email: emailAdapter(),
   secret: process.env.PAYLOAD_SECRET || '',

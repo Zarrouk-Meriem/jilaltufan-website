@@ -5,6 +5,7 @@ import {
   reviewingEmail,
   waitlistEmail,
 } from '@/lib/email/templates'
+import { SKIP_ACTIVITY } from '@/lib/payload/activity'
 import type { Application } from '@/payload-types'
 
 /** Set on the stamping update so the hook does not run again for its own write. */
@@ -82,7 +83,8 @@ export const sendStatusEmail: CollectionAfterChangeHook<Application> = async ({
     collection: 'applications',
     id: doc.id,
     data: { [rule.stamp]: sentAt },
-    context: { [STATUS_EMAIL_STAMP]: true },
+    // The stamp is the system's write, not the editor's: keep it out of the activity log.
+    context: { [STATUS_EMAIL_STAMP]: true, [SKIP_ACTIVITY]: true },
     overrideAccess: true,
     req,
   })

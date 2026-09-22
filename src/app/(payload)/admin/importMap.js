@@ -22,6 +22,9 @@ import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997e
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ExportListMenuItem as ExportListMenuItem_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
+import { TimeCell as TimeCell_33539d16dcd5d7cd62f9f028859803a9 } from '@/components/admin/ActivityCells'
+import { DocumentCell as DocumentCell_33539d16dcd5d7cd62f9f028859803a9 } from '@/components/admin/ActivityCells'
+import { ChangesCell as ChangesCell_33539d16dcd5d7cd62f9f028859803a9 } from '@/components/admin/ActivityCells'
 import { FormatField as FormatField_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { LimitField as LimitField_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { Page as Page_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
@@ -67,6 +70,9 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/plugin-import-export/rsc#ExportListMenuItem": ExportListMenuItem_cdf7e044479f899a31f804427d568b36,
+  "@/components/admin/ActivityCells#TimeCell": TimeCell_33539d16dcd5d7cd62f9f028859803a9,
+  "@/components/admin/ActivityCells#DocumentCell": DocumentCell_33539d16dcd5d7cd62f9f028859803a9,
+  "@/components/admin/ActivityCells#ChangesCell": ChangesCell_33539d16dcd5d7cd62f9f028859803a9,
   "@payloadcms/plugin-import-export/rsc#FormatField": FormatField_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#LimitField": LimitField_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#Page": Page_cdf7e044479f899a31f804427d568b36,
