@@ -12,7 +12,7 @@ const intl = createMiddleware(routing)
  * nonce only if every page becomes dynamically rendered. Dev keeps
  * 'unsafe-eval' for React Refresh; Turnstile's domain is allowed only when on.
  */
-function csp(): string {
+function csp(framable: boolean): string {
   const dev = process.env.NODE_ENV !== 'production'
   const turnstile = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
     ? ' https://challenges.cloudflare.com'
@@ -25,7 +25,9 @@ function csp(): string {
     `font-src 'self' data:`,
     `connect-src 'self'${dev ? ' ws: wss:' : ''}${turnstile}`,
     `frame-src${turnstile || " 'none'"}`,
-    `frame-ancestors 'none'`,
+    // Payload's live preview frames the public page inside the admin, same origin — 'none'
+    // blocked it («refused to connect» in the preview pane). The private pages stay 'none'.
+    `frame-ancestors ${framable ? "'self'" : "'none'"}`,
     `base-uri 'self'`,
     `form-action 'self'`,
     `object-src 'none'`,
@@ -44,8 +46,9 @@ const PRIVATE_PATH = new RegExp(`^/(?:${routing.locales.join('|')})/(?:applicati
 
 export default function proxy(req: NextRequest) {
   const res = intl(req) ?? NextResponse.next()
-  res.headers.set('Content-Security-Policy', csp())
-  if (PRIVATE_PATH.test(req.nextUrl.pathname)) {
+  const isPrivate = PRIVATE_PATH.test(req.nextUrl.pathname)
+  res.headers.set('Content-Security-Policy', csp(!isPrivate))
+  if (isPrivate) {
     res.headers.set('Cache-Control', 'private, no-store, max-age=0, must-revalidate')
     // next-intl offers every page as three hreflang alternates. This one has no public
     // counterpart to offer — publishing the token in two more flavours is pointless.

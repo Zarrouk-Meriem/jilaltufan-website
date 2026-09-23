@@ -11,10 +11,16 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 // Security headers for the public site. The Payload admin gets a relaxed CSP
 // (it relies on inline styles and, in dev, eval) — see the second entry.
+//
+// `X-Frame-Options: SAMEORIGIN`, not `DENY`: Payload's live preview renders the public page
+// in an iframe inside the admin, on our own origin. `DENY` blocks that too — the admin showed
+// «refused to connect» in the preview pane — while `SAMEORIGIN` still refuses every other site.
+// The CSP counterpart (`frame-ancestors`) is in `src/proxy.ts`. The private pages below keep
+// `DENY`: nothing previews them, so they stay unframable by anything at all.
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
 ]
 
@@ -27,8 +33,9 @@ const privatePage = `/:locale(${locales})/:area(application|account)/:path*`
 // Cache-Control is not here: Next sets its own on app-router pages and ignores this one,
 // so `src/proxy.ts` sets it instead.
 const privateHeaders = [
-  ...securityHeaders.filter((h) => h.key !== 'Referrer-Policy'),
+  ...securityHeaders.filter((h) => h.key !== 'Referrer-Policy' && h.key !== 'X-Frame-Options'),
   { key: 'Referrer-Policy', value: 'no-referrer' },
+  { key: 'X-Frame-Options', value: 'DENY' },
 ]
 
 const nextConfig: NextConfig = {
