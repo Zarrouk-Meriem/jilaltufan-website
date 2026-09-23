@@ -1,17 +1,22 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { APIError } from 'payload'
 import { mintInviteToken, setPasswordUrl, type AccountLocale } from '@/lib/accounts/invite'
-import { authCookieName } from '@/lib/auth/account'
+import { getAccount, authCookieName } from '@/lib/auth/account'
 import { passwordResetEmail } from '@/lib/email/templates'
 import {
+  changePasswordFormData,
+  changePasswordSchema,
   fieldErrorsOf,
   forgotFormData,
   forgotSchema,
   setPasswordFormData,
   setPasswordSchema,
+  profileFormData,
+  profileSchema,
   signInFormData,
   signInSchema,
 } from '@/lib/forms/account-schema'
@@ -160,4 +165,62 @@ export async function setPassword(_prev: FormState, fd: FormData): Promise<FormS
     return error('tokenInvalid')
   }
   redirect(`/${locale}/account`)
+}
+
+/** The student's own name and the language we write to them in. */
+export async function updateProfile(_prev: FormState, fd: FormData): Promise<FormState> {
+  const account = await getAccount()
+  if (!account) return error('signedOut')
+  const parsed = profileSchema.safeParse(profileFormData(fd))
+  if (!parsed.success) return error('formInvalid', fieldErrorsOf(parsed.error))
+
+  const payload = await getClient()
+  try {
+    await payload.update({
+      collection: 'accounts',
+      id: account.id,
+      data: { name: parsed.data.name, locale: parsed.data.locale },
+      overrideAccess: true,
+    })
+  } catch (err) {
+    payload.logger.error({ msg: 'profile update failed', id: account.id, err })
+    return error('server')
+  }
+  revalidatePath(`/${localeOf(fd.get('locale'))}/account/profile`)
+  return { status: 'done' }
+}
+
+/**
+ * A new password, for someone already signed in. The current one is asked for and checked
+ * by signing in with it — an unlocked screen should not be enough to take an account over.
+ */
+export async function changePassword(_prev: FormState, fd: FormData): Promise<FormState> {
+  const account = await getAccount()
+  if (!account) return error('signedOut')
+  const parsed = changePasswordSchema.safeParse(changePasswordFormData(fd))
+  if (!parsed.success) return error('formInvalid', fieldErrorsOf(parsed.error))
+  if (!signInLimiter.check(clientIp(await headers())).ok) return error('rateLimited')
+
+  const payload = await getClient()
+  try {
+    await payload.login({
+      collection: 'accounts',
+      data: { email: account.email, password: parsed.data.current },
+    })
+  } catch {
+    return error('formInvalid', { current: 'wrongPassword' })
+  }
+
+  try {
+    await payload.update({
+      collection: 'accounts',
+      id: account.id,
+      data: { password: parsed.data.password, passwordSetAt: new Date().toISOString() },
+      overrideAccess: true,
+    })
+  } catch (err) {
+    payload.logger.error({ msg: 'password change failed', id: account.id, err })
+    return error('server')
+  }
+  return { status: 'done' }
 }

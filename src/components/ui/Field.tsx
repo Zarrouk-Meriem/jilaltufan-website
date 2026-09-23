@@ -186,11 +186,16 @@ export function RadioGroup({
   id,
   options,
   className,
+  defaultValue,
   ...rest
 }: Common & { options: Option[]; className?: string } & Omit<
     ComponentProps<'input'>,
     'type' | 'id' | 'children'
   >) {
+  // Each radio carries its own `value`, so a `defaultValue` spread across all of them is
+  // both meaningless and a React error ("both value and defaultValue"). It selects one
+  // instead — which is what anyone passing it meant.
+  const preselected = defaultValue === undefined ? undefined : String(defaultValue)
   return (
     <fieldset
       role="radiogroup"
@@ -218,6 +223,7 @@ export function RadioGroup({
               id={`${id}-${o.value}`}
               type="radio"
               value={o.value}
+              defaultChecked={preselected === undefined ? undefined : preselected === o.value}
               className="size-4 shrink-0 cursor-pointer scroll-mt-44 appearance-none rounded-full border border-line-strong bg-paper transition-[border-color,border-width] duration-150 ease-brand checked:border-[5px] checked:border-red-600 hover:border-ink-700 focus:outline-none focus-visible:border-ink-900 focus-visible:shadow-[var(--focus-halo)]"
               {...rest}
             />

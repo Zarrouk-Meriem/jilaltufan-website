@@ -16,7 +16,10 @@ sleep 4
 # Warm every public route one at a time: parallel first compiles (a Playwright run with
 # four workers, a browser tab reconnecting) race on Turbopack's manifests and leave
 # every route answering 500 with "Unexpected non-whitespace character after JSON".
-for r in "" /programs /programs/palestine-our-compass /apply /schedule /events /events/jeel-altoufan-camp /projects /about /about/structure /students /instructors /knowledge /knowledge/minbar /knowledge/materials /contact /privacy /terms; do
+# Signed-out account pages still compile their segment (they redirect), and a token that
+# belongs to nobody compiles the follow-up page on its way to a 404 — which is the point:
+# a route left uncompiled here is one four Playwright workers will race on later.
+for r in "" /programs /programs/palestine-our-compass /apply /schedule /events /events/jeel-altoufan-camp /projects /about /about/structure /students /instructors /knowledge /knowledge/minbar /knowledge/materials /contact /privacy /terms /account /account/sign-in /account/forgot /account/set-password /account/profile /application/warm-the-route; do
   for l in ar en; do curl -s -o /dev/null "http://localhost:$PORT/$l$r"; done
 done
 curl -s -o /dev/null -w "http://localhost:$PORT → %{http_code}\n" "http://localhost:$PORT/ar"

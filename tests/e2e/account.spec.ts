@@ -56,15 +56,23 @@ async function findAccount(api: APIRequestContext, email: string): Promise<Accou
 }
 
 /**
- * An accepted applicant, and the account acceptance opened for them. Used by the one test
- * that is about that path: the apply form is rate limited (five submissions per ten minutes
- * per IP) and the suite already spends most of that budget in `apply.spec.ts` and
- * `application-status.spec.ts`, so everything that merely needs *an account* makes one
- * directly as staff instead.
+ * An accepted applicant, and the account acceptance opened for them.
+ *
+ * One real submission for the whole file, made on first use: the apply form is rate limited
+ * (five per ten minutes per IP, the right number for the live site) and other spec files
+ * spend that budget too, so a test that does not need a fresh application must not take
+ * one. `mode: 'default'` above keeps these tests in one worker, in order, so the tests that
+ * share this applicant each take the state the previous one left. Anything that merely
+ * needs *an account* makes one directly as staff instead.
  */
+let sharedApplicant: Promise<{ email: string }> | null = null
+
 async function acceptedApplicant(page: Page) {
-  const email = `playwright-account-${Date.now()}@example.com`
-  await submitApplication(page, 'ar', email)
+  const { email } = await (sharedApplicant ??= (async () => {
+    const address = `playwright-account-${Date.now()}@example.com`
+    await submitApplication(page, 'ar', address)
+    return { email: address }
+  })())
   const api = await staffApi(page)
   const { docs } = await (
     await api.get(`/api/applications?where[email][equals]=${encodeURIComponent(email)}`)
@@ -118,6 +126,125 @@ test('acceptance opens the account, invited but not yet activated', async ({ pag
   expect((await again.json()).totalDocs).toBe(1)
 })
 
+test('the window shows the student their own application, sessions and materials', async ({
+  page,
+}) => {
+  const { api, email, applicationId } = await acceptedApplicant(page)
+  const account = await findAccount(api, email)
+  const password = `pw-${Date.now()}-playwright`
+  expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
+
+  // Staff settle the program, which is what fills the sessions and materials sections.
+  const programs = await (await api.get('/api/programs?limit=1&depth=0')).json()
+  const program = programs.docs[0] as { id: number; title: string }
+  expect(
+    (await api.patch(`/api/applications/${applicationId}`, { data: { program: program.id } })).ok(),
+  ).toBe(true)
+
+  await page.goto('/ar/account/sign-in')
+  await page.getByLabel('البريد الإلكتروني').fill(email)
+  await page.getByLabel(/^كلمة السر/).fill(password)
+  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page).toHaveURL(/\/ar\/account$/)
+
+  const main = page.locator('main')
+  await expect(main).toContainText('طلبك')
+  await expect(main.getByText('مقبول', { exact: true })).toBeVisible()
+  await expect(main).toContainText(program.title)
+  // Their own details, as they submitted them.
+  await expect(main).toContainText('اختبار آلي')
+  await expect(main).toContainText(email)
+  // The CV they attached is offered back to them by name.
+  await expect(main).toContainText('ما أرفقته')
+  await expect(main.getByRole('link', { name: /\.pdf$/ })).toBeVisible()
+  // The sections that come from the program.
+  await expect(main).toContainText('حصصك')
+  await expect(main).toContainText('موادّك')
+  await expect(main.getByText('لا حصص بعد')).toHaveCount(0)
+
+  // The window never leaks a staff-only field.
+  await expect(main).not.toContainText('ملاحظات داخلية')
+})
+
+test('a student can download the CV they sent, and no one else can', async ({ page }) => {
+  const { api, email, applicationId } = await acceptedApplicant(page)
+  const account = await findAccount(api, email)
+  const password = `pw-${Date.now()}-playwright`
+  await api.patch(`/api/accounts/${account!.id}`, { data: { password } })
+
+  const application = await (await api.get(`/api/applications/${applicationId}?depth=1`)).json()
+  // Payload builds the file URL from the configured site URL, which in dev is a different
+  // port from the one the suite drives; the path is the part that matters here.
+  const cvUrl = application.cv?.url as string
+  expect(cvUrl, 'the submitted CV should be on the application').toBeTruthy()
+  const base = test.info().project.use.baseURL!
+  const cvPath = new URL(cvUrl, base).pathname
+
+  // A signed-in context, by token: Payload only honours its cookie alongside a browser's
+  // own Origin or Sec-Fetch-Site, which a bare API call does not carry — so a cookie here
+  // would read as nobody and prove nothing about access.
+  const asAccount = async (address: string, secret: string) => {
+    const res = await page.request.post('/api/accounts/login', {
+      data: { email: address, password: secret },
+    })
+    expect(res.status(), await res.text()).toBe(200)
+    const { token } = (await res.json()) as { token: string }
+    return request.newContext({
+      baseURL: base,
+      extraHTTPHeaders: { Authorization: `JWT ${token}` },
+    })
+  }
+
+  // Its own applicant: allowed.
+  const owner = await asAccount(email, password)
+  expect((await owner.get(cvPath)).status()).toBe(200)
+
+  // Nobody, and a different student: refused both times.
+  const stranger = await request.newContext({ baseURL: base })
+  expect((await stranger.get(cvPath)).status()).toBe(403)
+  const other = await activatedAccount(page)
+  const otherStudent = await asAccount(other.email, other.password)
+  expect((await otherStudent.get(cvPath)).status()).toBe(403)
+  await Promise.all([owner.dispose(), stranger.dispose(), otherStudent.dispose()])
+})
+
+test('a student edits their own name, and changes their password with the old one', async ({
+  page,
+}) => {
+  const { email, password } = await activatedAccount(page)
+  await page.goto('/ar/account/sign-in')
+  await page.getByLabel('البريد الإلكتروني').fill(email)
+  await page.getByLabel(/^كلمة السر/).fill(password)
+  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page).toHaveURL(/\/ar\/account$/)
+
+  await page.goto('/ar/account/profile')
+  await page.getByLabel(/^الاسم/).fill('اسم جديد')
+  await page.getByRole('button', { name: 'احفظ', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('حُفظ')
+  await page.goto('/ar/account')
+  await expect(page.locator('main')).toContainText('اسم جديد')
+
+  // A wrong current password changes nothing.
+  await page.goto('/ar/account/profile')
+  const next = `${password}-next`
+  await page.getByLabel(/^كلمة السر الحالية/).fill('not-the-password')
+  await page.getByLabel(/^كلمة السر الجديدة/).fill(next)
+  await page.getByLabel(/^أعد كتابة كلمة السر/).fill(next)
+  await page.getByRole('button', { name: 'غيّر كلمة السر' }).click()
+  await expect(page.locator('form').getByRole('alert').first()).toBeVisible()
+
+  // The real one does.
+  await page.getByLabel(/^كلمة السر الحالية/).fill(password)
+  await page.getByLabel(/^كلمة السر الجديدة/).fill(next)
+  await page.getByLabel(/^أعد كتابة كلمة السر/).fill(next)
+  await page.getByRole('button', { name: 'غيّر كلمة السر' }).click()
+  await expect(page.getByRole('status')).toContainText('تغيّرت كلمة السر')
+
+  const login = await page.request.post('/api/accounts/login', { data: { email, password: next } })
+  expect(login.status()).toBe(200)
+})
+
 test('the window is behind the door: signed out, /account sends you to sign in', async ({
   page,
 }) => {
@@ -135,14 +262,53 @@ test('a student signs in, sees their window, and signs out again', async ({ page
   await page.getByRole('button', { name: 'دخول' }).click()
 
   await expect(page).toHaveURL(/\/ar\/account$/)
-  await expect(page.getByText(email)).toBeVisible()
-  await expect(page.getByText('طالب', { exact: true })).toBeVisible()
+  // The window greets them by the name on the account.
+  await expect(page.locator('main')).toContainText('Playwright Student')
+  // With no application behind it, the window says so rather than showing an empty shell.
+  await expect(page.locator('main')).toContainText('لا يوجد طلب مرتبط بهذا الحساب')
 
   await page.getByRole('button', { name: 'خروج' }).click()
   await expect(page).toHaveURL(/\/ar\/account\/sign-in$/)
   // The cookie is gone, not merely the page.
   await page.goto('/ar/account')
   await expect(page).toHaveURL(/\/ar\/account\/sign-in$/)
+})
+
+test('the window and the profile page raise nothing in the console', async ({ page }) => {
+  // `console.spec.ts` walks the public routes; these two are behind a sign-in, so the same
+  // rule is enforced here. It caught a real one: RadioGroup spread `defaultValue` across
+  // every radio, which React refuses and which left the language unselected (2026-09-23).
+  const noise: string[] = []
+  page.on('console', (m) => ['error', 'warning'].includes(m.type()) && noise.push(m.text()))
+  page.on('pageerror', (e) => noise.push(String(e)))
+
+  const { email, password } = await activatedAccount(page)
+  await page.goto('/ar/account/sign-in')
+  await page.getByLabel('البريد الإلكتروني').fill(email)
+  await page.getByLabel(/^كلمة السر/).fill(password)
+  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page).toHaveURL(/\/ar\/account$/)
+  await page.goto('/ar/account/profile')
+  await expect(page.getByLabel(/^الاسم/)).toBeVisible()
+
+  // The language the account is written to is the one shown as chosen.
+  await expect(page.getByRole('radio', { name: 'العربية' })).toBeChecked()
+  await expect(page.getByRole('radio', { name: 'English' })).not.toBeChecked()
+
+  expect(noise.filter((n) => !/Download the React DevTools/.test(n))).toEqual([])
+})
+
+test('the links between the account pages go where they say', async ({ page }) => {
+  // next-intl's Link adds the locale itself, so a href that carries one too lands on
+  // /ar/ar/… — which looks right in a visibility check and 404s on a click (2026-09-23).
+  await page.goto('/ar/account/sign-in')
+  await page.getByRole('link', { name: 'نسيت كلمة السر؟' }).click()
+  await expect(page).toHaveURL(/\/ar\/account\/forgot$/)
+  await expect(page.getByLabel('البريد الإلكتروني')).toBeVisible()
+
+  await page.goto('/ar/account/set-password')
+  await page.getByRole('link', { name: 'اطلب رابطًا جديدًا' }).click()
+  await expect(page).toHaveURL(/\/ar\/account\/forgot$/)
 })
 
 test('a wrong password says one thing, and says it about neither field', async ({ page }) => {

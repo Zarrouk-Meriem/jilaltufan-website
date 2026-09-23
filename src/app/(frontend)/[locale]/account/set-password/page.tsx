@@ -45,7 +45,7 @@ export default async function SetPasswordPage({
             <Callout title={t('setPassword.noTokenTitle')}>
               <p>{t('setPassword.noToken')}</p>
               <p className="mt-3">
-                <TextLink href={`/${locale}/account/forgot`}>{t('setPassword.newLink')}</TextLink>
+                <TextLink href="/account/forgot">{t('setPassword.newLink')}</TextLink>
               </p>
             </Callout>
           )}

@@ -68,13 +68,16 @@ export const resetLimiter = createRateLimiter({
 })
 
 /**
- * Signing in and choosing a password: 10 per 10 minutes per IP. Payload already locks a
- * single account after ten bad attempts; this is the other axis — one address at a time
- * against many accounts, which no per-account lock would notice.
+ * Signing in and choosing a password: 30 per 10 minutes per IP. This is the axis a
+ * per-account lock cannot see — one address working through many accounts — and Payload
+ * already locks a single account after ten bad attempts, so this only has to stay well
+ * below what a spraying script wants. It must also not punish a shared connection: a
+ * household, a university's NAT, or a room of students all signing in before a session
+ * would trip a tighter cap between them (10 was too low; our own suite hit it).
  */
 export const signInLimiter = createRateLimiter({
-  capacity: 10,
-  refillPerMs: 10 / (10 * 60_000),
+  capacity: 30,
+  refillPerMs: 30 / (10 * 60_000),
   salt: 'jaa-sign-in',
 })
 

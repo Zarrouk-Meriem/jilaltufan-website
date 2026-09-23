@@ -34,6 +34,27 @@ export const setPasswordSchema = z
   })
   .refine((v) => v.password === v.confirm, { path: ['confirm'], message: 'passwordMismatch' })
 
+/** What a student may change about themselves. */
+export const profileSchema = z.object({
+  name: z.string().trim().min(2, 'required').max(120, 'tooLong'),
+  locale: z.enum(['ar', 'en']),
+})
+
+/**
+ * Changing a password asks for the current one. Without that, anyone who found an unlocked
+ * screen could lock the owner out of their own account in two keystrokes.
+ */
+export const changePasswordSchema = z
+  .object({
+    current: z.string().min(1, 'required').max(72, 'tooLong'),
+    password: passwordField,
+    confirm: z.string(),
+  })
+  .refine((v) => v.password === v.confirm, { path: ['confirm'], message: 'passwordMismatch' })
+
+export type ProfileInput = z.input<typeof profileSchema>
+export type ChangePasswordInput = z.input<typeof changePasswordSchema>
+
 export type SignInInput = z.input<typeof signInSchema>
 export type ForgotInput = z.input<typeof forgotSchema>
 export type SetPasswordInput = z.input<typeof setPasswordSchema>
@@ -57,6 +78,17 @@ export const setPasswordFormData = (fd: FormData): SetPasswordInput => ({
   password: str(fd, 'password'),
   confirm: str(fd, 'confirm'),
   website: str(fd, 'website'),
+})
+
+export const profileFormData = (fd: FormData): ProfileInput => ({
+  name: str(fd, 'name'),
+  locale: str(fd, 'accountLocale') === 'en' ? 'en' : 'ar',
+})
+
+export const changePasswordFormData = (fd: FormData): ChangePasswordInput => ({
+  current: str(fd, 'current'),
+  password: str(fd, 'password'),
+  confirm: str(fd, 'confirm'),
 })
 
 /** First error per field, as message keys. */

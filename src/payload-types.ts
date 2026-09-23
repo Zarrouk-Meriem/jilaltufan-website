@@ -1207,6 +1207,10 @@ export interface ApplicationFile {
   id: number;
   applicant?: string | null;
   originalName?: string | null;
+  /**
+   * The application this file was attached to — what lets its own applicant download it from their window.
+   */
+  application?: (number | null) | Application;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1911,6 +1915,7 @@ export interface ApplicationsSelect<T extends boolean = true> {
 export interface ApplicationFilesSelect<T extends boolean = true> {
   applicant?: T;
   originalName?: T;
+  application?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

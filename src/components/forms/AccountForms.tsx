@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useActionState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
-import { Input } from '@/components/ui/Field'
+import { Input, RadioGroup } from '@/components/ui/Field'
 import { Loader } from '@/components/ui/Loader'
 import { TextLink } from '@/components/ui/TextLink'
 import type { FormState } from '@/app/(frontend)/[locale]/account/actions'
@@ -91,7 +91,7 @@ export function SignInForm({
       />
       <Submit label={t('signIn')} pending={pending} />
       <p className="text-sm text-ink-500">
-        <TextLink href={`/${locale}/account/forgot`}>{t('forgotLink')}</TextLink>
+        <TextLink href="/account/forgot">{t('forgotLink')}</TextLink>
       </p>
     </form>
   )
@@ -178,9 +178,131 @@ export function SetPasswordForm({
       <Submit label={t('setPassword.action')} pending={pending} />
       {state.status === 'error' && state.formError === 'tokenInvalid' ? (
         <p className="enter text-sm text-ink-500">
-          <TextLink href={`/${locale}/account/forgot`}>{t('setPassword.newLink')}</TextLink>
+          <TextLink href="/account/forgot">{t('setPassword.newLink')}</TextLink>
         </p>
       ) : null}
+    </form>
+  )
+}
+
+/**
+ * The name we call a student by and the language we write to them in. The success line
+ * lives in a slot that is always there, so saving never nudges the form below it.
+ */
+export function ProfileForm({
+  action,
+  name,
+  accountLocale,
+  email,
+}: {
+  action: (prev: FormState, fd: FormData) => Promise<FormState>
+  name: string
+  accountLocale: 'ar' | 'en'
+  email: string
+}) {
+  const t = useTranslations('account')
+  const te = useTranslations('account.errors')
+  const locale = useLocale()
+  const [state, submit, pending] = useActionState(action, idle)
+
+  return (
+    <form action={submit} className="relative flex flex-col gap-4" noValidate>
+      <input type="hidden" name="locale" value={locale} />
+      <FormError state={state} />
+      <Input
+        id="name"
+        name="name"
+        defaultValue={name}
+        required
+        label={t('profile.name')}
+        error={state.fieldErrors?.name ? te(state.fieldErrors.name) : undefined}
+      />
+      <RadioGroup
+        id="accountLocale"
+        name="accountLocale"
+        label={t('profile.language')}
+        defaultValue={accountLocale}
+        options={[
+          { value: 'ar', label: 'العربية' },
+          { value: 'en', label: 'English' },
+        ]}
+      />
+      <Input
+        id="profile-email"
+        name="profile-email"
+        value={email}
+        dir="ltr"
+        readOnly
+        disabled
+        label={t('email')}
+        hint={t('profile.emailNote')}
+        lines={2}
+      />
+      <Submit label={t('profile.save')} pending={pending} />
+      <div className="min-h-6">
+        {state.status === 'done' ? (
+          <p role="status" className="enter font-medium text-ink-900">
+            {t('profile.saved')}
+          </p>
+        ) : null}
+      </div>
+    </form>
+  )
+}
+
+/** A new password for someone already signed in; the current one is asked for. */
+export function ChangePasswordForm({
+  action,
+}: {
+  action: (prev: FormState, fd: FormData) => Promise<FormState>
+}) {
+  const t = useTranslations('account')
+  const te = useTranslations('account.errors')
+  const locale = useLocale()
+  const [state, submit, pending] = useActionState(action, idle)
+  const err = (k: string) => (state.fieldErrors?.[k] ? te(state.fieldErrors[k]) : undefined)
+
+  return (
+    <form action={submit} className="relative flex flex-col gap-4" noValidate>
+      <input type="hidden" name="locale" value={locale} />
+      <FormError state={state} />
+      <Input
+        id="current"
+        name="current"
+        type="password"
+        autoComplete="current-password"
+        required
+        label={t('profile.currentPassword')}
+        error={err('current')}
+      />
+      <Input
+        id="new-password"
+        name="password"
+        type="password"
+        autoComplete="new-password"
+        required
+        label={t('newPassword')}
+        hint={t('passwordHint')}
+        error={err('password')}
+        lines={2}
+      />
+      <Input
+        id="new-confirm"
+        name="confirm"
+        type="password"
+        autoComplete="new-password"
+        required
+        label={t('confirmPassword')}
+        error={err('confirm')}
+      />
+      <Submit label={t('profile.changePassword')} pending={pending} />
+      <div className="min-h-6">
+        {state.status === 'done' ? (
+          <p role="status" className="enter font-medium text-ink-900">
+            {t('profile.passwordChanged')}
+          </p>
+        ) : null}
+      </div>
     </form>
   )
 }

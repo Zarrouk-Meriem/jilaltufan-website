@@ -117,6 +117,17 @@ export async function submitApplication(
       },
     })
 
+    // The file was written before the application existed, so it learns its application
+    // now. That link is what lets the applicant download their own CV from their window
+    // later, and staff see it on the file.
+    if (cvId)
+      await payload.update({
+        collection: 'application-files',
+        id: cvId,
+        data: { application: doc.id },
+        overrideAccess: true,
+      })
+
     const settings = await payload.findGlobal({ slug: 'site-settings', depth: 0 })
     // Applications have their own mailbox when the academy sets one; contact@ otherwise.
     const applicationsEmail = settings.applicationsEmail || settings.contactEmail

@@ -426,10 +426,43 @@
     "working": "One moment…",
     "forgotLink": "Forgotten your password?",
     "signedInAs": "Account",
-    "shellNote": "Your application, your sessions and your materials are being added to this window. They will be here shortly.",
     "kind": {
       "student": "Student",
       "instructor": "Guest instructor"
+    },
+    "applicationTitle": "Your application",
+    "noApplication": "No application is linked to this account",
+    "noApplicationBody": "If you think that is a mistake, write to us and we will look into it.",
+    "documents": "What you attached",
+    "detailsNote": "These are your details as you sent them with your application. If something has changed, write to us and we will update it.",
+    "details": {
+      "fullName": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "profession": "Profession"
+    },
+    "sessionsTitle": "Your sessions",
+    "noSessions": "No sessions yet",
+    "noProgramYet": "Your sessions appear here as soon as your program is settled.",
+    "materialsTitle": "Your materials",
+    "noMaterials": "No materials yet",
+    "youTitle": "About you",
+    "youIntro": "The name we call you by, the language we write to you in, and your password.",
+    "editProfile": "Edit your details",
+    "profile": {
+      "title": "Your **details**",
+      "intro": "What you change here belongs to your account alone; your application stays as you sent it.",
+      "detailsTitle": "Name and language",
+      "name": "Name",
+      "language": "Correspondence language",
+      "emailNote": "Your address is not changed from here; write to us if you need it changed.",
+      "save": "Save",
+      "saved": "Saved.",
+      "passwordTitle": "Password",
+      "currentPassword": "Current password",
+      "changePassword": "Change password",
+      "passwordChanged": "Your password has been changed.",
+      "back": "Back to your window"
     },
     "forgot": {
       "title": "Reset your **password**",
@@ -459,7 +492,10 @@
       "passwordShort": "At least twelve characters",
       "passwordLong": "Longer than seventy-two characters",
       "passwordMismatch": "The two passwords do not match",
-      "spam": "The form could not be sent."
+      "spam": "The form could not be sent.",
+      "signedOut": "Your session has ended. Please sign in again.",
+      "server": "That could not be saved just now. Try again shortly.",
+      "wrongPassword": "That is not your current password"
     }
   },
   "students": {
