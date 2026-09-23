@@ -449,6 +449,25 @@
     "youTitle": "About you",
     "youIntro": "The name we call you by, the language we write to you in, and your password.",
     "editProfile": "Edit your details",
+    "teaching": {
+      "title": "Your **teaching** window",
+      "intro": "Your sessions at the Academy, the link to join them, and the materials you send their students.",
+      "sessionsTitle": "Your sessions",
+      "noSessions": "No sessions assigned to you yet",
+      "noSessionsBody": "They appear here as soon as the team assigns you one. We will write to you when that happens.",
+      "filesTitle": "Materials for your sessions",
+      "filesIntro": "Send what you would like the students to have: a deck, a paper, a reading. The team reviews it and publishes it to them; nothing appears before that.",
+      "whichSession": "For which session?",
+      "file": "File",
+      "fileHint": "PDF, Word or PowerPoint, up to 20 MB.",
+      "choose": "Choose a file",
+      "none": "No file chosen",
+      "note": "A note for the team",
+      "noteHint": "Optional: anything the team should know about this file.",
+      "send": "Send",
+      "sent": "We have the file. The team will review it and publish it to the students.",
+      "profileNote": "What the instructors page says about you is edited by the team. Write to us if you would like it changed."
+    },
     "profile": {
       "title": "Your **details**",
       "intro": "What you change here belongs to your account alone; your application stays as you sent it.",
@@ -495,7 +514,11 @@
       "spam": "The form could not be sent.",
       "signedOut": "Your session has ended. Please sign in again.",
       "server": "That could not be saved just now. Try again shortly.",
-      "wrongPassword": "That is not your current password"
+      "wrongPassword": "That is not your current password",
+      "notYourSession": "That session is not one of yours.",
+      "fileRequired": "Choose a file",
+      "fileTooBig": "The file is larger than 20 MB",
+      "fileType": "Accepted formats: PDF, Word and PowerPoint"
     }
   },
   "students": {

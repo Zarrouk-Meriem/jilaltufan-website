@@ -1,10 +1,11 @@
 import { cache } from 'react'
 import type { Locale } from '@/i18n/routing'
-import type { Account, Application, Material, Program } from '@/payload-types'
+import type { Account, Application, Instructor, Material, Program } from '@/payload-types'
 import type { PublicSession } from './sessions'
 import { getClient } from './client'
 import { listMaterials } from './materials'
-import { listSessionsForProgram } from './sessions'
+import { listSessionsForProgram, toPublic, type PublicSession as PS } from './sessions'
+import { getSiteSettings } from './globals'
 
 /**
  * What a signed-in student may see of their own record. As with the follow-up page, this is
@@ -88,3 +89,71 @@ export const getAccountMaterials = cache(
   async (application: AccountApplication | null, locale: Locale): Promise<Material[]> =>
     application?.program ? listMaterials(locale, application.program.slug) : [],
 )
+
+/** The public profile a guest instructor's account points at. */
+export const getAccountInstructor = cache(
+  async (account: Account, locale: Locale): Promise<Instructor | null> => {
+    const id = idOf(account.instructor)
+    if (!id) return null
+    const payload = await getClient()
+    return payload
+      .findByID({
+        collection: 'instructors',
+        id,
+        locale,
+        fallbackLocale: 'ar',
+        depth: 1,
+        overrideAccess: true,
+      })
+      .catch(() => null)
+  },
+)
+
+/**
+ * The sessions a guest is teaching, with the join link on the same gate the public site
+ * uses — the window is not a way around a field rule, it is simply where the person who
+ * needs the link will look for it.
+ */
+export const getInstructorSessions = cache(
+  async (instructor: Instructor | null, locale: Locale, now = new Date()): Promise<PS[]> => {
+    if (!instructor) return []
+    const [payload, settings] = await Promise.all([getClient(), getSiteSettings(locale)])
+    const res = await payload.find({
+      collection: 'sessions',
+      where: { instructors: { contains: instructor.id } },
+      locale,
+      fallbackLocale: 'ar',
+      sort: 'startsAt',
+      depth: 1,
+      limit: 50,
+      overrideAccess: true,
+    })
+    const gate = {
+      policy: settings.joinLinkVisibility,
+      windowMinutes: settings.joinWindowMinutes,
+      now,
+    }
+    return res.docs.map((d) => toPublic(d, gate))
+  },
+)
+
+/** What this guest has already sent for their sessions. */
+export type SentFile = { id: number; name: string; url: string | null; sessionId: number | null }
+
+export const getInstructorFiles = cache(async (account: Account): Promise<SentFile[]> => {
+  const payload = await getClient()
+  const res = await payload.find({
+    collection: 'session-files',
+    where: { sender: { equals: account.id } },
+    sort: '-createdAt',
+    depth: 0,
+    limit: 100,
+    overrideAccess: true,
+  })
+  return res.docs.map((d) => ({
+    id: d.id,
+    name: d.originalName || d.filename || '',
+    url: d.url ?? null,
+    sessionId: idOf(d.session),
+  }))
+})

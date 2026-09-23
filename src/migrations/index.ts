@@ -12,6 +12,7 @@ import * as migration_20260922_135917_activity_auth_actions from './20260922_135
 import * as migration_20260923_142726_application_status_token from './20260923_142726_application_status_token'
 import * as migration_20260923_161608_accounts from './20260923_161608_accounts'
 import * as migration_20260923_174358_application_file_owner from './20260923_174358_application_file_owner'
+import * as migration_20260923_201816_instructor_invite from './20260923_201816_instructor_invite'
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20260923_174358_application_file_owner.up,
     down: migration_20260923_174358_application_file_owner.down,
     name: '20260923_174358_application_file_owner',
+  },
+  {
+    up: migration_20260923_201816_instructor_invite.up,
+    down: migration_20260923_201816_instructor_invite.down,
+    name: '20260923_201816_instructor_invite',
   },
 ]

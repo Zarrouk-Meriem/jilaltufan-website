@@ -17,6 +17,7 @@ next-env.d.ts
 /media/
 /public/media/
 /application-files/
+/session-files/
 /public/flags/
 
 # test + build artifacts

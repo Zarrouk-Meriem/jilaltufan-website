@@ -263,6 +263,48 @@ export function acceptanceEmail(
 }
 
 /**
+ * A guest instructor's invite, sent when staff confirm them. It says what the window is
+ * for, because unlike a student the guest did not ask for an account — they were given one
+ * so that their session's link and their materials have somewhere to live.
+ */
+export function instructorInviteEmail(locale: Locale, name: string, url: string) {
+  if (locale === 'ar') {
+    const subject = 'دعوتك للمحاضرة في أكاديمية جيل الطوفان'
+    return {
+      subject,
+      ...wrap(
+        'ar',
+        subject,
+        [
+          `أهلًا ${name}،`,
+          'يسرّنا أن نستضيفك محاضرًا في أكاديمية جيل الطوفان. فتحنا لك نافذة خاصة تجد فيها موعد حصتك ورابط الدخول إليها، وترسل منها المواد التي تودّ مشاركتها مع الطلبة.',
+          'اختر كلمة السر من الرابط أدناه خلال أربع وعشرين ساعة؛ وإن انتهت صلاحيته فاطلب رابطًا جديدًا من الصفحة نفسها.',
+          REPLY_AR,
+          SIGN_AR,
+        ],
+        { label: ACTIVATE_AR, href: url },
+      ),
+    }
+  }
+  const subject = 'Your invitation to teach at Jil Altufan Academy'
+  return {
+    subject,
+    ...wrap(
+      'en',
+      subject,
+      [
+        `Hello ${name},`,
+        'We are glad to be hosting you as a guest instructor at Jil Altufan Academy. A window has been opened for you: it holds the time of your session and the link to join it, and it is where you send the materials you would like the students to have.',
+        'Choose your password from the link below within twenty-four hours; if it expires, ask for a new one on the same page.',
+        REPLY_EN,
+        SIGN_EN,
+      ],
+      { label: ACTIVATE_EN, href: url },
+    ),
+  }
+}
+
+/**
  * A password reset, asked for from the sign-in page. Deliberately says nothing about
  * whether an account exists beyond the fact that this letter arrived — the page it comes
  * from answers the same way to any address.

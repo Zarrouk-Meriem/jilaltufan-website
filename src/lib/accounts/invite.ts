@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto'
-import type { Payload, PayloadRequest } from 'payload'
+import type { Payload, PayloadRequest, Where } from 'payload'
 import { SITE_URL } from '@/lib/site'
 import type { Account, Application } from '@/payload-types'
 
@@ -35,30 +35,41 @@ export async function mintInviteToken(
 }
 
 /**
- * The account behind an accepted application, created if this is the first time.
+ * The account for a person, created if this is the first time, and the link that activates
+ * it.
  *
  * Idempotent on purpose: the acceptance hook can run again (staff correct a status, then
- * set it back), and a second account for the same person would be a second identity. It
- * matches on the application first and on the address second, so an applicant who already
- * has an account — a returning student, someone invited by hand — keeps the one they have.
+ * set it back) and a guest can be invited more than once, and a second account for the same
+ * person would be a second identity. It matches on what the account points at first and on
+ * the address second, so someone who already has an account keeps the one they have.
  *
- * Returns the link the letter should carry, or null when no invite is due: the person has
- * already chosen a password, and sending a reset link they did not ask for is an invitation
- * for someone else to use it.
+ * `inviteUrl` is null when no invite is due: the person has already chosen a password, and
+ * a reset link they did not ask for is an invitation for someone else to use it.
  */
-export async function inviteStudentAccount(
+export async function inviteAccount(
   payload: Payload,
-  application: Application,
-  req?: Partial<PayloadRequest>,
+  args: {
+    email: string
+    kind: NonNullable<Account['kind']>
+    name?: string | null
+    locale: AccountLocale
+    application?: number
+    instructor?: number
+    req?: Partial<PayloadRequest>
+  },
 ): Promise<{ account: Account; inviteUrl: string | null }> {
-  const locale: AccountLocale = application.locale === 'en' ? 'en' : 'ar'
-  const email = application.email.toLowerCase().trim()
+  const { email: raw, kind, name, locale, application, instructor, req } = args
+  const email = raw.toLowerCase().trim()
+
+  const owner: Where | null = application
+    ? { application: { equals: application } }
+    : instructor
+      ? { instructor: { equals: instructor } }
+      : null
 
   const existing = await payload.find({
     collection: 'accounts',
-    where: {
-      or: [{ application: { equals: application.id } }, { email: { equals: email } }],
-    },
+    where: { or: [...(owner ? [owner] : []), { email: { equals: email } }] },
     limit: 1,
     depth: 0,
     overrideAccess: true,
@@ -74,14 +85,14 @@ export async function inviteStudentAccount(
       data: {
         email,
         password: unknowablePassword(),
-        kind: 'student',
-        name: application.fullName,
+        kind,
+        name: name ?? undefined,
         locale,
-        application: application.id,
+        application,
+        instructor,
       },
     }))
 
-  // Already activated: they sign in, or ask for a reset themselves.
   if (account.passwordSetAt) return { account, inviteUrl: null }
 
   const token = await mintInviteToken(payload, account.email, req)
@@ -95,4 +106,20 @@ export async function inviteStudentAccount(
     req,
   })
   return { account, inviteUrl: setPasswordUrl(token, locale) }
+}
+
+/** The account behind an accepted application; the student half of `inviteAccount`. */
+export async function inviteStudentAccount(
+  payload: Payload,
+  application: Application,
+  req?: Partial<PayloadRequest>,
+): Promise<{ account: Account; inviteUrl: string | null }> {
+  return inviteAccount(payload, {
+    email: application.email,
+    kind: 'student',
+    name: application.fullName,
+    locale: application.locale === 'en' ? 'en' : 'ar',
+    application: application.id,
+    req,
+  })
 }

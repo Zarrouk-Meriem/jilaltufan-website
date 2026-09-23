@@ -67,6 +67,13 @@ export const resetLimiter = createRateLimiter({
   salt: 'jaa-password-reset',
 })
 
+/** A guest sending materials: 10 files per 10 minutes per IP, which is a working session. */
+export const uploadLimiter = createRateLimiter({
+  capacity: 10,
+  refillPerMs: 10 / (10 * 60_000),
+  salt: 'jaa-session-file',
+})
+
 /**
  * Signing in and choosing a password: 30 per 10 minutes per IP. This is the axis a
  * per-account lock cannot see — one address working through many accounts — and Payload

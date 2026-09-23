@@ -4,7 +4,9 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useActionState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
-import { Input, RadioGroup } from '@/components/ui/Field'
+import { Input, RadioGroup, Textarea } from '@/components/ui/Field'
+import { FileInput } from '@/components/ui/FileInput'
+import { SESSION_FILE_ACCEPT } from '@/lib/forms/session-file-schema'
 import { Loader } from '@/components/ui/Loader'
 import { TextLink } from '@/components/ui/TextLink'
 import type { FormState } from '@/app/(frontend)/[locale]/account/actions'
@@ -300,6 +302,68 @@ export function ChangePasswordForm({
         {state.status === 'done' ? (
           <p role="status" className="enter font-medium text-ink-900">
             {t('profile.passwordChanged')}
+          </p>
+        ) : null}
+      </div>
+    </form>
+  )
+}
+
+/**
+ * What a guest sends for one of their sessions. The list of sessions is the one the server
+ * gave this page, so the form cannot offer a session that is not theirs — and the action
+ * checks it again anyway.
+ */
+export function SessionFileForm({
+  action,
+  sessions,
+}: {
+  action: (prev: FormState, fd: FormData) => Promise<FormState>
+  sessions: { id: number; label: string }[]
+}) {
+  const t = useTranslations('account')
+  const te = useTranslations('account.errors')
+  const locale = useLocale()
+  const [state, submit, pending] = useActionState(action, idle)
+  const err = (k: string) => (state.fieldErrors?.[k] ? te(state.fieldErrors[k]) : undefined)
+
+  return (
+    <form action={submit} className="relative flex flex-col gap-4" noValidate>
+      <input type="hidden" name="locale" value={locale} />
+      <FormError state={state} />
+      <RadioGroup
+        id="session"
+        name="session"
+        required
+        label={t('teaching.whichSession')}
+        defaultValue={String(sessions[0]?.id ?? '')}
+        options={sessions.map((s) => ({ value: String(s.id), label: s.label }))}
+        error={err('session')}
+      />
+      <FileInput
+        id="file"
+        name="file"
+        accept={SESSION_FILE_ACCEPT}
+        required
+        label={t('teaching.file')}
+        hint={t('teaching.fileHint')}
+        chooseLabel={t('teaching.choose')}
+        emptyLabel={t('teaching.none')}
+        error={err('file')}
+      />
+      <Textarea
+        id="note"
+        name="note"
+        rows={3}
+        label={t('teaching.note')}
+        hint={t('teaching.noteHint')}
+        error={err('note')}
+      />
+      <Submit label={t('teaching.send')} pending={pending} />
+      <div className="min-h-6">
+        {state.status === 'done' ? (
+          <p role="status" className="enter font-medium text-ink-900">
+            {t('teaching.sent')}
           </p>
         ) : null}
       </div>

@@ -77,6 +77,7 @@ export interface Config {
     events: Event;
     applications: Application;
     'application-files': ApplicationFile;
+    'session-files': SessionFile;
     'contact-messages': ContactMessage;
     users: User;
     accounts: Account;
@@ -106,6 +107,7 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     applications: ApplicationsSelect<false> | ApplicationsSelect<true>;
     'application-files': ApplicationFilesSelect<false> | ApplicationFilesSelect<true>;
+    'session-files': SessionFilesSelect<false> | SessionFilesSelect<true>;
     'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     accounts: AccountsSelect<false> | AccountsSelect<true>;
@@ -340,6 +342,16 @@ export interface Instructor {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
+  /**
+   * For correspondence and the invite only; never shown on the site.
+   */
+  contactEmail?: string | null;
+  contactLocale?: ('ar' | 'en') | null;
+  /**
+   * Tick and save to send the guest a link to choose their own password and open their window. A password is never emailed.
+   */
+  sendInvite?: boolean | null;
+  inviteSentAt?: string | null;
   /**
    * Optional. Falls back to the main title and description.
    */
@@ -1222,46 +1234,26 @@ export interface ApplicationFile {
   height?: number | null;
 }
 /**
+ * What guest instructors send for their sessions. Students see none of it until the team publishes it as a material.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "contact-messages".
+ * via the `definition` "session-files".
  */
-export interface ContactMessage {
+export interface SessionFile {
   id: number;
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  messageStatus: 'new' | 'replied' | 'archived';
-  locale?: ('ar' | 'en') | null;
+  session?: (number | null) | Session;
+  sender?: (number | null) | Account;
+  originalName?: string | null;
+  note?: string | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name?: string | null;
-  role: 'admin' | 'editor';
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
 }
 /**
  * Student and guest-instructor accounts. Created on acceptance or when a guest is invited; the person chooses their own password from the link in their letter — a password is never emailed. These accounts cannot enter the admin.
@@ -1304,6 +1296,48 @@ export interface Account {
   collection: 'accounts';
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-messages".
+ */
+export interface ContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  messageStatus: 'new' | 'replied' | 'archived';
+  locale?: ('ar' | 'en') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  role: 'admin' | 'editor';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
  * Every create, update, and delete made by a staff account, with the time, the account, and the fields that changed — plus logins, logouts, and failed login attempts. Filter by Action to see one kind. Read-only.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1323,6 +1357,7 @@ export interface Activity {
     | 'events'
     | 'applications'
     | 'application-files'
+    | 'session-files'
     | 'contact-messages'
     | 'users'
     | 'accounts'
@@ -1581,6 +1616,10 @@ export interface PayloadLockedDocument {
         value: number | ApplicationFile;
       } | null)
     | ({
+        relationTo: 'session-files';
+        value: number | SessionFile;
+      } | null)
+    | ({
         relationTo: 'contact-messages';
         value: number | ContactMessage;
       } | null)
@@ -1735,6 +1774,10 @@ export interface InstructorsSelect<T extends boolean = true> {
       };
   programs?: T;
   sessions?: T;
+  contactEmail?: T;
+  contactLocale?: T;
+  sendInvite?: T;
+  inviteSentAt?: T;
   seo?:
     | T
     | {
@@ -1916,6 +1959,25 @@ export interface ApplicationFilesSelect<T extends boolean = true> {
   applicant?: T;
   originalName?: T;
   application?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "session-files_select".
+ */
+export interface SessionFilesSelect<T extends boolean = true> {
+  session?: T;
+  sender?: T;
+  originalName?: T;
+  note?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2713,6 +2775,7 @@ export interface TaskCreateCollectionExport {
       | 'events'
       | 'applications'
       | 'application-files'
+      | 'session-files'
       | 'contact-messages'
       | 'users'
       | 'accounts'

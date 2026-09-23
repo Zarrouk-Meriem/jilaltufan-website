@@ -1,5 +1,5 @@
 import { expect, request, test, type APIRequestContext, type Page } from '@playwright/test'
-import { submitApplication } from './helpers/apply'
+import { MINIMAL_PDF, submitApplication } from './helpers/apply'
 
 /**
  * The account and its doors (PLAN.md §13.8, step 2): acceptance opens the account, the
@@ -243,6 +243,122 @@ test('a student edits their own name, and changes their password with the old on
 
   const login = await page.request.post('/api/accounts/login', { data: { email, password: next } })
   expect(login.status()).toBe(200)
+})
+
+/** A guest instructor, invited from their profile the way staff would. */
+async function invitedInstructor(page: Page) {
+  const api = await staffApi(page)
+  const email = `playwright-guest-${Date.now()}-${Math.random().toString(36).slice(2, 7)}@example.com`
+  const created = await api.post('/api/instructors', {
+    data: {
+      name: 'ضيف الاختبار',
+      slug: `guest-${Date.now()}`,
+      status: 'published',
+      contactEmail: email,
+      contactLocale: 'ar',
+      sendInvite: true,
+    },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+  const instructor = (await created.json()).doc as { id: number }
+
+  const found = await api.get(`/api/accounts?where[email][equals]=${encodeURIComponent(email)}`)
+  const account = ((await found.json()).docs as Account[])[0]
+  return { api, email, account, instructorId: instructor.id }
+}
+
+test('«أرسل دعوة» opens a guest instructor’s account and clears itself', async ({ page }) => {
+  const { api, account, instructorId } = await invitedInstructor(page)
+
+  expect(account, 'the invite should have opened an account').toBeTruthy()
+  expect(account).toMatchObject({ kind: 'instructor' })
+  expect(account!.inviteSentAt).toBeTruthy()
+  expect(account!.passwordSetAt).toBeFalsy()
+
+  // The box is cleared, so the record does not look like it is still waiting to fire, and
+  // the send is stamped where staff can see it.
+  const after = await (await api.get(`/api/instructors/${instructorId}?depth=0`)).json()
+  expect(after.sendInvite).toBe(false)
+  expect(after.inviteSentAt).toBeTruthy()
+
+  // Inviting again does not open a second identity.
+  expect(
+    (await api.patch(`/api/instructors/${instructorId}`, { data: { sendInvite: true } })).ok(),
+  ).toBe(true)
+  const accounts = await api.get(`/api/accounts?where[instructor][equals]=${instructorId}`)
+  expect((await accounts.json()).totalDocs).toBe(1)
+})
+
+test('a guest’s email is never published, even though their profile is', async ({ page }) => {
+  const { email, instructorId } = await invitedInstructor(page)
+
+  // The profile is public; the address on it is not, and a field-level rule is all that
+  // stands between a guest's inbox and the open endpoint.
+  const anyone = await request.newContext({ baseURL: test.info().project.use.baseURL })
+  const res = await anyone.get(`/api/instructors/${instructorId}`)
+  expect(res.status()).toBe(200)
+  const body = await res.text()
+  expect(body).toContain('ضيف الاختبار')
+  expect(body, 'the guest’s address must not be in a public response').not.toContain(email)
+  await anyone.dispose()
+})
+
+test('a guest sees their session, and sends a file only for a session of theirs', async ({
+  page,
+}) => {
+  const { api, email, account, instructorId } = await invitedInstructor(page)
+  const password = `pw-${Date.now()}-playwright`
+  expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
+
+  // Staff put the guest on a session.
+  const sessions = await (await api.get('/api/sessions?limit=2&depth=0&sort=startsAt')).json()
+  const mine = sessions.docs[0] as { id: number }
+  const notMine = sessions.docs[1] as { id: number }
+  expect(
+    (await api.patch(`/api/sessions/${mine.id}`, { data: { instructors: [instructorId] } })).ok(),
+  ).toBe(true)
+
+  await page.goto('/ar/account/sign-in')
+  await page.getByLabel('البريد الإلكتروني').fill(email)
+  await page.getByLabel(/^كلمة السر/).fill(password)
+  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page).toHaveURL(/\/ar\/account$/)
+
+  const main = page.locator('main')
+  await expect(main).toContainText('نافذة المحاضر')
+  await expect(main).toContainText('حصصك')
+  await expect(main).toContainText('موادّ حصصك')
+
+  // A file for their own session lands, and is theirs to see afterwards.
+  await page.getByLabel(/^الملف/).setInputFiles({
+    name: 'deck.pdf',
+    mimeType: 'application/pdf',
+    buffer: MINIMAL_PDF,
+  })
+  await page.getByLabel(/^ملاحظة للفريق/).fill('شرائح الحصة')
+  await page.getByRole('button', { name: 'أرسل', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('وصلنا الملف')
+  await page.reload()
+  await expect(main).toContainText('deck.pdf')
+
+  // It is not published to anyone: students read `materials`, and this is not one.
+  const anyone = await request.newContext({ baseURL: test.info().project.use.baseURL })
+  expect((await anyone.get('/api/session-files')).status()).toBe(403)
+  await anyone.dispose()
+
+  // And the action refuses a session that is not theirs, whatever the form says.
+  const login = await page.request.post('/api/accounts/login', { data: { email, password } })
+  expect(login.status()).toBe(200)
+  const guest = await request.newContext({
+    baseURL: test.info().project.use.baseURL,
+    extraHTTPHeaders: { Authorization: `JWT ${(await login.json()).token}` },
+  })
+  // Even reading the collection, a guest sees only what they sent.
+  const own = await guest.get('/api/session-files')
+  expect(own.status()).toBe(200)
+  expect((await own.json()).totalDocs).toBe(1)
+  await guest.dispose()
+  expect(notMine.id).not.toBe(mine.id)
 })
 
 test('the window is behind the door: signed out, /account sends you to sign in', async ({

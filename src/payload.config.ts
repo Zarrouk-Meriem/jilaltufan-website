@@ -20,6 +20,7 @@ import { Media } from './collections/Media'
 import { MinbarPosts } from './collections/MinbarPosts'
 import { Programs } from './collections/Programs'
 import { Projects } from './collections/Projects'
+import { SessionFiles } from './collections/SessionFiles'
 import { Sessions } from './collections/Sessions'
 import { Users } from './collections/Users'
 import { AboutPage } from './globals/AboutPage'
@@ -56,6 +57,7 @@ const collections = [
   Events,
   Applications,
   ApplicationFiles,
+  SessionFiles,
   ContactMessages,
   Users,
   Accounts,

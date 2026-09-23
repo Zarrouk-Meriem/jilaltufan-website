@@ -20,7 +20,8 @@ import {
   signInFormData,
   signInSchema,
 } from '@/lib/forms/account-schema'
-import { clientIp, resetLimiter, signInLimiter } from '@/lib/forms/rate-limit'
+import { sessionFileSchema } from '@/lib/forms/session-file-schema'
+import { clientIp, resetLimiter, signInLimiter, uploadLimiter } from '@/lib/forms/rate-limit'
 import { getClient } from '@/lib/queries/client'
 
 export type FormState = {
@@ -224,3 +225,69 @@ export async function changePassword(_prev: FormState, fd: FormData): Promise<Fo
   }
   return { status: 'done' }
 }
+
+/**
+ * A file a guest instructor sends for one of their sessions.
+ *
+ * It lands in `session-files`, which students cannot read: staff review it and publish it
+ * as a material if it should be seen. The session is checked against the ones this guest is
+ * actually teaching, so an id typed into the form cannot attach a file to someone else's.
+ */
+export async function sendSessionFile(_prev: FormState, fd: FormData): Promise<FormState> {
+  const account = await getAccount()
+  if (!account || account.kind !== 'instructor') return error('signedOut')
+
+  const file = fd.get('file')
+  const parsed = sessionFileSchema.safeParse({
+    session: fd.get('session'),
+    note: typeof fd.get('note') === 'string' ? fd.get('note') : '',
+    file: file instanceof File ? file : undefined,
+  })
+  if (!parsed.success) return error('formInvalid', fieldErrorsOf(parsed.error))
+  if (!uploadLimiter.check(clientIp(await headers())).ok) return error('rateLimited')
+
+  const payload = await getClient()
+  try {
+    const instructorId =
+      typeof account.instructor === 'object' && account.instructor
+        ? account.instructor.id
+        : account.instructor
+    if (!instructorId) return error('server')
+
+    // Theirs to teach, or nothing happens.
+    const { totalDocs } = await payload.count({
+      collection: 'sessions',
+      where: {
+        and: [{ id: { equals: parsed.data.session } }, { instructors: { contains: instructorId } }],
+      },
+      overrideAccess: true,
+    })
+    if (totalDocs === 0) return error('notYourSession')
+
+    const buffer = Buffer.from(await parsed.data.file.arrayBuffer())
+    await payload.create({
+      collection: 'session-files',
+      overrideAccess: true,
+      data: {
+        session: parsed.data.session,
+        sender: account.id,
+        originalName: parsed.data.file.name.slice(0, 200),
+        note: parsed.data.note || undefined,
+      },
+      file: {
+        data: buffer,
+        mimetype: parsed.data.file.type || 'application/octet-stream',
+        name: `session-${parsed.data.session}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${extensionOf(parsed.data.file.name)}`,
+        size: buffer.length,
+      },
+    })
+  } catch (err) {
+    payload.logger.error({ msg: 'session file upload failed', account: account.id, err })
+    return error('server')
+  }
+  revalidatePath(`/${localeOf(fd.get('locale'))}/account`)
+  return { status: 'done' }
+}
+
+/** A stable extension for the stored name; the original name is kept on the record. */
+const extensionOf = (name: string) => /\.(pdf|docx?|pptx?)$/i.exec(name)?.[0]?.toLowerCase() ?? ''
