@@ -361,6 +361,82 @@ test('a guest sees their session, and sends a file only for a session of theirs'
   expect(notMine.id).not.toBe(mine.id)
 })
 
+test('the register is staff-only, sticks against Zoom, and shows the student their progress', async ({
+  page,
+}) => {
+  const { api, email, applicationId } = await acceptedApplicant(page)
+  const account = await findAccount(api, email)
+  const password = `pw-${Date.now()}-playwright`
+  expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
+
+  const programs = await (await api.get('/api/programs?limit=1&depth=0')).json()
+  const program = programs.docs[0] as { id: number }
+  expect(
+    (await api.patch(`/api/applications/${applicationId}`, { data: { program: program.id } })).ok(),
+  ).toBe(true)
+  const sessions = await (
+    await api.get(
+      `/api/sessions?where[program][equals]=${program.id}&limit=2&depth=0&sort=startsAt`,
+    )
+  ).json()
+  const [first, second] = sessions.docs as { id: number }[]
+
+  // Staff mark the register. `recordedBy` is taken from the request, not the form.
+  const marked = await api.post('/api/attendance', {
+    data: { session: first!.id, account: account!.id, state: 'present', source: 'zoom' },
+  })
+  expect(marked.status(), await marked.text()).toBe(201)
+  const row = (await marked.json()).doc as { id: number; source: string; recordedBy: unknown }
+  expect(row.source, 'a staff write is a staff mark whatever the body claimed').toBe('staff')
+  expect(row.recordedBy).toBeTruthy()
+
+  // One row per person per session, however many times it is sent.
+  const again = await api.post('/api/attendance', {
+    data: { session: first!.id, account: account!.id, state: 'absent' },
+  })
+  expect(again.ok(), 'a second row for the same pair must not be created').toBe(false)
+
+  expect(
+    (
+      await api.post('/api/attendance', {
+        data: { session: second!.id, account: account!.id, state: 'excused' },
+      })
+    ).status(),
+  ).toBe(201)
+
+  // The student sees their own progress, and only their own rows.
+  await page.goto('/ar/account/sign-in')
+  await page.getByLabel('البريد الإلكتروني').fill(email)
+  await page.getByLabel(/^كلمة السر/).fill(password)
+  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page).toHaveURL(/\/ar\/account$/)
+  await expect(page.locator('main')).toContainText('حضرت 1 من')
+  await expect(page.locator('main')).toContainText('بعذر')
+
+  const login = await page.request.post('/api/accounts/login', { data: { email, password } })
+  const student = await request.newContext({
+    baseURL: test.info().project.use.baseURL,
+    extraHTTPHeaders: { Authorization: `JWT ${(await login.json()).token}` },
+  })
+  const mine = await student.get('/api/attendance')
+  expect(mine.status()).toBe(200)
+  expect((await mine.json()).totalDocs).toBe(2)
+  // Reading is all a student may do with it.
+  expect(
+    (
+      await student.post('/api/attendance', {
+        data: { session: first!.id, account: account!.id, state: 'present' },
+      })
+    ).status(),
+  ).toBe(403)
+  await student.dispose()
+
+  // And nobody signed out sees any of it.
+  const anyone = await request.newContext({ baseURL: test.info().project.use.baseURL })
+  expect((await anyone.get('/api/attendance')).status()).toBe(403)
+  await anyone.dispose()
+})
+
 test('the window is behind the door: signed out, /account sends you to sign in', async ({
   page,
 }) => {

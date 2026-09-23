@@ -12,6 +12,7 @@ import { Accounts } from './collections/Accounts'
 import { Activity } from './collections/Activity'
 import { ApplicationFiles } from './collections/ApplicationFiles'
 import { Applications } from './collections/Applications'
+import { Attendance } from './collections/Attendance'
 import { ContactMessages } from './collections/ContactMessages'
 import { Events } from './collections/Events'
 import { Instructors } from './collections/Instructors'
@@ -50,6 +51,7 @@ const devOrigin =
 const collections = [
   Programs,
   Sessions,
+  Attendance,
   Instructors,
   Projects,
   MinbarPosts,

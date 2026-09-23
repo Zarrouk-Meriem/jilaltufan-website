@@ -157,3 +157,41 @@ export const getInstructorFiles = cache(async (account: Account): Promise<SentFi
     sessionId: idOf(d.session),
   }))
 })
+
+/**
+ * How far through their program a student is: the sessions they were present at, against
+ * the sessions the program holds. Excused absences are counted as what they are — not
+ * present, but not the same as simply not coming — so the window can say both.
+ */
+export type Progress = { attended: number; excused: number; total: number }
+
+export const getAccountProgress = cache(
+  async (account: Account, application: AccountApplication | null): Promise<Progress | null> => {
+    if (!application?.program) return null
+    const payload = await getClient()
+    const [total, attended, excused] = await Promise.all([
+      payload.count({
+        collection: 'sessions',
+        where: {
+          and: [
+            { program: { equals: application.program.id } },
+            { status: { equals: 'published' } },
+          ],
+        },
+        overrideAccess: true,
+      }),
+      payload.count({
+        collection: 'attendance',
+        where: { and: [{ account: { equals: account.id } }, { state: { equals: 'present' } }] },
+        overrideAccess: true,
+      }),
+      payload.count({
+        collection: 'attendance',
+        where: { and: [{ account: { equals: account.id } }, { state: { equals: 'excused' } }] },
+        overrideAccess: true,
+      }),
+    ])
+    if (total.totalDocs === 0) return null
+    return { attended: attended.totalDocs, excused: excused.totalDocs, total: total.totalDocs }
+  },
+)

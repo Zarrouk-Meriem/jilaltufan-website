@@ -444,6 +444,8 @@
     "sessionsTitle": "Your sessions",
     "noSessions": "No sessions yet",
     "noProgramYet": "Your sessions appear here as soon as your program is settled.",
+    "progress": "You have attended {attended} of {total} sessions.",
+    "progressExcused": "({excused} excused)",
     "materialsTitle": "Your materials",
     "noMaterials": "No materials yet",
     "youTitle": "About you",

@@ -70,6 +70,7 @@ export interface Config {
   collections: {
     programs: Program;
     sessions: Session;
+    attendance: Attendance;
     instructors: Instructor;
     projects: Project;
     'minbar-posts': MinbarPost;
@@ -100,6 +101,7 @@ export interface Config {
   collectionsSelect: {
     programs: ProgramsSelect<false> | ProgramsSelect<true>;
     sessions: SessionsSelect<false> | SessionsSelect<true>;
+    attendance: AttendanceSelect<false> | AttendanceSelect<true>;
     instructors: InstructorsSelect<false> | InstructorsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'minbar-posts': MinbarPostsSelect<false> | MinbarPostsSelect<true>;
@@ -479,214 +481,67 @@ export interface Session {
   createdAt: string;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "projects".
- */
-export interface Project {
-  id: number;
-  title: string;
-  summary?: string | null;
-  body?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  image?: (number | null) | Media;
-  projectStatus?: ('ongoing' | 'upcoming' | 'completed') | null;
-  /**
-   * Optional. Falls back to the main title and description.
-   */
-  seo?: {
-    title?: string | null;
-    description?: string | null;
-    ogImage?: (number | null) | Media;
-  };
-  /**
-   * Only "Published" is visible to visitors.
-   */
-  status: 'draft' | 'published';
-  /**
-   * Generated from the Arabic title. Latin letters, digits, and dashes only.
-   */
-  slug: string;
-  /**
-   * Internal flag: this record still needs real content.
-   */
-  isPlaceholder?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "minbar-posts".
- */
-export interface MinbarPost {
-  id: number;
-  title: string;
-  excerpt?: string | null;
-  body: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  cover?: (number | null) | Media;
-  author?: (number | null) | Instructor;
-  /**
-   * Used when the author is not an instructor.
-   */
-  authorName?: string | null;
-  publishedAt: string;
-  tags?:
-    | {
-        tag: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Optional. Falls back to the main title and description.
-   */
-  seo?: {
-    title?: string | null;
-    description?: string | null;
-    ogImage?: (number | null) | Media;
-  };
-  /**
-   * Only "Published" is visible to visitors.
-   */
-  status: 'draft' | 'published';
-  /**
-   * Generated from the Arabic title. Latin letters, digits, and dashes only.
-   */
-  slug: string;
-  /**
-   * Internal flag: this record still needs real content.
-   */
-  isPlaceholder?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * PDFs, links, and readings tied to a program or session.
+ * The register: one row per student per session. Marked from the session itself; a later sync from Zoom never overwrites what the team marked by hand.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "materials".
+ * via the `definition` "attendance".
  */
-export interface Material {
+export interface Attendance {
   id: number;
-  title: string;
-  program?: (number | null) | Program;
-  session?: (number | null) | Session;
-  type: 'pdf' | 'link' | 'reading';
-  file?: (number | null) | Media;
-  url?: string | null;
-  description?: string | null;
+  session: number | Session;
+  account: number | Account;
+  state: 'present' | 'absent' | 'excused';
   /**
-   * Only "Published" is visible to visitors.
+   * What the team marked is never replaced by a later sync from Zoom.
    */
-  status: 'draft' | 'published';
+  source: 'staff' | 'zoom';
   /**
-   * Internal flag: this record still needs real content.
+   * From the Zoom report when there is one.
    */
-  isPlaceholder?: boolean | null;
+  minutes?: number | null;
+  recordedBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * The Jil Altufan Camp (type "camp"), activities, and seminars.
+ * Student and guest-instructor accounts. Created on acceptance or when a guest is invited; the person chooses their own password from the link in their letter — a password is never emailed. These accounts cannot enter the admin.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events".
+ * via the `definition` "accounts".
  */
-export interface Event {
+export interface Account {
   id: number;
-  title: string;
-  type: 'camp' | 'activity' | 'seminar';
-  startDate: string;
-  endDate?: string | null;
-  isOnline?: boolean | null;
-  location?: string | null;
-  summary?: string | null;
-  body?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  programme?:
-    | {
-        dayTitle: string;
-        date?: string | null;
-        items?:
-          | {
-              time?: string | null;
-              title: string;
-              description?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  gallery?:
-    | {
-        image: number | Media;
-        id?: string | null;
-      }[]
-    | null;
-  registrationMode?: ('none' | 'link' | 'form') | null;
-  registrationLink?: string | null;
-  coverImage?: (number | null) | Media;
+  kind: 'student' | 'instructor';
+  name?: string | null;
+  locale?: ('ar' | 'en') | null;
   /**
-   * Optional. Falls back to the main title and description.
+   * The application this account came from.
    */
-  seo?: {
-    title?: string | null;
-    description?: string | null;
-    ogImage?: (number | null) | Media;
-  };
+  application?: (number | null) | Application;
+  instructor?: (number | null) | Instructor;
+  inviteSentAt?: string | null;
   /**
-   * Only "Published" is visible to visitors.
+   * Empty means the person has not activated their account yet.
    */
-  status: 'draft' | 'published';
-  /**
-   * Generated from the Arabic title. Latin letters, digits, and dashes only.
-   */
-  slug: string;
-  /**
-   * Internal flag: this record still needs real content.
-   */
-  isPlaceholder?: boolean | null;
+  passwordSetAt?: string | null;
   updatedAt: string;
   createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'accounts';
 }
 /**
  * Submissions from the apply form. Filter by program and status; export CSV from the export button.
@@ -1234,83 +1089,6 @@ export interface ApplicationFile {
   height?: number | null;
 }
 /**
- * What guest instructors send for their sessions. Students see none of it until the team publishes it as a material.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "session-files".
- */
-export interface SessionFile {
-  id: number;
-  session?: (number | null) | Session;
-  sender?: (number | null) | Account;
-  originalName?: string | null;
-  note?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-}
-/**
- * Student and guest-instructor accounts. Created on acceptance or when a guest is invited; the person chooses their own password from the link in their letter — a password is never emailed. These accounts cannot enter the admin.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "accounts".
- */
-export interface Account {
-  id: number;
-  kind: 'student' | 'instructor';
-  name?: string | null;
-  locale?: ('ar' | 'en') | null;
-  /**
-   * The application this account came from.
-   */
-  application?: (number | null) | Application;
-  instructor?: (number | null) | Instructor;
-  inviteSentAt?: string | null;
-  /**
-   * Empty means the person has not activated their account yet.
-   */
-  passwordSetAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'accounts';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "contact-messages".
- */
-export interface ContactMessage {
-  id: number;
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  messageStatus: 'new' | 'replied' | 'archived';
-  locale?: ('ar' | 'en') | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -1338,6 +1116,253 @@ export interface User {
   collection: 'users';
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  summary?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  image?: (number | null) | Media;
+  projectStatus?: ('ongoing' | 'upcoming' | 'completed') | null;
+  /**
+   * Optional. Falls back to the main title and description.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Generated from the Arabic title. Latin letters, digits, and dashes only.
+   */
+  slug: string;
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "minbar-posts".
+ */
+export interface MinbarPost {
+  id: number;
+  title: string;
+  excerpt?: string | null;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  cover?: (number | null) | Media;
+  author?: (number | null) | Instructor;
+  /**
+   * Used when the author is not an instructor.
+   */
+  authorName?: string | null;
+  publishedAt: string;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Falls back to the main title and description.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Generated from the Arabic title. Latin letters, digits, and dashes only.
+   */
+  slug: string;
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * PDFs, links, and readings tied to a program or session.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "materials".
+ */
+export interface Material {
+  id: number;
+  title: string;
+  program?: (number | null) | Program;
+  session?: (number | null) | Session;
+  type: 'pdf' | 'link' | 'reading';
+  file?: (number | null) | Media;
+  url?: string | null;
+  description?: string | null;
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * The Jil Altufan Camp (type "camp"), activities, and seminars.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  type: 'camp' | 'activity' | 'seminar';
+  startDate: string;
+  endDate?: string | null;
+  isOnline?: boolean | null;
+  location?: string | null;
+  summary?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  programme?:
+    | {
+        dayTitle: string;
+        date?: string | null;
+        items?:
+          | {
+              time?: string | null;
+              title: string;
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  gallery?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  registrationMode?: ('none' | 'link' | 'form') | null;
+  registrationLink?: string | null;
+  coverImage?: (number | null) | Media;
+  /**
+   * Optional. Falls back to the main title and description.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Generated from the Arabic title. Latin letters, digits, and dashes only.
+   */
+  slug: string;
+  /**
+   * Internal flag: this record still needs real content.
+   */
+  isPlaceholder?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * What guest instructors send for their sessions. Students see none of it until the team publishes it as a material.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "session-files".
+ */
+export interface SessionFile {
+  id: number;
+  session?: (number | null) | Session;
+  sender?: (number | null) | Account;
+  originalName?: string | null;
+  note?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-messages".
+ */
+export interface ContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  messageStatus: 'new' | 'replied' | 'archived';
+  locale?: ('ar' | 'en') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Every create, update, and delete made by a staff account, with the time, the account, and the fields that changed — plus logins, logouts, and failed login attempts. Filter by Action to see one kind. Read-only.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1350,6 +1375,7 @@ export interface Activity {
   target:
     | 'programs'
     | 'sessions'
+    | 'attendance'
     | 'instructors'
     | 'projects'
     | 'minbar-posts'
@@ -1588,6 +1614,10 @@ export interface PayloadLockedDocument {
         value: number | Session;
       } | null)
     | ({
+        relationTo: 'attendance';
+        value: number | Attendance;
+      } | null)
+    | ({
         relationTo: 'instructors';
         value: number | Instructor;
       } | null)
@@ -1752,6 +1782,20 @@ export interface SessionsSelect<T extends boolean = true> {
   sessionStatus?: T;
   status?: T;
   isPlaceholder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "attendance_select".
+ */
+export interface AttendanceSelect<T extends boolean = true> {
+  session?: T;
+  account?: T;
+  state?: T;
+  source?: T;
+  minutes?: T;
+  recordedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2768,6 +2812,7 @@ export interface TaskCreateCollectionExport {
     collectionSlug:
       | 'programs'
       | 'sessions'
+      | 'attendance'
       | 'instructors'
       | 'projects'
       | 'minbar-posts'

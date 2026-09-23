@@ -133,6 +133,14 @@ export const Sessions: CollectionConfig = {
     },
     localizedTextarea('materialsNote', { ar: 'ملاحظة عن المواد', en: 'Materials note' }),
     {
+      name: 'attendance',
+      type: 'ui',
+      label: { ar: 'الحضور', en: 'Attendance' },
+      admin: {
+        components: { Field: '@/components/admin/SessionAttendance#SessionAttendanceField' },
+      },
+    },
+    {
       name: 'sessionStatus',
       type: 'select',
       required: true,

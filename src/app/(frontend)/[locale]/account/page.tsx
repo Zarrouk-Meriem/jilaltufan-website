@@ -18,6 +18,7 @@ import {
   getAccountApplication,
   getAccountInstructor,
   getAccountMaterials,
+  getAccountProgress,
   getAccountSessions,
   getInstructorFiles,
   getInstructorSessions,
@@ -63,9 +64,10 @@ export default async function AccountPage({ params }: PageProps<'/[locale]/accou
   if (account.kind === 'instructor') return <InstructorWindow account={account} locale={locale} />
 
   const application = await getAccountApplication(account, locale)
-  const [sessions, materials] = await Promise.all([
+  const [sessions, materials, progress] = await Promise.all([
     getAccountSessions(application, locale),
     getAccountMaterials(application, locale),
+    getAccountProgress(account, application),
   ])
   const tz = settings.academyTimeZone
   const now = new Date()
@@ -171,6 +173,20 @@ export default async function AccountPage({ params }: PageProps<'/[locale]/accou
             ordinal={ordinalFor(1, t)}
             title={t('account.sessionsTitle')}
           />
+          {progress ? (
+            <p className="mt-6 text-base text-ink-700">
+              {t('account.progress', {
+                attended: progress.attended,
+                total: progress.total,
+              })}
+              {progress.excused > 0 ? (
+                <span className="text-ink-500">
+                  {' '}
+                  {t('account.progressExcused', { excused: progress.excused })}
+                </span>
+              ) : null}
+            </p>
+          ) : null}
           <div className="mt-8">
             {sessions.length ? (
               <div className="divide-y divide-line border-y border-line">

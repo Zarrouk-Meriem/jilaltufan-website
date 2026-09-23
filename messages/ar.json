@@ -455,6 +455,8 @@
     "sessionsTitle": "حصصك",
     "noSessions": "لا حصص بعد",
     "noProgramYet": "تظهر حصصك هنا فور تحديد برنامجك.",
+    "progress": "حضرت {attended} من {total} حصص.",
+    "progressExcused": "(و{excused} بعذر)",
     "materialsTitle": "موادّك",
     "noMaterials": "لا مواد بعد",
     "youTitle": "بياناتك",
