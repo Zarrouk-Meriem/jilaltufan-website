@@ -411,6 +411,57 @@
     "privateNote": "Keep this link to yourself: anyone who opens it sees your application status.",
     "notFoundTitle": "Unknown link"
   },
+  "account": {
+    "title": "Your **account**",
+    "intro": "Your place in the Academy: your application, your sessions, your materials.",
+    "signInTitle": "**Sign in**",
+    "signInIntro": "Your account is opened when you are accepted, and the link to choose a password reaches you by email.",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "confirmPassword": "Repeat the password",
+    "passwordHint": "At least twelve characters. Length is what protects you; we ask for no symbols and no digits.",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "working": "One moment…",
+    "forgotLink": "Forgotten your password?",
+    "signedInAs": "Account",
+    "shellNote": "Your application, your sessions and your materials are being added to this window. They will be here shortly.",
+    "kind": {
+      "student": "Student",
+      "instructor": "Guest instructor"
+    },
+    "forgot": {
+      "title": "Reset your **password**",
+      "intro": "Give us your address and we will send you a link to choose a new password.",
+      "hint": "The address your account was opened with.",
+      "action": "Send the link",
+      "sentTitle": "Check your inbox",
+      "sent": "If that address has an account with us, a link to choose a new password is on its way to it now. It is good for twenty-four hours."
+    },
+    "setPassword": {
+      "title": "Choose a **password**",
+      "intro": "Your password stays yours alone; we never email it and never see it.",
+      "action": "Save and sign in",
+      "newLink": "Ask for a new link",
+      "noTokenTitle": "The link is incomplete",
+      "noToken": "This address carries no token. Open the link from our letter exactly as it arrived, or ask for a new one."
+    },
+    "errors": {
+      "formInvalid": "Check the fields marked in red.",
+      "credentials": "That email or password is not right.",
+      "locked": "The account is paused after repeated attempts. Try again in ten minutes, or ask for a reset link.",
+      "rateLimited": "Too many attempts in a short time. Wait a moment and try again.",
+      "tokenInvalid": "That link has expired or has already been used.",
+      "required": "This field is required",
+      "email": "Enter a valid email address",
+      "tooLong": "Longer than allowed",
+      "passwordShort": "At least twelve characters",
+      "passwordLong": "Longer than seventy-two characters",
+      "passwordMismatch": "The two passwords do not match",
+      "spam": "The form could not be sent."
+    }
+  },
   "students": {
     "title": "Student **window**",
     "intro": "Everything you need in one place: how sessions work, how to join, and your program's schedule and materials.",

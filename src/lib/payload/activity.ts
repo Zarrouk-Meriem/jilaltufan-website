@@ -23,6 +23,9 @@ export const ACTIVITY_SLUG = 'activity' as const
 /** Set in `context` on a system write (e.g. the status-email stamp) so it is not logged as the editor's. */
 export const SKIP_ACTIVITY = 'skipActivity'
 
+/** The staff collection: the only one whose sign-ins this log records. See `logActivity`. */
+export const STAFF_SLUG = 'users' as const
+
 export type Action = 'create' | 'update' | 'delete' | 'login' | 'login-failed' | 'logout'
 export type Label = { ar: string; en: string }
 export type Change = { field: string; label: Label; from?: unknown; to?: unknown }
@@ -303,7 +306,17 @@ export function logActivity(collection: CollectionConfig): CollectionConfig {
       return doc
     },
   ]
-  const auth = collection.auth ? authHooks(collection.slug as Activity['target']) : {}
+  // Sign-ins, only for staff. This log's `user` column is a relationship to `users`, so
+  // another auth collection's id written into it points at a different person's row — or at
+  // nobody, which is what happened when `accounts` arrived: the foreign key refused the
+  // write, and because the hook runs inside the login's own transaction, that refusal rolled
+  // the login back and a student signed in successfully as nobody (found 2026-09-23). A
+  // student's sign-ins would need their own register. What staff *do* to an account is still
+  // recorded here — `record` keys on the acting user being staff, which is the point.
+  const auth =
+    collection.auth && collection.slug === STAFF_SLUG
+      ? authHooks(collection.slug as Activity['target'])
+      : {}
   return {
     ...collection,
     hooks: {

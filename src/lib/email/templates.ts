@@ -40,6 +40,8 @@ const FOLLOW_AR = 'تابع حالة طلبك'
 const FOLLOW_EN = 'Follow your application'
 const KEEP_AR = 'الرابط خاص بك وحدك، فلا تشاركه مع أحد.'
 const KEEP_EN = 'The link is yours alone; please do not share it.'
+const ACTIVATE_AR = 'اختر كلمة السر'
+const ACTIVATE_EN = 'Choose your password'
 
 /**
  * The applicant's confirmation: one application for the academy, program chosen after
@@ -197,36 +199,108 @@ export function reviewingEmail(locale: Locale, name: string) {
  * Sent once when staff move an application to «accepted». The program line appears only
  * when one has been assigned; otherwise the team settles it with the applicant by email.
  */
-export function acceptanceEmail(locale: Locale, name: string, program?: string) {
+export function acceptanceEmail(
+  locale: Locale,
+  name: string,
+  program?: string,
+  inviteUrl?: string,
+) {
+  // Acceptance is also where the account is born (PLAN.md §13.3). One letter, not two: the
+  // link sets a password the person chooses themselves — we never send one.
+  const action = inviteUrl
+    ? { label: locale === 'ar' ? ACTIVATE_AR : ACTIVATE_EN, href: inviteUrl }
+    : undefined
   if (locale === 'ar') {
     const subject = 'قُبِل طلب التحاقك بأكاديمية جيل الطوفان'
     return {
       subject,
-      ...wrap('ar', subject, [
-        `أهلًا ${name}،`,
-        'يسرّنا أن نبلغك بقبول طلب التحاقك بأكاديمية جيل الطوفان. مرحبًا بك بيننا.',
-        program
-          ? `برنامجك: ${program}.`
-          : 'سيتواصل معك فريق الأكاديمية على هذا البريد لتحديد برنامجك.',
-        'جميع الحصص مباشرة على Zoom بتوقيت القدس، وستصلك التفاصيل على هذا البريد قبل الانطلاق.',
-        REPLY_AR,
-        SIGN_AR,
-      ]),
+      ...wrap(
+        'ar',
+        subject,
+        [
+          `أهلًا ${name}،`,
+          'يسرّنا أن نبلغك بقبول طلب التحاقك بأكاديمية جيل الطوفان. مرحبًا بك بيننا.',
+          program
+            ? `برنامجك: ${program}.`
+            : 'سيتواصل معك فريق الأكاديمية على هذا البريد لتحديد برنامجك.',
+          ...(inviteUrl
+            ? [
+                'فُتح لك حساب في نافذة الطالب. اختر كلمة السر من الرابط أدناه خلال أربع وعشرين ساعة؛ وإن انتهت صلاحيته فاطلب رابطًا جديدًا من الصفحة نفسها.',
+              ]
+            : []),
+          'جميع الحصص مباشرة على Zoom بتوقيت القدس، وستصلك التفاصيل على هذا البريد قبل الانطلاق.',
+          REPLY_AR,
+          SIGN_AR,
+        ],
+        action,
+      ),
     }
   }
   const subject = 'Your application to Jil Altufan Academy has been accepted'
   return {
     subject,
-    ...wrap('en', subject, [
-      `Hello ${name},`,
-      'We are glad to let you know that your application to Jil Altufan Academy has been accepted. Welcome.',
-      program
-        ? `Your program: ${program}.`
-        : "The Academy's team will be in touch at this address to settle your program.",
-      'All sessions are live on Zoom, in Al-Quds time; the details will reach you at this address before the start.',
-      REPLY_EN,
-      SIGN_EN,
-    ]),
+    ...wrap(
+      'en',
+      subject,
+      [
+        `Hello ${name},`,
+        'We are glad to let you know that your application to Jil Altufan Academy has been accepted. Welcome.',
+        program
+          ? `Your program: ${program}.`
+          : "The Academy's team will be in touch at this address to settle your program.",
+        ...(inviteUrl
+          ? [
+              'An account has been opened for you in the student window. Choose your password from the link below within twenty-four hours; if it expires, ask for a new one on the same page.',
+            ]
+          : []),
+        'All sessions are live on Zoom, in Al-Quds time; the details will reach you at this address before the start.',
+        REPLY_EN,
+        SIGN_EN,
+      ],
+      action,
+    ),
+  }
+}
+
+/**
+ * A password reset, asked for from the sign-in page. Deliberately says nothing about
+ * whether an account exists beyond the fact that this letter arrived — the page it comes
+ * from answers the same way to any address.
+ */
+export function passwordResetEmail(locale: Locale, name: string, url: string) {
+  if (locale === 'ar') {
+    const subject = 'إعادة تعيين كلمة السر'
+    return {
+      subject,
+      ...wrap(
+        'ar',
+        subject,
+        [
+          `أهلًا ${name}،`,
+          'طُلبت إعادة تعيين كلمة السر لحسابك. اختر كلمة سر جديدة من الرابط أدناه خلال أربع وعشرين ساعة.',
+          'إن لم تطلب ذلك، تجاهل هذه الرسالة: كلمة سرك الحالية لم تتغيّر، والرابط لا يصل إلا إلى بريدك هذا.',
+          REPLY_AR,
+          SIGN_AR,
+        ],
+        { label: ACTIVATE_AR, href: url },
+      ),
+    }
+  }
+  const subject = 'Reset your password'
+  return {
+    subject,
+    ...wrap(
+      'en',
+      subject,
+      [
+        `Hello ${name},`,
+        'A password reset was requested for your account. Choose a new password from the link below within twenty-four hours.',
+        'If it was not you, ignore this message: your current password is unchanged, and the link only ever reaches this address of yours.',
+        REPLY_EN,
+        SIGN_EN,
+      ],
+      { label: ACTIVATE_EN, href: url },
+    ),
   }
 }
 

@@ -5,6 +5,7 @@ import {
   reviewingEmail,
   waitlistEmail,
 } from '@/lib/email/templates'
+import { inviteStudentAccount } from '@/lib/accounts/invite'
 import { SKIP_ACTIVITY } from '@/lib/payload/activity'
 import type { Application } from '@/payload-types'
 
@@ -54,8 +55,22 @@ export const sendStatusEmail: CollectionAfterChangeHook<Application> = async ({
 
   const { payload } = req
   const locale: Locale = doc.locale === 'en' ? 'en' : 'ar'
+
+  // Acceptance opens the account, and the letter carries the link that activates it
+  // (PLAN.md §13.3). A failure here must not swallow the acceptance letter — being told you
+  // are accepted matters more than the account, which staff can invite again from the
+  // record — so it is logged and the letter goes out without the link.
+  let inviteUrl: string | undefined
+  if (doc.applicationStatus === 'accepted') {
+    try {
+      inviteUrl = (await inviteStudentAccount(payload, doc, req)).inviteUrl ?? undefined
+    } catch (err) {
+      payload.logger.error({ msg: 'student account invite failed', id: doc.id, err })
+    }
+  }
+
   const [mail, settings] = await Promise.all([
-    compose(payload, doc, locale),
+    compose(payload, doc, locale, inviteUrl),
     payload.findGlobal({ slug: 'site-settings', depth: 0 }),
   ])
   try {
@@ -91,12 +106,22 @@ export const sendStatusEmail: CollectionAfterChangeHook<Application> = async ({
   return { ...doc, [rule.stamp]: sentAt }
 }
 
-async function compose(payload: Payload, doc: Application, locale: Locale): Promise<Mail> {
+async function compose(
+  payload: Payload,
+  doc: Application,
+  locale: Locale,
+  inviteUrl?: string,
+): Promise<Mail> {
   switch (doc.applicationStatus) {
     case 'reviewing':
       return reviewingEmail(locale, doc.fullName)
     case 'accepted':
-      return acceptanceEmail(locale, doc.fullName, await programTitle(payload, doc.program, locale))
+      return acceptanceEmail(
+        locale,
+        doc.fullName,
+        await programTitle(payload, doc.program, locale),
+        inviteUrl,
+      )
     case 'waitlisted':
       return waitlistEmail(locale, doc.fullName)
     default:

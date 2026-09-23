@@ -10,6 +10,7 @@ import * as migration_20260922_075008_status_emails from './20260922_075008_stat
 import * as migration_20260922_124615_activity_log from './20260922_124615_activity_log'
 import * as migration_20260922_135917_activity_auth_actions from './20260922_135917_activity_auth_actions'
 import * as migration_20260923_142726_application_status_token from './20260923_142726_application_status_token'
+import * as migration_20260923_161608_accounts from './20260923_161608_accounts'
 
 export const migrations = [
   {
@@ -71,5 +72,10 @@ export const migrations = [
     up: migration_20260923_142726_application_status_token.up,
     down: migration_20260923_142726_application_status_token.down,
     name: '20260923_142726_application_status_token',
+  },
+  {
+    up: migration_20260923_161608_accounts.up,
+    down: migration_20260923_161608_accounts.down,
+    name: '20260923_161608_accounts',
   },
 ]

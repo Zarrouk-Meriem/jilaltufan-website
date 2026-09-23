@@ -10,11 +10,16 @@ import { submitApplication } from './helpers/apply'
  * Reading the token back needs a staff account, so this spec needs the throwaway accounts
  * from `scripts/e2e-staff.ts` and skips without them, as `activity.spec.ts` does.
  */
-const admin = { email: process.env.E2E_ADMIN_EMAIL, password: process.env.E2E_ADMIN_PASSWORD }
+// This spec's own admin, not the one `activity.spec.ts` uses: two logins for a single
+// account at the same moment lose each other's session, and spec files run in parallel.
+const admin = {
+  email: process.env.E2E_ADMIN_B_EMAIL,
+  password: process.env.E2E_ADMIN_B_PASSWORD,
+}
 
 test.skip(
   !(admin.email && admin.password),
-  'set E2E_ADMIN_* (pnpm payload:tsx run scripts/e2e-staff.ts)',
+  'set E2E_ADMIN_B_* (pnpm payload:tsx run scripts/e2e-staff.ts)',
 )
 
 // One worker, in order: Payload drops a session when two logins for one account land at the
@@ -33,6 +38,23 @@ async function api(page: Page): Promise<APIRequestContext> {
 
 type Row = { id: number; fullName: string; statusToken: string; statusLink: string }
 
+/**
+ * One real submission for the whole file, made on first use and reused in order.
+ *
+ * The apply form is rate limited — five per ten minutes per IP, which is the right number
+ * for the live site — and the suite has several files submitting through it, so a test that
+ * spends a submission it does not need takes one from a test that does (the whole suite ran
+ * out on 2026-09-23). `mode: 'default'` above keeps these tests in one worker, in order, so
+ * a single shared application is safe: each takes the state the previous one left.
+ */
+let shared: Promise<{ email: string }> | null = null
+const sharedApplication = (page: Page) =>
+  (shared ??= (async () => {
+    const email = `playwright-status-${Date.now()}@example.com`
+    await submitApplication(page, 'ar', email)
+    return { email }
+  })())
+
 /** The application behind an address, as staff see it. */
 async function find(api: APIRequestContext, email: string): Promise<Row> {
   const res = await api.get(`/api/applications?where[email][equals]=${encodeURIComponent(email)}`)
@@ -46,8 +68,7 @@ async function find(api: APIRequestContext, email: string): Promise<Row> {
 test('an application is born with a follow-up link, and the link shows its status', async ({
   page,
 }) => {
-  const email = `playwright-status-${Date.now()}@example.com`
-  await submitApplication(page, 'ar', email)
+  const { email } = await sharedApplication(page)
   const staff = await api(page)
   const doc = await find(staff, email)
 
@@ -80,8 +101,9 @@ test('an application is born with a follow-up link, and the link shows its statu
 test('the link follows the status the staff set, in the applicant’s own language', async ({
   page,
 }) => {
-  const email = `playwright-status-en-${Date.now()}@example.com`
-  await submitApplication(page, 'en', email)
+  // The page speaks the language in its URL; the application's own locale only decides
+  // which language its letters are written in, so one application serves both.
+  const { email } = await sharedApplication(page)
   const staff = await api(page)
   const doc = await find(staff, email)
 
@@ -101,8 +123,8 @@ test('an unknown token is a 404, exactly like a made-up one', async ({ page }) =
 })
 
 test('an expired link shows no status — only the offer of a new one', async ({ page }) => {
-  const email = `playwright-status-old-${Date.now()}@example.com`
-  await submitApplication(page, 'ar', email)
+  // Last in the file on purpose: it ages the link out and then rotates the token away.
+  const { email } = await sharedApplication(page)
   const staff = await api(page)
   const doc = await find(staff, email)
 

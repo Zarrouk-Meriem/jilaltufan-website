@@ -8,6 +8,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { Accounts } from './collections/Accounts'
 import { Activity } from './collections/Activity'
 import { ApplicationFiles } from './collections/ApplicationFiles'
 import { Applications } from './collections/Applications'
@@ -57,6 +58,7 @@ const collections = [
   ApplicationFiles,
   ContactMessages,
   Users,
+  Accounts,
   Media,
 ]
 const globals = [

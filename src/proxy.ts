@@ -34,12 +34,13 @@ function csp(): string {
 }
 
 /**
- * The applicant's follow-up page, whose URL *is* the secret (PLAN.md §13.3). Next sets its
- * own Cache-Control on app-router responses and ignores one set in `next.config.ts`, so
- * here is the only place it holds — in production. `next dev` overrides it in turn, which
- * is why the strict value is asserted against a production server, never against dev.
+ * The pages that belong to one person: the applicant's follow-up page, whose URL *is* the
+ * secret, and the account window behind a sign-in (PLAN.md §13.3, §13.6). Next sets its own
+ * Cache-Control on app-router responses and ignores one set in `next.config.ts`, so here is
+ * the only place it holds — in production. `next dev` overrides it in turn, which is why
+ * the strict value is asserted against a production server, never against dev.
  */
-const PRIVATE_PATH = new RegExp(`^/(?:${routing.locales.join('|')})/application(?:/|$)`)
+const PRIVATE_PATH = new RegExp(`^/(?:${routing.locales.join('|')})/(?:application|account)(?:/|$)`)
 
 export default function proxy(req: NextRequest) {
   const res = intl(req) ?? NextResponse.next()

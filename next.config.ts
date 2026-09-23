@@ -18,12 +18,12 @@ const securityHeaders = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
 ]
 
-// The one private route on the public site: an applicant's follow-up page, found by the
-// token in the URL (PLAN.md §13.3). The token *is* the secret, so the URL must not be
-// cached by anything in front of us and must not leave in a Referer header — the page has
-// no outbound links today, and `no-referrer` keeps that true if one is ever added.
+// The private routes on the public site: an applicant's follow-up page, found by the token
+// in the URL, and the account window (PLAN.md §13.3, §13.6). A token in a URL and a signed-in
+// page must not be cached by anything in front of us, and must not leave in a Referer header
+// — neither has outbound links today, and `no-referrer` keeps that true if one is added.
 const locales = routing.locales.join('|')
-const privatePage = `/:locale(${locales})/application/:path*`
+const privatePage = `/:locale(${locales})/:area(application|account)/:path*`
 // Cache-Control is not here: Next sets its own on app-router pages and ignores this one,
 // so `src/proxy.ts` sets it instead.
 const privateHeaders = [
@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
       // The private route is excluded here and given its own rule below, so a key is never
       // set twice on one response.
       {
-        source: `/((?!admin|api|(?:${locales})/application).*)`,
+        source: `/((?!admin|api|(?:${locales})/(?:application|account)).*)`,
         headers: securityHeaders,
       },
       { source: privatePage, headers: privateHeaders },

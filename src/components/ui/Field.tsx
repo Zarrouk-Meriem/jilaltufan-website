@@ -83,8 +83,9 @@ export function Input({
   id,
   className,
   icon,
+  lines,
   ...rest
-}: Common & ComponentProps<'input'> & { icon?: ReactNode }) {
+}: Common & ComponentProps<'input'> & { icon?: ReactNode; lines?: 1 | 2 }) {
   const input = (
     <input
       id={id}
@@ -96,7 +97,9 @@ export function Input({
     />
   )
   return (
-    <FieldWrap {...{ label, hint, error, required, id }}>
+    // `lines` for a hint that wraps on a phone: the slot is reserved at its tallest, so an
+    // error replacing it never moves the rest of the form.
+    <FieldWrap {...{ label, hint, error, required, id, lines }}>
       {icon ? (
         // Same direction as the input, so the icon sits where its text begins.
         <div dir={rest.dir} className="relative">

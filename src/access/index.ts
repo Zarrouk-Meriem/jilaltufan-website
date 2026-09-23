@@ -24,9 +24,31 @@ export const publishedOrStaff: Access = ({ req }) =>
 
 export const staffFieldOnly: FieldAccess = ({ req }) => isStaffUser(req)
 
-/** Users can read/update themselves; admins manage everyone. */
+/**
+ * Staff can read and change themselves; admins manage everyone.
+ *
+ * `isStaffUser` rather than `req.user`: ids are per-collection, so once a second auth
+ * collection existed, a signed-in account with id 7 matched the *staff user* with id 7 and
+ * could read and update them — this guards both on `users` (found 2026-09-23, pinned in
+ * `tests/unit/access.test.ts`). Anyone authenticated is not the same as anyone on staff.
+ */
 export const selfOrAdmin: Access = ({ req }) => {
   if (isAdminUser(req)) return true
-  if (req.user) return { id: { equals: req.user.id } }
+  if (isStaffUser(req) && req.user) return { id: { equals: req.user.id } }
+  return false
+}
+
+/**
+ * Accounts — students and guest instructors (PLAN.md §13.2). They are a different auth
+ * collection from staff, and every staff rule above keys on `collection === 'users'`, so an
+ * account can never inherit a staff right by accident. These are the mirror image: an
+ * account may read and change itself, staff may see them all, and nobody else sees anything.
+ */
+export const isAccount = (req: PayloadRequest) =>
+  (req.user as { collection?: string } | null)?.collection === 'accounts'
+
+export const accountSelfOrStaff: Access = ({ req }) => {
+  if (isStaffUser(req)) return true
+  if (isAccount(req) && req.user) return { id: { equals: req.user.id } }
   return false
 }

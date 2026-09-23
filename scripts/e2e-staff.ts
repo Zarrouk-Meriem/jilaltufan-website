@@ -1,8 +1,13 @@
 /**
- * Throwaway staff accounts for the admin e2e specs (`tests/e2e/activity.spec.ts`), in the
- * local database only. Prints the credentials as shell exports; the specs skip without them.
+ * Throwaway staff accounts for the admin e2e specs, in the local database only. Prints the
+ * credentials as shell exports; the specs skip without them.
  *   pnpm payload:tsx run scripts/e2e-staff.ts            → create (or reset) and print
  *   pnpm payload:tsx run scripts/e2e-staff.ts delete     → remove them and their log rows
+ *
+ * One admin per spec file that needs one, rather than one shared between them: Payload
+ * loses a session when two logins for the same account land at the same moment (see the
+ * note at the top of `activity.spec.ts`), and spec *files* run in parallel workers, so a
+ * shared admin had one spec signing the other out mid-test (2026-09-23).
  */
 import 'dotenv/config'
 import { randomBytes } from 'node:crypto'
@@ -10,8 +15,13 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 
 const ACCOUNTS = [
+  // activity.spec.ts
   { key: 'ADMIN', email: 'e2e-admin@example.test', role: 'admin' as const },
   { key: 'EDITOR', email: 'e2e-editor@example.test', role: 'editor' as const },
+  // application-status.spec.ts
+  { key: 'ADMIN_B', email: 'e2e-admin-b@example.test', role: 'admin' as const },
+  // account.spec.ts
+  { key: 'ADMIN_C', email: 'e2e-admin-c@example.test', role: 'admin' as const },
 ]
 
 const payload = await getPayload({ config })

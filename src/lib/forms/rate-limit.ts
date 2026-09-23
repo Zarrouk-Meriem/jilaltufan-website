@@ -56,6 +56,28 @@ export const statusLinkLimiter = createRateLimiter({
   salt: 'jaa-status-link',
 })
 
+/**
+ * Asking for a password-reset link: 5 per 10 minutes per IP. Its own bucket, not the
+ * status link's — they are different actions, and one should never spend the other's
+ * budget for a visitor behind a shared address.
+ */
+export const resetLimiter = createRateLimiter({
+  capacity: 5,
+  refillPerMs: 5 / (10 * 60_000),
+  salt: 'jaa-password-reset',
+})
+
+/**
+ * Signing in and choosing a password: 10 per 10 minutes per IP. Payload already locks a
+ * single account after ten bad attempts; this is the other axis — one address at a time
+ * against many accounts, which no per-account lock would notice.
+ */
+export const signInLimiter = createRateLimiter({
+  capacity: 10,
+  refillPerMs: 10 / (10 * 60_000),
+  salt: 'jaa-sign-in',
+})
+
 /** Best-effort client IP behind common proxies; falls back to a constant so the limiter still applies. */
 export function clientIp(headers: Headers): string {
   const xff = headers.get('x-forwarded-for')

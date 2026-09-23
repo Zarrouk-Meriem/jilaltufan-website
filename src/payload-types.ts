@@ -64,6 +64,7 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    accounts: AccountAuthOperations;
   };
   blocks: {};
   collections: {
@@ -78,6 +79,7 @@ export interface Config {
     'application-files': ApplicationFile;
     'contact-messages': ContactMessage;
     users: User;
+    accounts: Account;
     media: Media;
     activity: Activity;
     exports: Export;
@@ -106,6 +108,7 @@ export interface Config {
     'application-files': ApplicationFilesSelect<false> | ApplicationFilesSelect<true>;
     'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    accounts: AccountsSelect<false> | AccountsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     activity: ActivitySelect<false> | ActivitySelect<true>;
     exports: ExportsSelect<false> | ExportsSelect<true>;
@@ -142,7 +145,7 @@ export interface Config {
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: User | Account;
   jobs: {
     tasks: {
       createCollectionExport: TaskCreateCollectionExport;
@@ -156,6 +159,24 @@ export interface Config {
   };
 }
 export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface AccountAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -1239,6 +1260,46 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Student and guest-instructor accounts. Created on acceptance or when a guest is invited; the person chooses their own password from the link in their letter — a password is never emailed. These accounts cannot enter the admin.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "accounts".
+ */
+export interface Account {
+  id: number;
+  kind: 'student' | 'instructor';
+  name?: string | null;
+  locale?: ('ar' | 'en') | null;
+  /**
+   * The application this account came from.
+   */
+  application?: (number | null) | Application;
+  instructor?: (number | null) | Instructor;
+  inviteSentAt?: string | null;
+  /**
+   * Empty means the person has not activated their account yet.
+   */
+  passwordSetAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'accounts';
+}
+/**
  * Every create, update, and delete made by a staff account, with the time, the account, and the fields that changed — plus logins, logouts, and failed login attempts. Filter by Action to see one kind. Read-only.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1260,6 +1321,7 @@ export interface Activity {
     | 'application-files'
     | 'contact-messages'
     | 'users'
+    | 'accounts'
     | 'media'
     | 'about-page'
     | 'home-page'
@@ -1523,6 +1585,10 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'accounts';
+        value: number | Account;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1531,10 +1597,15 @@ export interface PayloadLockedDocument {
         value: number | Activity;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'accounts';
+        value: number | Account;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -1544,10 +1615,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'accounts';
+        value: number | Account;
+      };
   key?: string | null;
   value?:
     | {
@@ -1866,6 +1942,35 @@ export interface ContactMessagesSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "accounts_select".
+ */
+export interface AccountsSelect<T extends boolean = true> {
+  kind?: T;
+  name?: T;
+  locale?: T;
+  application?: T;
+  instructor?: T;
+  inviteSentAt?: T;
+  passwordSetAt?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -2605,6 +2710,7 @@ export interface TaskCreateCollectionExport {
       | 'application-files'
       | 'contact-messages'
       | 'users'
+      | 'accounts'
       | 'media'
       | 'activity'
       | 'exports'
