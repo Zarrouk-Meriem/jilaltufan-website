@@ -13,6 +13,17 @@ type Who = typeof admin
 // The admin follows the browser language; the assertions below read the Arabic admin.
 test.use({ locale: 'ar-PS' })
 
+/**
+ * One worker, in order — every test here signs in as the same two accounts, and Payload
+ * loses a session when two logins for one account land at the same moment: login reads the
+ * user's session list, appends to it, and writes it back, so the slower write drops the
+ * faster one's row and that token is refused (403 on a read an admin is allowed). Under the
+ * config's `fullyParallel`, four workers signed in at once and three were deauthorised
+ * before their first request (2026-09-23). `default` (not `serial`) so a failure still lets
+ * the rest of the file run.
+ */
+test.describe.configure({ mode: 'default' })
+
 test.skip(
   !configured,
   'set E2E_ADMIN_* and E2E_EDITOR_* (pnpm payload:tsx run scripts/e2e-staff.ts)',
