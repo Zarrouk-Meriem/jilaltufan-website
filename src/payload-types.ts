@@ -1163,6 +1163,12 @@ export interface Application {
   acceptanceEmailSentAt?: string | null;
   waitlistEmailSentAt?: string | null;
   rejectionEmailSentAt?: string | null;
+  statusToken?: string | null;
+  statusTokenExpiresAt?: string | null;
+  /**
+   * The link sent with the confirmation letter; it shows the applicant their own status and nothing else. Once it expires, the page itself sends them a fresh one.
+   */
+  statusLink?: string | null;
   /**
    * Staff only.
    */
@@ -1815,6 +1821,9 @@ export interface ApplicationsSelect<T extends boolean = true> {
   acceptanceEmailSentAt?: T;
   waitlistEmailSentAt?: T;
   rejectionEmailSentAt?: T;
+  statusToken?: T;
+  statusTokenExpiresAt?: T;
+  statusLink?: T;
   internalNotes?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -380,6 +380,37 @@
     "successBody": "We received your application to the Academy and sent a confirmation to <bdi>{email}</bdi>. The Academy's team will review it and be in touch; once accepted, you choose your program.",
     "seePrograms": "Explore the programs"
   },
+  "application": {
+    "title": "**Follow** your application",
+    "intro": "This page belongs to your application alone: it shows where it stands today, and nothing else.",
+    "submitted": "You applied on",
+    "programLabel": "Program",
+    "statusLabel": "Status",
+    "status": {
+      "new": "Received",
+      "reviewing": "Under review",
+      "accepted": "Accepted",
+      "waitlisted": "Waiting list",
+      "rejected": "Not accepted this time"
+    },
+    "note": {
+      "new": "We have your application and it is waiting its turn. Every change appears here, and reaches your inbox at the same moment.",
+      "reviewing": "Your application is with the Academy's team. We read every application carefully, and you will have our answer by email within two weeks at most.",
+      "accepted": "Your application was accepted — welcome. The details of how the program begins reach you by email.",
+      "waitlisted": "Your application is still with us, on the waiting list. There is no need to apply again; we write to you the moment a place opens.",
+      "rejected": "Your application was not accepted this time. You remain welcome to apply in a future intake."
+    },
+    "expired": {
+      "title": "This link has expired",
+      "body": "Links expire after a while to protect your privacy. We can send a new one to the address you applied with.",
+      "action": "Send me a new link",
+      "sending": "Sending…",
+      "sent": "If the application exists, a new link is on its way to your inbox. This one no longer works.",
+      "error": "That could not be sent just now. Try again shortly, or write to us and we will help."
+    },
+    "privateNote": "Keep this link to yourself: anyone who opens it sees your application status.",
+    "notFoundTitle": "Unknown link"
+  },
   "students": {
     "title": "Student **window**",
     "intro": "Everything you need in one place: how sessions work, how to join, and your program's schedule and materials.",

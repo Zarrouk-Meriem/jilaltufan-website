@@ -2,6 +2,7 @@
 
 import { headers } from 'next/headers'
 import { ValidationError } from 'payload'
+import { statusUrl } from '@/lib/applications/status-token'
 import { countryName } from '@/lib/countries'
 import { academyNotification, applicantEmail, type NotificationLine } from '@/lib/email/templates'
 import {
@@ -119,7 +120,13 @@ export async function submitApplication(
     const settings = await payload.findGlobal({ slug: 'site-settings', depth: 0 })
     // Applications have their own mailbox when the academy sets one; contact@ otherwise.
     const applicationsEmail = settings.applicationsEmail || settings.contactEmail
-    const applicant = applicantEmail(data.locale, data.fullName)
+    // The follow-up link (PLAN.md §13.3): minted with the row by the collection's
+    // beforeChange hook, so the letter can carry it the first time it goes out.
+    const applicant = applicantEmail(
+      data.locale,
+      data.fullName,
+      doc.statusToken ? statusUrl(doc.statusToken, data.locale) : undefined,
+    )
     const lines: NotificationLine[] = [
       ['الاسم', data.fullName],
       ['الجنس', data.gender === 'female' ? 'أنثى' : 'ذكر'],

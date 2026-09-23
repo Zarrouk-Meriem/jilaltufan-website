@@ -1,3 +1,4 @@
+export * from './applications'
 export * from './events'
 export * from './globals'
 export * from './instructors'

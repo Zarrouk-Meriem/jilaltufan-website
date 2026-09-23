@@ -302,3 +302,127 @@ An editor publishes a program with eight sessions and Zoom links, publishes an e
 **→ Awaiting your approval before M1.** Corrections to any of §2 are welcome; I'd rather change the plan than the code.
 
 **Season (revised Sep 2026 from the founding paper):** the academy year runs October → June for the timeline; open training is 8 lectures Oct → May, the four directed programs are 6 sessions Jan → Jun, graduation projects and the camp fall in September. Between July and September the home timeline shows the coming season. Season labels on cards come from each program's own fields (`src/lib/program.ts`), never from a fixed string.
+
+---
+
+## 13. Phase 2 — the student and instructor windows (designed 2026-09-23)
+
+§11.4 left accounts out of the MVP and named `Users` + `/students` + `/instructors` as the
+seam. This is that seam, opened. Today both windows are public, unauthenticated pages and
+the only auth collection is staff (`Users`); an applicant's whole relationship with the
+academy is their email address and the four status letters.
+
+### 13.1 The decisions (2026-09-23)
+
+1. **Two triggers, not one.** Submitting an application creates **no account**: the
+   confirmation letter carries a signed, expiring link to a page showing that one
+   application's status. The account is created **on acceptance**. This revises the
+   2026-09-21 Minbar decision (an account by applying) and needs the academy's sign-off —
+   `TODO.md`. It means «حساب» is a student of the academy, not anyone who filled a form:
+   no credentials held for rejected applicants, and no account spam feeding comment spam.
+2. **No password is ever emailed.** Accounts are created password-less and unverified; the
+   letter carries a single-use, time-limited link to a page on this site where the person
+   chooses their own password. An expired link offers «أرسل رابطًا جديدًا» and re-issues
+   itself — staff are never in the loop. An emailed password would sit in that mailbox
+   forever, survive any "change it on first login" step, and cost us deliverability on the
+   same domain that sends acceptance letters.
+3. **A guest instructor is invited by staff.** When a guest is confirmed, an editor creates
+   the profile and ticks «أرسل دعوة»; the guest gets the same set-password link. No account
+   exists until there is a session to teach — which is what «المحاضرون ضيوف» (2026-09-21)
+   means in practice.
+4. **Attendance comes from Zoom, and staff can correct it.** The academy will hold a Zoom
+   Business plan, so the participant report is the default register; staff marking is the
+   fallback when nobody syncs, and the override when Zoom is wrong. A staff mark always
+   wins and a later sync never overwrites it.
+5. **Minbar commenting is held.** The comments collection and its moderation are out of
+   this phase by decision; the account it would have needed is being built here anyway.
+
+### 13.2 One auth collection, never the public profile
+
+Payload injects the auth `email` field with **no access control**
+(`payload/dist/auth/getAuthFields.js`), and every public read in `src/lib/queries/*` runs
+`overrideAccess: false`. So an auth collection is a collection whose email column is as
+readable as the collection is — and `instructors` is published to the world. Credentials
+therefore never go into a public collection, which rules out making `Instructors` an auth
+collection (checked 2026-09-23; it also revises the note in `Users.ts` about _two_ new auth
+collections).
+
+- **`accounts`** — the one non-staff auth collection: `kind` (`student` | `instructor`),
+  `locale`, a relationship to the `applications` row (students) or the `instructors`
+  profile (instructors), and nothing public. `access.admin` is `() => false`, so an account
+  can never enter `/admin` whatever else goes wrong; read/update are self-or-staff.
+- **`instructors`** stays exactly what it is — a public profile with no email and no
+  password. The account points at it, not the other way round.
+- `src/access/index.ts` already keys every staff rule on `u.collection === 'users'`, so a
+  new auth collection cannot inherit staff rights by accident. It gains `isAccount`,
+  `isStudentAccount`, `isInstructorAccount` in the same shape.
+
+### 13.3 The three doors
+
+| Door              | Who                            | Carries                                                          | Expiry                                                                     |
+| ----------------- | ------------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Status link       | every applicant, at submission | `/[locale]/application/[token]` — that application's status only | opaque token + expiry on the row, staff-read-only, never in a public query |
+| Student invite    | on `accepted`                  | set-password link in the acceptance letter                       | Payload's verification token                                               |
+| Instructor invite | when staff tick «أرسل دعوة»    | the same set-password link                                       | Payload's verification token                                               |
+
+Sign-in afterwards is email + the password they chose, on our own pages with the site's own
+form controls (no native `<select>`, no native pickers — the 2026-09-18 rules apply here as
+everywhere). Honeypot and the existing rate limit go on sign-in, forgot, and set-password,
+as on every public write.
+
+### 13.4 What each window holds
+
+**Student** — application status and the documents they sent · their program's sessions
+with join links (through the existing join-window gate in the query layer, which is also
+where an `email-only` policy would be honoured) · materials for their program · progress:
+sessions attended against the program's total · their personal information, editable.
+
+**Instructor** — their upcoming session and its join link · materials to upload for it ·
+their own bio and photo, editable · past sessions they taught.
+
+`zoomPasscode` stays staff-only in both. The window is not a way around a field rule.
+
+### 13.5 Attendance and progress
+
+A row per person per session (`attendance`): session, account, state
+(`present` | `absent` | `excused`), `source` (`zoom` | `staff`), minutes attended, and who
+recorded it. Zoom's Server-to-Server OAuth app reads
+`/report/meetings/{id}/participants` after a session ends and matches by email —
+`zoomMeetingId` is already on `Sessions`. Matching is imperfect by nature (a different
+email, a phone join), which is why `source: 'staff'` is sticky: the sync writes and updates
+only rows it owns. Progress in the window is attended ÷ the program's session count; the
+founding paper's continuation and graduation criteria can key off the same rows later.
+
+### 13.6 Rendering and caching — these routes are different
+
+Every page behind a login is per-visitor: `force-dynamic`, `Cache-Control: private,
+no-store`, and **never** in the static build table (§ "Static rendering — the two traps" in
+`CLAUDE.md` is about public pages; this is the documented exception). The account link lives
+in the footer, the mobile menu, and contextual links — **not** in the header, which stays
+one row by the 2026-09-18 feedback.
+
+### 13.7 What it touches in code that exists
+
+- `src/collections/hooks/status-email.ts` — the `accepted` branch also creates the account
+  and sends the invite; the same "stamp it, never send twice" discipline applies.
+- `src/lib/email/templates.ts` — four new letters (status link, student invite, instructor
+  invite, password reset) in both languages. The submission confirmation gains one line
+  with the status link, which changes a template the academy is already reviewing.
+- Migrations: `accounts`, `attendance`, the token fields on `applications`. The `activity`
+  `target` enum is a schema change if account sign-ins are logged — decide first
+  (they are not staff writes; a separate register may be the honest answer).
+- `pnpm generate:types` after each collection change; `pnpm generate:importmap` if any
+  admin Cell is added; Neon migrated **before** the next push, per `TODO.md`.
+
+### 13.8 Order of work
+
+1. **The status link** — token on `Applications`, the page, the line in the confirmation
+   letter. No auth at all, and it reaches every applicant immediately.
+2. **`accounts` + the doors** — collection, sign-in / set-password / forgot, the session
+   read in RSC, the empty `/account` shell.
+3. **The student window** — status and documents, sessions and join links, materials,
+   personal information.
+4. **The instructor invite and window** — «أرسل دعوة», their session, upload, bio.
+5. **Attendance by hand** — the collection and the staff marking UI; progress in the window.
+6. **Zoom sync** — S2S OAuth, the report pull, reconciliation that never overwrites staff.
+7. _(held)_ Minbar commenting.

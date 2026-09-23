@@ -1,8 +1,17 @@
-import type { CollectionConfig, Field } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig, Field } from 'payload'
 import { nobody, staffOnly } from '@/access'
+import { mintStatusToken, statusUrl } from '@/lib/applications/status-token'
 import { countryName, countryOptions } from '@/lib/countries'
 import { GENDERS, HEAR_ABOUT } from '@/lib/forms/apply-schema'
 import { sendStatusEmail } from './hooks/status-email'
+
+/**
+ * Every application carries its own follow-up link from the moment it is created, so the
+ * confirmation letter can name it and the applicant never needs an account to see where
+ * they stand. Only on create: a later save must not invalidate a link already sent.
+ */
+const mintOnCreate: CollectionBeforeChangeHook = ({ data, operation }) =>
+  operation === 'create' ? { ...data, ...mintStatusToken() } : data
 
 /**
  * Public create is deliberately `false`: submissions arrive through the apply
@@ -49,7 +58,7 @@ export const Applications: CollectionConfig = {
     },
   },
   access: { read: staffOnly, create: nobody, update: staffOnly, delete: staffOnly },
-  hooks: { afterChange: [sendStatusEmail] },
+  hooks: { beforeChange: [mintOnCreate], afterChange: [sendStatusEmail] },
   defaultSort: '-createdAt',
   fields: [
     {
@@ -288,6 +297,50 @@ export const Applications: CollectionConfig = {
         readOnly: true,
         condition: (data) => !!data?.rejectionEmailSentAt,
         date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm' },
+      },
+    },
+    // The follow-up link (PLAN.md §13.3). The token is the whole secret, so it is never
+    // shown as a field of its own; staff see the finished link, which is what they would
+    // send if an applicant asks for it again.
+    {
+      name: 'statusToken',
+      type: 'text',
+      unique: true,
+      label: { ar: 'رمز متابعة الطلب', en: 'Status link token' },
+      admin: { hidden: true, readOnly: true },
+    },
+    {
+      name: 'statusTokenExpiresAt',
+      type: 'date',
+      label: { ar: 'ينتهي رابط المتابعة في', en: 'Status link expires' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => !!data?.statusTokenExpiresAt,
+        date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm' },
+      },
+    },
+    {
+      name: 'statusLink',
+      type: 'text',
+      virtual: true,
+      label: { ar: 'رابط متابعة الطلب', en: 'Status link' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => !!data?.statusToken,
+        description: {
+          ar: 'الرابط الذي أُرسل مع رسالة الاستلام؛ يرى منه المتقدّم حالة طلبه وحدها. إن انتهت صلاحيته يطلب من الصفحة رابطًا جديدًا يصل إلى بريده.',
+          en: 'The link sent with the confirmation letter; it shows the applicant their own status and nothing else. Once it expires, the page itself sends them a fresh one.',
+        },
+      },
+      hooks: {
+        afterRead: [
+          ({ data }) =>
+            data?.statusToken
+              ? statusUrl(data.statusToken, data.locale === 'en' ? 'en' : 'ar')
+              : undefined,
+        ],
       },
     },
     {

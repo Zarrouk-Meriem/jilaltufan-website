@@ -3,6 +3,7 @@ import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { routing } from './src/i18n/routing'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -15,6 +16,19 @@ const securityHeaders = [
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+]
+
+// The one private route on the public site: an applicant's follow-up page, found by the
+// token in the URL (PLAN.md §13.3). The token *is* the secret, so the URL must not be
+// cached by anything in front of us and must not leave in a Referer header — the page has
+// no outbound links today, and `no-referrer` keeps that true if one is ever added.
+const locales = routing.locales.join('|')
+const privatePage = `/:locale(${locales})/application/:path*`
+// Cache-Control is not here: Next sets its own on app-router pages and ignores this one,
+// so `src/proxy.ts` sets it instead.
+const privateHeaders = [
+  ...securityHeaders.filter((h) => h.key !== 'Referrer-Policy'),
+  { key: 'Referrer-Policy', value: 'no-referrer' },
 ]
 
 const nextConfig: NextConfig = {
@@ -37,7 +51,13 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
-      { source: '/((?!admin|api).*)', headers: securityHeaders },
+      // The private route is excluded here and given its own rule below, so a key is never
+      // set twice on one response.
+      {
+        source: `/((?!admin|api|(?:${locales})/application).*)`,
+        headers: securityHeaders,
+      },
+      { source: privatePage, headers: privateHeaders },
       {
         source: '/admin/:path*',
         headers: securityHeaders.filter((h) => h.key !== 'X-Frame-Options'),

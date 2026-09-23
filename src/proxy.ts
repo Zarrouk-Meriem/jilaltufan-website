@@ -33,9 +33,23 @@ function csp(): string {
   ].join('; ')
 }
 
+/**
+ * The applicant's follow-up page, whose URL *is* the secret (PLAN.md §13.3). Next sets its
+ * own Cache-Control on app-router responses and ignores one set in `next.config.ts`, so
+ * here is the only place it holds — in production. `next dev` overrides it in turn, which
+ * is why the strict value is asserted against a production server, never against dev.
+ */
+const PRIVATE_PATH = new RegExp(`^/(?:${routing.locales.join('|')})/application(?:/|$)`)
+
 export default function proxy(req: NextRequest) {
   const res = intl(req) ?? NextResponse.next()
   res.headers.set('Content-Security-Policy', csp())
+  if (PRIVATE_PATH.test(req.nextUrl.pathname)) {
+    res.headers.set('Cache-Control', 'private, no-store, max-age=0, must-revalidate')
+    // next-intl offers every page as three hreflang alternates. This one has no public
+    // counterpart to offer — publishing the token in two more flavours is pointless.
+    res.headers.delete('Link')
+  }
   if (process.env.NODE_ENV === 'production')
     res.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
   return res

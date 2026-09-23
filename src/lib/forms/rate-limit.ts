@@ -45,6 +45,16 @@ export function createRateLimiter({
 /** 5 submissions per 10 minutes per IP for applications; 3 for contact. */
 export const applyLimiter = createRateLimiter({ capacity: 5, refillPerMs: 5 / (10 * 60_000) })
 export const contactLimiter = createRateLimiter({ capacity: 3, refillPerMs: 3 / (10 * 60_000) })
+/**
+ * Re-issuing an expired follow-up link sends mail to an address we already hold, so the
+ * ceiling is about mail volume, not about guessing: 3 per 10 minutes per IP. Its own bucket
+ * so asking for a link never spends an applicant's submission budget.
+ */
+export const statusLinkLimiter = createRateLimiter({
+  capacity: 3,
+  refillPerMs: 3 / (10 * 60_000),
+  salt: 'jaa-status-link',
+})
 
 /** Best-effort client IP behind common proxies; falls back to a constant so the limiter still applies. */
 export function clientIp(headers: Headers): string {
