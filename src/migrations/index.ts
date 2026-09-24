@@ -19,6 +19,7 @@ import * as migration_20260924_160041_enrollments from './20260924_160041_enroll
 import * as migration_20260924_165855_announcements from './20260924_165855_announcements'
 import * as migration_20260924_183138_certificates from './20260924_183138_certificates'
 import * as migration_20260924_190938_badges from './20260924_190938_badges'
+import * as migration_20260924_205223_staff_tools from './20260924_205223_staff_tools'
 
 export const migrations = [
   {
@@ -125,5 +126,10 @@ export const migrations = [
     up: migration_20260924_190938_badges.up,
     down: migration_20260924_190938_badges.down,
     name: '20260924_190938_badges',
+  },
+  {
+    up: migration_20260924_205223_staff_tools.up,
+    down: migration_20260924_205223_staff_tools.down,
+    name: '20260924_205223_staff_tools',
   },
 ]

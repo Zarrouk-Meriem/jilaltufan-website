@@ -572,9 +572,13 @@ export interface Account {
 export interface Application {
   id: number;
   /**
-   * The applicant is emailed, in their language, on the move to Reviewing (from New only), Accepted, and Waitlisted — once, on the change; each send time appears below. Rejected sends nothing until the send box is ticked.
+   * The applicant is emailed, in their language, on the move to Reviewing (from New only), Accepted, and Waitlisted — once, on the change; each send time appears below. Rejected sends nothing until the send box is ticked; Withdrawn sends nothing. Any status other than Accepted stops the student’s access to their programs.
    */
-  applicationStatus: 'new' | 'reviewing' | 'accepted' | 'waitlisted' | 'rejected';
+  applicationStatus: 'new' | 'reviewing' | 'accepted' | 'waitlisted' | 'rejected' | 'withdrawn';
+  /**
+   * Tick and save to send the student a new link to choose their password. The box clears itself. Nothing is sent to someone who already has a password.
+   */
+  resendInvite?: boolean | null;
   fullName: string;
   gender?: ('female' | 'male') | null;
   dateOfBirth?: string | null;
@@ -2206,6 +2210,7 @@ export interface EventsSelect<T extends boolean = true> {
  */
 export interface ApplicationsSelect<T extends boolean = true> {
   applicationStatus?: T;
+  resendInvite?: T;
   fullName?: T;
   gender?: T;
   dateOfBirth?: T;

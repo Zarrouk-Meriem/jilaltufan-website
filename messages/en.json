@@ -398,14 +398,16 @@
       "reviewing": "Under review",
       "accepted": "Accepted",
       "waitlisted": "Waiting list",
-      "rejected": "Not accepted this time"
+      "rejected": "Not accepted this time",
+      "withdrawn": "Withdrawn"
     },
     "note": {
       "new": "We have your application and it is waiting its turn. Every change appears here, and reaches your inbox at the same moment.",
       "reviewing": "Your application is with the Academy's team. We read every application carefully, and you will have our answer by email within two weeks at most.",
       "accepted": "Your application was accepted — welcome. The details of how the program begins reach you by email.",
       "waitlisted": "Your application is still with us, on the waiting list. There is no need to apply again; we write to you the moment a place opens.",
-      "rejected": "Your application was not accepted this time. You remain welcome to apply in a future intake."
+      "rejected": "Your application was not accepted this time. You remain welcome to apply in a future intake.",
+      "withdrawn": "Your withdrawal from the Academy has been recorded, and you no longer have access to its programs. If this is a mistake, or you would like to return, write to us."
     },
     "expired": {
       "title": "This link has expired",

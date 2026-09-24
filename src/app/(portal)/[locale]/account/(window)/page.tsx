@@ -40,6 +40,7 @@ const STATUS_TONES: Record<string, BadgeTone> = {
   accepted: 'accent',
   waitlisted: 'neutral',
   rejected: 'struck',
+  withdrawn: 'muted',
 }
 
 /** A link to another part of the portal, as a card rather than a line of text. */

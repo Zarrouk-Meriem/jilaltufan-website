@@ -3,6 +3,7 @@ import { nobody, staffOnly } from '@/access'
 import { mintStatusToken, statusUrl } from '@/lib/applications/status-token'
 import { countryName, countryOptions } from '@/lib/countries'
 import { GENDERS, HEAR_ABOUT } from '@/lib/forms/apply-schema'
+import { applicationAccountFollowUps, guardEmailChange } from './hooks/application-account'
 import { sendStatusEmail } from './hooks/status-email'
 
 /**
@@ -58,7 +59,10 @@ export const Applications: CollectionConfig = {
     },
   },
   access: { read: staffOnly, create: nobody, update: staffOnly, delete: staffOnly },
-  hooks: { beforeChange: [mintOnCreate], afterChange: [sendStatusEmail] },
+  hooks: {
+    beforeChange: [mintOnCreate, guardEmailChange],
+    afterChange: [sendStatusEmail, applicationAccountFollowUps],
+  },
   defaultSort: '-createdAt',
   fields: [
     {
@@ -71,8 +75,8 @@ export const Applications: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: {
-          ar: 'يُرسَل بريد إلى المتقدّم بلغته عند الانتقال إلى «قيد المراجعة» (من «جديد» فقط) و«مقبول» و«قائمة انتظار»، مرة واحدة عند التغيير؛ ويظهر وقت كل إرسال أدناه. «مرفوض» لا يُرسل شيئًا إلا بعد تفعيل خانة الإرسال.',
-          en: 'The applicant is emailed, in their language, on the move to Reviewing (from New only), Accepted, and Waitlisted — once, on the change; each send time appears below. Rejected sends nothing until the send box is ticked.',
+          ar: 'يُرسَل بريد إلى المتقدّم بلغته عند الانتقال إلى «قيد المراجعة» (من «جديد» فقط) و«مقبول» و«قائمة انتظار»، مرة واحدة عند التغيير؛ ويظهر وقت كل إرسال أدناه. «مرفوض» لا يُرسل شيئًا إلا بعد تفعيل خانة الإرسال، و«انسحب» لا يُرسل شيئًا. كل حالة غير «مقبول» توقف وصول الطالب إلى برامجه.',
+          en: 'The applicant is emailed, in their language, on the move to Reviewing (from New only), Accepted, and Waitlisted — once, on the change; each send time appears below. Rejected sends nothing until the send box is ticked; Withdrawn sends nothing. Any status other than Accepted stops the student’s access to their programs.',
         },
       },
       options: [
@@ -81,7 +85,33 @@ export const Applications: CollectionConfig = {
         { label: { ar: 'مقبول', en: 'Accepted' }, value: 'accepted' },
         { label: { ar: 'قائمة انتظار', en: 'Waitlisted' }, value: 'waitlisted' },
         { label: { ar: 'مرفوض', en: 'Rejected' }, value: 'rejected' },
+        { label: { ar: 'انسحب', en: 'Withdrawn' }, value: 'withdrawn' },
       ],
+    },
+    {
+      // The account this application opened, and whether it is in use (read-only).
+      name: 'accountPanel',
+      type: 'ui',
+      label: { ar: 'الحساب', en: 'Account' },
+      admin: {
+        position: 'sidebar',
+        condition: (data) => data?.applicationStatus === 'accepted',
+        components: { Field: '@/components/admin/ApplicationAccount#ApplicationAccountField' },
+      },
+    },
+    {
+      name: 'resendInvite',
+      type: 'checkbox',
+      defaultValue: false,
+      label: { ar: 'أعد إرسال الدعوة', en: 'Re-send the invite' },
+      admin: {
+        position: 'sidebar',
+        condition: (data) => data?.applicationStatus === 'accepted',
+        description: {
+          ar: 'فعّلها واحفظ ليصل الطالب رابط جديد لاختيار كلمة السر. تعود الخانة فارغة وحدها. لا يُرسل شيء لمن اختار كلمة سره.',
+          en: 'Tick and save to send the student a new link to choose their password. The box clears itself. Nothing is sent to someone who already has a password.',
+        },
+      },
     },
     {
       type: 'tabs',

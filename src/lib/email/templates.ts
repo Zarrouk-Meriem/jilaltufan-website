@@ -339,6 +339,45 @@ export function passwordResetEmail(locale: Locale, name: string, url: string) {
 }
 
 /**
+ * The activation link on its own: when staff re-send an invite from the application, or
+ * open an account by hand in the admin (awaiting the academy's sign-off — TODO.md).
+ */
+export function accountInviteEmail(locale: Locale, name: string, url: string) {
+  if (locale === 'ar') {
+    const subject = 'حسابك في أكاديمية جيل الطوفان'
+    return {
+      subject,
+      ...wrap(
+        'ar',
+        subject,
+        [
+          `أهلًا ${name}،`,
+          'حسابك في نافذة الأكاديمية بانتظارك. اختر كلمة السر من الرابط أدناه خلال أربع وعشرين ساعة؛ وإن انتهت صلاحيته فافتحه، وسيصلك رابط جديد.',
+          REPLY_AR,
+          SIGN_AR,
+        ],
+        { label: ACTIVATE_AR, href: url },
+      ),
+    }
+  }
+  const subject = 'Your account at Jil Altufan Academy'
+  return {
+    subject,
+    ...wrap(
+      'en',
+      subject,
+      [
+        `Hello ${name},`,
+        'Your account in the Academy’s window is waiting for you. Choose your password from the link below within twenty-four hours; if it has expired, open it anyway and a new one will be sent.',
+        REPLY_EN,
+        SIGN_EN,
+      ],
+      { label: ACTIVATE_EN, href: url },
+    ),
+  }
+}
+
+/**
  * A fresh activation link, sent when someone opens an invite that expired before they chose
  * a password. Only ever sent to the address already on the account (awaiting the academy's
  * sign-off, like the other letters — TODO.md).

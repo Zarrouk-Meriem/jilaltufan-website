@@ -1176,3 +1176,69 @@ test('a guest instructor sees their public profile, read-only, and their session
     data: { instructors: session.instructors ?? [] },
   })
 })
+
+test('staff tools: re-send the invite, correct the address, withdraw, open an account by hand', async ({
+  page,
+}) => {
+  const { api, email, applicationId } = await acceptedApplicant(page)
+  const before = (await findAccount(api, email))!
+
+  // «أعد إرسال الدعوة»: the link goes out again, the stamp moves, the box clears itself.
+  await new Promise((r) => setTimeout(r, 1100))
+  const resent = await api.patch(`/api/applications/${applicationId}`, {
+    data: { resendInvite: true },
+  })
+  expect(resent.ok(), await resent.text()).toBe(true)
+  const app = (await (await api.get(`/api/applications/${applicationId}?depth=0`)).json()) as {
+    resendInvite: boolean
+    statusToken: string
+  }
+  expect(app.resendInvite).toBe(false)
+  const after = (await findAccount(api, email))!
+  expect(new Date(after.inviteSentAt!).getTime()).toBeGreaterThan(
+    new Date(before.inviteSentAt ?? 0).getTime(),
+  )
+
+  // A corrected address reaches the account too; one already in use is refused.
+  const corrected = `playwright-corrected-${Date.now()}@example.com`
+  expect(
+    (await api.patch(`/api/applications/${applicationId}`, { data: { email: corrected } })).ok(),
+  ).toBe(true)
+  expect((await findAccount(api, corrected))?.id).toBe(before.id)
+  const other = await activatedAccount(page)
+  const clash = await api.patch(`/api/applications/${applicationId}`, {
+    data: { email: other.email },
+  })
+  expect(clash.status()).toBe(400)
+  expect(await clash.text()).toContain('هذا البريد مستعمل في حساب آخر')
+  // Back to the address the rest of this file signs in with.
+  expect((await api.patch(`/api/applications/${applicationId}`, { data: { email } })).ok()).toBe(
+    true,
+  )
+  expect((await findAccount(api, email))?.id).toBe(before.id)
+
+  // An account opened by hand in the admin gets its activation letter.
+  expect(
+    (await api.get(`/api/accounts/${other.account.id}?depth=0`).then((r) => r.json())).inviteSentAt,
+  ).toBeTruthy()
+  await api.delete(`/api/accounts/${other.account.id}`)
+  await other.api.dispose()
+
+  // «انسحب»: the status page says so, quietly.
+  expect(
+    (
+      await api.patch(`/api/applications/${applicationId}`, {
+        data: { applicationStatus: 'withdrawn' },
+      })
+    ).ok(),
+  ).toBe(true)
+  await page.goto(`/ar/application/${app.statusToken}`)
+  await expect(page.locator('main')).toContainText('سُجّل انسحابك من الأكاديمية')
+  expect(
+    (
+      await api.patch(`/api/applications/${applicationId}`, {
+        data: { applicationStatus: 'accepted' },
+      })
+    ).ok(),
+  ).toBe(true)
+})

@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { APIError } from 'payload'
-import { accountSelfOrStaff, adminOnly, staffFieldOnly, staffOnly } from '@/access'
+import { accountSelfOrStaff, adminOnly, isStaffUser, staffFieldOnly, staffOnly } from '@/access'
+import { SYSTEM_INVITE, sendAccountInvite } from '@/lib/accounts/invite'
+import type { Account } from '@/payload-types'
 
 /**
  * Everyone who is not staff: a student of the academy, or a guest instructor
@@ -50,6 +52,20 @@ export const Accounts: CollectionConfig = {
     admin: () => false,
   },
   hooks: {
+    // An account a person opened by hand in the admin gets its activation letter, as one
+    // opened by acceptance or a guest's invite does; those mark their own create
+    // (SYSTEM_INVITE) because they write the letter themselves.
+    afterChange: [
+      async ({ doc, operation, req, context }) => {
+        if (operation !== 'create' || context[SYSTEM_INVITE] || !isStaffUser(req)) return doc
+        try {
+          await sendAccountInvite(req.payload, doc as Account, req)
+        } catch (err) {
+          req.payload.logger.error({ msg: 'invite for a hand-made account failed', err })
+        }
+        return doc
+      },
+    ],
     // Their rows go first: enrollments, attendance and badge awards require an account, so the database
     // would otherwise refuse the delete (their links are NOT NULL).
     beforeDelete: [

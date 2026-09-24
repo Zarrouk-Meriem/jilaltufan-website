@@ -34,6 +34,7 @@ const TONES: Record<string, BadgeTone> = {
   accepted: 'accent',
   waitlisted: 'neutral',
   rejected: 'struck',
+  withdrawn: 'muted',
 }
 
 export default async function ApplicationStatusPage({

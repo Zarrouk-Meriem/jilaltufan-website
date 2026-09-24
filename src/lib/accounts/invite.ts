@@ -1,9 +1,17 @@
 import { randomBytes } from 'node:crypto'
 import type { Payload, PayloadRequest, Where } from 'payload'
+import { accountInviteEmail } from '@/lib/email/templates'
 import { SITE_URL } from '@/lib/site'
 import type { Account, Application } from '@/payload-types'
 
 export type AccountLocale = 'ar' | 'en'
+
+/**
+ * Set on the `create` that `inviteAccount` makes, so the accounts' own "opened by hand"
+ * hook knows the system is already writing the letter (acceptance, a guest's invite) and
+ * does not send a second one.
+ */
+export const SYSTEM_INVITE = 'systemInvite'
 
 /** Where an invite or a reset lands: our own page, in the person's language. */
 export const setPasswordUrl = (token: string, locale: AccountLocale): string =>
@@ -82,6 +90,7 @@ export async function inviteAccount(
       collection: 'accounts',
       overrideAccess: true,
       req,
+      context: { [SYSTEM_INVITE]: true },
       data: {
         email,
         password: unknowablePassword(),
@@ -122,4 +131,43 @@ export async function inviteStudentAccount(
     application: application.id,
     req,
   })
+}
+
+/**
+ * Mails the activation link to an account that has not chosen a password yet, and stamps
+ * the send. Used when staff re-send an invite and when they open an account by hand.
+ * Returns whether a letter went out (false when the person already has a password: a
+ * link they did not ask for would only be an invitation for someone else).
+ */
+export async function sendAccountInvite(
+  payload: Payload,
+  account: Account,
+  req?: Partial<PayloadRequest>,
+): Promise<boolean> {
+  if (account.passwordSetAt || account.disabled) return false
+  const token = await mintInviteToken(payload, account.email, req)
+  if (!token) return false
+  const lang: AccountLocale = account.locale === 'en' ? 'en' : 'ar'
+  const letter = accountInviteEmail(
+    lang,
+    account.name || account.email,
+    setPasswordUrl(token, lang),
+  )
+  const settings = await payload.findGlobal({ slug: 'site-settings', depth: 0, req })
+  await payload.sendEmail({
+    to: account.email,
+    replyTo: settings.applicationsEmail || settings.contactEmail,
+    subject: letter.subject,
+    text: letter.text,
+    html: letter.html,
+  })
+  await payload.update({
+    collection: 'accounts',
+    id: account.id,
+    data: { inviteSentAt: new Date().toISOString() },
+    overrideAccess: true,
+    req,
+    context: { [SYSTEM_INVITE]: true },
+  })
+  return true
 }
