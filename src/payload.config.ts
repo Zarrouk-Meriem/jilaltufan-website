@@ -33,6 +33,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { StudentsPage } from './globals/StudentsPage'
 import { logActivity, logGlobalActivity } from './lib/payload/activity'
 import { emailAdapter } from './lib/payload/email'
+import { pinnedDatabaseUrl } from './lib/payload/db-url'
 import { storagePlugins } from './lib/payload/storage'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -125,7 +126,7 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URL || '' },
+    pool: { connectionString: pinnedDatabaseUrl(process.env.DATABASE_URL) },
     migrationDir: path.resolve(dirname, 'migrations'),
   }),
   upload: { limits: { fileSize: 20 * 1024 * 1024 } },
