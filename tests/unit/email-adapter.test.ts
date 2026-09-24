@@ -65,6 +65,32 @@ describe('reserved recipients are never delivered', () => {
     info.mockRestore()
   })
 
+  it.each([
+    ['an application', 'applications@jilaltufan.org'],
+    ['a contact message', 'contact@jilaltufan.org'],
+  ])(
+    'logs the academy copy of %s from a test visitor instead of sending it',
+    async (_, academy) => {
+      const info = vi.spyOn(console, 'info').mockImplementation(() => {})
+      const { sent, adapter } = provider()
+      await withoutReservedRecipients(adapter)({ payload }).sendEmail({
+        to: academy,
+        replyTo: 'playwright-1@example.com',
+        subject: 's',
+      })
+      expect(sent, 'nothing should reach the provider').toEqual([])
+      info.mockRestore()
+    },
+  )
+
+  it('delivers the academy copy from a real visitor, and a letter that replies to the academy', async () => {
+    const { sent, adapter } = provider()
+    const send = withoutReservedRecipients(adapter)({ payload }).sendEmail
+    await send({ to: 'applications@jilaltufan.org', replyTo: 'visitor@gmail.com', subject: 's' })
+    await send({ to: 'visitor@gmail.com', replyTo: 'applications@jilaltufan.org', subject: 's' })
+    expect(sent).toEqual(['applications@jilaltufan.org', 'visitor@gmail.com'])
+  })
+
   it('delivers a real address untouched', async () => {
     const { sent, adapter } = provider()
     await withoutReservedRecipients(adapter)({ payload }).sendEmail({

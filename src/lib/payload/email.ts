@@ -52,8 +52,15 @@ const recipientsOf = (to: unknown): string[] =>
     )
     .filter(Boolean)
 
+const concernsNobody = (addresses: string[]) =>
+  addresses.length > 0 && addresses.every((a) => RESERVED_RECIPIENT.test(a))
+
 /**
- * Anything addressed to a reserved name is written to the log instead of sent.
+ * Anything addressed to a reserved name is written to the log instead of sent — and so is
+ * anything whose reply-to is one: the academy's copy of an application or a contact message
+ * goes to a real mailbox but replies to the visitor, so for a test visitor it is a
+ * notification about nobody. The recipient check alone let those through, and a local e2e
+ * run sent a dozen «طلب التحاق جديد — Playwright…» to applications@ (2026-09-24).
  *
  * The e2e suite applies as `playwright-…@example.com` and then drives the flows that write
  * to an applicant, so a provider configured locally would deliver a bounce per run — which
@@ -74,8 +81,10 @@ export function withoutReservedRecipients(
       ...from,
       name: 'guarded',
       sendEmail: async (message) => {
-        const to = recipientsOf(message.to)
-        if (to.length > 0 && to.every((a) => RESERVED_RECIPIENT.test(a)))
+        if (
+          concernsNobody(recipientsOf(message.to)) ||
+          concernsNobody(recipientsOf(message.replyTo))
+        )
           return log.sendEmail(message)
         return (await provider()).sendEmail(message)
       },
