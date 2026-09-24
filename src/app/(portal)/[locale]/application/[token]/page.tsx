@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { StatusLinkReissue } from '@/components/forms/StatusLinkReissue'
-import { PageIntro } from '@/components/sections/PageIntro'
+import { PortalShell } from '@/components/portal/PortalShell'
+import { Card, Fact, Facts, PageOpening } from '@/components/portal/pieces'
 
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import type { Locale } from '@/i18n/routing'
@@ -50,14 +51,10 @@ export default async function ApplicationStatusPage({
   // old letter in a mailbox would keep answering for as long as the application exists.
   if (application.expired)
     return (
-      <>
-        <PageIntro locale={locale} title={t('title')} intro={t('intro')} />
-        <div className="container-site py-14 md:py-20">
-          <div className="max-w-2xl">
-            <StatusLinkReissue token={token} action={reissueStatusLink} />
-          </div>
-        </div>
-      </>
+      <PortalShell locale={locale}>
+        <PageOpening title={t('title')} intro={t('intro')} />
+        <StatusLinkReissue token={token} action={reissueStatusLink} />
+      </PortalShell>
     )
 
   const settings = await getSiteSettings(locale)
@@ -65,29 +62,26 @@ export default async function ApplicationStatusPage({
   const status = application.status
 
   return (
-    <>
-      <PageIntro locale={locale} title={t('title')} intro={t('intro')} />
-      <div className="container-site py-14 md:py-20">
-        <div className="max-w-2xl">
-          <div className="rounded-brand border border-line p-6 md:p-8">
-            <p className="text-xs font-medium text-ink-500">{t('submitted')}</p>
-            <p className="mt-1 text-md font-medium text-ink-900">{submitted}</p>
-            <p className="mt-6 text-xs font-medium text-ink-500">{t('statusLabel')}</p>
-            <p className="mt-2">
-              <Badge tone={TONES[status] ?? 'neutral'}>{t(`status.${status}`)}</Badge>
-            </p>
-            <p className="mt-4 text-base text-ink-700">{t(`note.${status}`)}</p>
+    <PortalShell locale={locale}>
+      <PageOpening
+        title={t('title')}
+        intro={t('intro')}
+        aside={<Badge tone={TONES[status] ?? 'neutral'}>{t(`status.${status}`)}</Badge>}
+      />
+      <div className="flex flex-col gap-5">
+        <Card title={t('statusLabel')}>
+          <p className="measure text-base text-ink-700">{t(`note.${status}`)}</p>
+        </Card>
+        <Card title={t('submitted')}>
+          <Facts>
+            <Fact label={t('submitted')} value={submitted} />
             {application.program ? (
-              <>
-                <p className="mt-6 text-xs font-medium text-ink-500">{t('programLabel')}</p>
-                <p className="mt-1 text-md font-medium text-ink-900">{application.program}</p>
-              </>
+              <Fact label={t('programLabel')} value={application.program} />
             ) : null}
-          </div>
-
-          <p className="mt-6 text-sm text-ink-500">{t('privateNote')}</p>
-        </div>
+          </Facts>
+        </Card>
+        <p className="text-sm text-ink-500">{t('privateNote')}</p>
       </div>
-    </>
+    </PortalShell>
   )
 }

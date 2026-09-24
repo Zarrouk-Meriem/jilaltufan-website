@@ -9,7 +9,7 @@ import { FileInput } from '@/components/ui/FileInput'
 import { SESSION_FILE_ACCEPT } from '@/lib/forms/session-file-schema'
 import { Loader } from '@/components/ui/Loader'
 import { TextLink } from '@/components/ui/TextLink'
-import type { FormState } from '@/app/(frontend)/[locale]/account/actions'
+import type { FormState } from '@/app/(portal)/[locale]/account/actions'
 
 const idle: FormState = { status: 'idle' }
 

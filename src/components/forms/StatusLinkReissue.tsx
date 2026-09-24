@@ -5,7 +5,7 @@ import { useActionState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
 import { Loader } from '@/components/ui/Loader'
-import type { ReissueResult } from '@/app/(frontend)/[locale]/application/[token]/actions'
+import type { ReissueResult } from '@/app/(portal)/[locale]/application/[token]/actions'
 
 /**
  * The expired follow-up link, and the one button that fixes it. The message replaces the

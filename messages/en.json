@@ -414,6 +414,28 @@
   "account": {
     "title": "Your **account**",
     "intro": "Your place in the Academy: your application, your sessions, your materials.",
+    "nav": {
+      "overview": "Overview",
+      "application": "My application",
+      "sessions": "My sessions",
+      "materials": "My materials",
+      "sentMaterials": "Session materials",
+      "profile": "My details"
+    },
+    "greeting": "Hello {name}",
+    "nextSession": "Your next session",
+    "seeAllSessions": "All your sessions",
+    "seeApplication": "Your application in full",
+    "progressTitle": "Your attendance",
+    "applicationIntro": "Your application as it reached us, and where it stands today.",
+    "sessionsIntro": "Your program’s sessions in Al-Quds time and yours, with the join link when its moment comes.",
+    "materialsIntro": "What the team has published for the students of your program.",
+    "yourDetails": "Your details as you sent them",
+    "jump": {
+      "sessions": "Times and join links",
+      "materials": "Your program’s files and readings",
+      "sentMaterials": "What you have sent, and what to send"
+    },
     "signInTitle": "**Sign in**",
     "signInIntro": "Your account is opened when you are accepted, and the link to choose a password reaches you by email.",
     "email": "Email",
@@ -468,7 +490,9 @@
       "noteHint": "Optional: anything the team should know about this file.",
       "send": "Send",
       "sent": "We have the file. The team will review it and publish it to the students.",
-      "profileNote": "What the instructors page says about you is edited by the team. Write to us if you would like it changed."
+      "profileNote": "What the instructors page says about you is edited by the team. Write to us if you would like it changed.",
+      "alreadySent": "What you have sent",
+      "sendOne": "Send a file"
     },
     "profile": {
       "title": "Your **details**",

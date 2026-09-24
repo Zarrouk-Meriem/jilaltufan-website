@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { SetPasswordForm } from '@/components/forms/AccountForms'
-import { PageIntro } from '@/components/sections/PageIntro'
+import { PortalShell } from '@/components/portal/PortalShell'
+import { PageOpening } from '@/components/portal/pieces'
 import { Callout } from '@/components/ui/Callout'
 import { TextLink } from '@/components/ui/TextLink'
 import type { Locale } from '@/i18n/routing'
@@ -35,22 +36,18 @@ export default async function SetPasswordPage({
   const value = typeof token === 'string' ? token : ''
 
   return (
-    <>
-      <PageIntro locale={locale} title={t('setPassword.title')} intro={t('setPassword.intro')} />
-      <div className="container-site py-14 md:py-20">
-        <div className="max-w-md">
-          {value ? (
-            <SetPasswordForm token={value} action={setPassword} />
-          ) : (
-            <Callout title={t('setPassword.noTokenTitle')}>
-              <p>{t('setPassword.noToken')}</p>
-              <p className="mt-3">
-                <TextLink href="/account/forgot">{t('setPassword.newLink')}</TextLink>
-              </p>
-            </Callout>
-          )}
-        </div>
-      </div>
-    </>
+    <PortalShell locale={locale}>
+      <PageOpening title={t('setPassword.title')} intro={t('setPassword.intro')} />
+      {value ? (
+        <SetPasswordForm token={value} action={setPassword} />
+      ) : (
+        <Callout title={t('setPassword.noTokenTitle')}>
+          <p>{t('setPassword.noToken')}</p>
+          <p className="mt-3">
+            <TextLink href="/account/forgot">{t('setPassword.newLink')}</TextLink>
+          </p>
+        </Callout>
+      )}
+    </PortalShell>
   )
 }

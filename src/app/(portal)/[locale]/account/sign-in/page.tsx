@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { SignInForm } from '@/components/forms/AccountForms'
-import { PageIntro } from '@/components/sections/PageIntro'
+import { PortalShell } from '@/components/portal/PortalShell'
+import { PageOpening } from '@/components/portal/pieces'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { getAccount } from '@/lib/auth/account'
@@ -28,13 +29,9 @@ export default async function SignInPage({ params }: PageProps<'/[locale]/accoun
   if (await getAccount()) redirect(`/${locale}/account`)
 
   return (
-    <>
-      <PageIntro locale={locale} title={t('signInTitle')} intro={t('signInIntro')} />
-      <div className="container-site py-14 md:py-20">
-        <div className="max-w-md">
-          <SignInForm action={signIn} />
-        </div>
-      </div>
-    </>
+    <PortalShell locale={locale}>
+      <PageOpening title={t('signInTitle')} intro={t('signInIntro')} />
+      <SignInForm action={signIn} />
+    </PortalShell>
   )
 }

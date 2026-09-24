@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ForgotForm } from '@/components/forms/AccountForms'
-import { PageIntro } from '@/components/sections/PageIntro'
+import { PortalShell } from '@/components/portal/PortalShell'
+import { PageOpening } from '@/components/portal/pieces'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { requestReset } from '../actions'
@@ -23,13 +24,9 @@ export default async function ForgotPage({ params }: PageProps<'/[locale]/accoun
   const t = await getTranslations('account')
 
   return (
-    <>
-      <PageIntro locale={locale} title={t('forgot.title')} intro={t('forgot.intro')} />
-      <div className="container-site py-14 md:py-20">
-        <div className="max-w-md">
-          <ForgotForm action={requestReset} />
-        </div>
-      </div>
-    </>
+    <PortalShell locale={locale}>
+      <PageOpening title={t('forgot.title')} intro={t('forgot.intro')} />
+      <ForgotForm action={requestReset} />
+    </PortalShell>
   )
 }
