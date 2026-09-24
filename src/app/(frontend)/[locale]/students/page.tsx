@@ -241,7 +241,7 @@ export default async function StudentsPage({
             <div className="rounded-brand border border-line bg-paper-2 p-6" aria-disabled="true">
               <div className="flex items-center justify-between gap-3">
                 <span className="inline-flex items-center gap-2 text-md font-semibold text-ink-900">
-                  <Icon name="lock" className="size-4 text-navy-800" />
+                  <Icon name="lock" className="size-4 text-navy-900" />
                   {t('students.accountTitle')}
                 </span>
                 <Badge tone="muted">{t('students.accountSoon')}</Badge>

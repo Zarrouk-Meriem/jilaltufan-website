@@ -21,7 +21,7 @@ export function MaterialRow({
   const icon: IconName = type === 'pdf' ? 'file' : type === 'link' ? 'external' : 'book'
   return (
     <div className="flex items-start gap-4 py-5">
-      <Icon name={icon} className="mt-1 size-5 text-navy-800" />
+      <Icon name={icon} className="mt-1 size-5 text-navy-900" />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-md font-semibold text-ink-900">{title}</h3>

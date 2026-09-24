@@ -17,7 +17,7 @@ export function AddToCalendar({
 }) {
   return (
     <span className={cn('inline-flex flex-wrap items-center gap-x-4 gap-y-1 text-sm', className)}>
-      <Icon name="calendar-plus" className="size-4 text-navy-800" />
+      <Icon name="calendar-plus" className="size-4 text-navy-900" />
       <a
         href={icsHref}
         className="link-grow relative inline-flex min-h-6 items-center text-ink-700 hover:text-ink-900"

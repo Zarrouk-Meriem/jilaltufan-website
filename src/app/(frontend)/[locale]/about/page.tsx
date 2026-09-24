@@ -113,7 +113,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                         key={p.id ?? i}
                         className="rounded-brand border border-line p-5 transition-colors duration-200 ease-brand hover:border-ink-900"
                       >
-                        <Icon name={icon} className="size-6 text-navy-800" />
+                        <Icon name={icon} className="size-6 text-navy-900" />
                         <h3 className="mt-4 text-base font-semibold text-ink-900">{p.title}</h3>
                         {p.text ? (
                           <p className="mt-2 text-sm leading-relaxed text-ink-700">{p.text}</p>

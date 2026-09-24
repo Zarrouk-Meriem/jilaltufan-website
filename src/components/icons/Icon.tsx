@@ -201,8 +201,11 @@ export function Icon({ name, tone = 'duo', direction, className, ...rest }: Icon
       ? DIRECTION[name][direction ?? (name === 'arrow' ? 'forward' : 'down')]
       : undefined
   return (
+    // `data-icon` names it in the DOM, so the colour guard in `tests/e2e/icons.spec.ts`
+    // can find every icon the site actually renders rather than trusting each call site.
     <svg
       aria-hidden
+      data-icon={name}
       viewBox="0 0 24 24"
       width={24}
       height={24}
