@@ -387,6 +387,7 @@ export interface Media {
    * Short description for screen readers. Required.
    */
   alt: string;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1078,6 +1079,7 @@ export interface ApplicationFile {
    * The application this file was attached to — what lets its own applicant download it from their window.
    */
   application?: (number | null) | Application;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1337,6 +1339,7 @@ export interface SessionFile {
   sender?: (number | null) | Account;
   originalName?: string | null;
   note?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1440,6 +1443,7 @@ export interface Export {
     | number
     | boolean
     | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1477,6 +1481,7 @@ export interface Import {
       | boolean
       | null;
   };
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -2003,6 +2008,7 @@ export interface ApplicationFilesSelect<T extends boolean = true> {
   applicant?: T;
   originalName?: T;
   application?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2022,6 +2028,7 @@ export interface SessionFilesSelect<T extends boolean = true> {
   sender?: T;
   originalName?: T;
   note?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2105,6 +2112,7 @@ export interface AccountsSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2184,6 +2192,7 @@ export interface ExportsSelect<T extends boolean = true> {
   fields?: T;
   collectionSlug?: T;
   where?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2214,6 +2223,7 @@ export interface ImportsSelect<T extends boolean = true> {
         issues?: T;
         issueDetails?: T;
       };
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

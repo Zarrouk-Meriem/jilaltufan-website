@@ -14,6 +14,7 @@ import * as migration_20260923_161608_accounts from './20260923_161608_accounts'
 import * as migration_20260923_174358_application_file_owner from './20260923_174358_application_file_owner'
 import * as migration_20260923_201816_instructor_invite from './20260923_201816_instructor_invite'
 import * as migration_20260923_204202_attendance from './20260923_204202_attendance'
+import * as migration_20260924_071126_storage_prefix_always from './20260924_071126_storage_prefix_always'
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20260923_204202_attendance.up,
     down: migration_20260923_204202_attendance.down,
     name: '20260923_204202_attendance',
+  },
+  {
+    up: migration_20260924_071126_storage_prefix_always.up,
+    down: migration_20260924_071126_storage_prefix_always.down,
+    name: '20260924_071126_storage_prefix_always',
   },
 ]
