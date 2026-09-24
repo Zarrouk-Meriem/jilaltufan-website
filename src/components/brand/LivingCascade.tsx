@@ -2,11 +2,12 @@
 
 import { useEffect, useRef } from 'react'
 import { cn } from '@/lib/cn'
+import { cascadeLight } from './cascade-light'
 
 /**
  * The hero's art: the designer's cascade of interlocking marks, large, at the
  * top-left corner and bleeding out of the frame, lit by a gradient that follows
- * the pointer. The cascade is a mask; the gradient's centre is --px/--py on this element, set
+ * the pointer, scaled onto the strokes so it never leaves them (`cascade-light.ts`). The cascade is a mask; the gradient's centre is --px/--py on this element, set
  * from `pointermove` on the parent surface (this layer takes no events); the light
  * moves by transform only (`living-mark` in `patterns.css`). A client leaf
  * only because of the listener; it renders nothing for assistive tech.
@@ -29,28 +30,43 @@ export function LivingCascade({
       if (frame) return
       frame = requestAnimationFrame(() => {
         frame = 0
-        const r = el.getBoundingClientRect()
+        const r = host.getBoundingClientRect()
         if (!r.width || !r.height) return
         // The layer may be mirrored or rotated into its corner; map the pointer through
-        // the same transform so the light still lands under it.
+        // the same transform so the light still moves the way the pointer does.
         const m = /matrix\(([^)]+)\)/.exec(getComputedStyle(el).transform)?.[1]?.split(',')
         const flipX = Number(m?.[0] ?? 1) < 0
         const flipY = Number(m?.[3] ?? 1) < 0
-        const x = (e.clientX - r.left) / r.width
-        const y = (e.clientY - r.top) / r.height
-        el.style.setProperty('--px', `${((flipX ? 1 - x : x) * 100).toFixed(1)}%`)
-        el.style.setProperty('--py', `${((flipY ? 1 - y : y) * 100).toFixed(1)}%`)
+        const { px, py } = cascadeLight(
+          (e.clientX - r.left) / r.width,
+          (e.clientY - r.top) / r.height,
+          flipX,
+          flipY,
+        )
+        el.style.setProperty('--px', `${px.toFixed(1)}%`)
+        el.style.setProperty('--py', `${py.toFixed(1)}%`)
       })
     }
     const onLeave = () => {
+      if (frame) cancelAnimationFrame(frame)
+      frame = 0
       el.style.removeProperty('--px')
       el.style.removeProperty('--py')
     }
+    const onHidden = () => {
+      if (document.visibilityState === 'hidden') onLeave()
+    }
     host.addEventListener('pointermove', onMove, { passive: true })
     host.addEventListener('pointerleave', onLeave)
+    // The pointer can leave without a pointerleave (switching window or tab); the
+    // light goes back to rest then too.
+    window.addEventListener('blur', onLeave)
+    document.addEventListener('visibilitychange', onHidden)
     return () => {
       host.removeEventListener('pointermove', onMove)
       host.removeEventListener('pointerleave', onLeave)
+      window.removeEventListener('blur', onLeave)
+      document.removeEventListener('visibilitychange', onHidden)
       if (frame) cancelAnimationFrame(frame)
     }
   }, [])
