@@ -8,7 +8,9 @@ import { stripAccent } from '@/lib/accent'
 import { getSiteSettings } from '@/lib/queries'
 import { submitContact } from './actions'
 
-export const dynamic = 'force-dynamic'
+// Static, refreshed like the other settings-driven pages; the submit is a server
+// action with its own per-request checks. Was forced dynamic (no-store, ≈160 ms TTFB).
+export const revalidate = 60
 
 export async function generateMetadata({
   params,

@@ -271,6 +271,20 @@ test('a student edits their own name, and changes their password with the old on
   expect(login.status()).toBe(200)
 })
 
+/**
+ * Guests made by a test are deleted after it, with the account the invite opened: they
+ * are published, so every run used to leave another public profile behind (126 of them
+ * in the local database by 2026-09-24, each one a prerendered page in every build).
+ */
+const madeGuests: { api: APIRequestContext; instructorId: number; email: string }[] = []
+test.afterEach(async () => {
+  for (const { api, instructorId, email } of madeGuests.splice(0)) {
+    await api.delete(`/api/accounts?where[email][equals]=${encodeURIComponent(email)}`)
+    await api.delete(`/api/instructors/${instructorId}`)
+    await api.dispose()
+  }
+})
+
 /** A guest instructor, invited from their profile the way staff would. */
 async function invitedInstructor(page: Page) {
   const api = await staffApi(page)
@@ -287,6 +301,7 @@ async function invitedInstructor(page: Page) {
   })
   expect(created.status(), await created.text()).toBe(201)
   const instructor = (await created.json()).doc as { id: number }
+  madeGuests.push({ api, instructorId: instructor.id, email })
 
   const found = await api.get(`/api/accounts?where[email][equals]=${encodeURIComponent(email)}`)
   const account = ((await found.json()).docs as Account[])[0]

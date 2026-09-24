@@ -13,8 +13,10 @@ import { submitApplication } from './actions'
 /**
  * One application for the whole academy: a visitor applies once, and the program
  * is chosen after acceptance (staff set it on the record). No program chooser here.
+ * Static: nothing on the page depends on the request (the draft lives in the browser,
+ * the submit is a server action with its own per-request checks). It was forced
+ * dynamic, so every visit rendered it afresh with `no-store` (≈200 ms TTFB).
  */
-export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({
   params,

@@ -44,6 +44,8 @@ export const revalidate = 60
  */
 const HERO_BOX = 'md:start-[40%] [--edge:right] rtl:[--edge:left]'
 const HERO_EDGE = 'linear-gradient(to var(--edge), transparent, #000 30%)'
+/** Tailwind's `xl`: where the silhouette mask switches to the 1920 file. */
+const CUTOUT_XL = 1280
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const { locale } = await params
@@ -141,14 +143,42 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         {heroImage && heroCutout ? (
           // The same photograph again, masked to the subject's silhouette, so the subject
           // looks exactly like the layer below it and simply covers the cascade.
+          // A CSS mask has no srcset, so the width is chosen by breakpoint: 1920 only on
+          // wide frames, 1080 below (still finer than the ~750 px photo a phone gets).
+          // Every phone used to fetch the 1920 file, and the masked layer — the hero's
+          // largest paint — waited for it (live Lighthouse, 2026-09-24: 113 kB, 4.4 s).
+          // Preloaded per breakpoint in CORS mode, the mode a mask image is fetched in.
           <div
             aria-hidden
             className={cn(
               'absolute inset-0 mask-intersect mask-cover mask-position-[35%_0%] mask-no-repeat rtl:mask-position-[65%_0%]',
+              '[--cutout:var(--cutout-sm)] xl:[--cutout:var(--cutout-xl)]',
               HERO_BOX,
             )}
-            style={{ maskImage: `url(${optimizedImageUrl(heroCutout.src, 1920)}), ${HERO_EDGE}` }}
+            style={
+              {
+                '--cutout-sm': `url(${optimizedImageUrl(heroCutout.src, 1080)})`,
+                '--cutout-xl': `url(${optimizedImageUrl(heroCutout.src, 1920)})`,
+                maskImage: `var(--cutout), ${HERO_EDGE}`,
+              } as React.CSSProperties
+            }
           >
+            <link
+              rel="preload"
+              as="image"
+              href={optimizedImageUrl(heroCutout.src, 1080)}
+              media={`(max-width: ${CUTOUT_XL - 0.02}px)`}
+              crossOrigin="anonymous"
+              fetchPriority="high"
+            />
+            <link
+              rel="preload"
+              as="image"
+              href={optimizedImageUrl(heroCutout.src, 1920)}
+              media={`(min-width: ${CUTOUT_XL}px)`}
+              crossOrigin="anonymous"
+              fetchPriority="high"
+            />
             <DuotoneImage
               src={heroImage.src}
               alt=""
