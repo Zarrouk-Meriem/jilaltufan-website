@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
+import { AnnouncementList } from '@/components/portal/AnnouncementList'
 import { SessionRow } from '@/components/sections/SessionRow'
 import { Card, PageOpening, Progress, QuickLinks } from '@/components/portal/pieces'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
@@ -12,6 +13,7 @@ import type { Locale } from '@/i18n/routing'
 import { getAccount } from '@/lib/auth/account'
 import { enrolledPrograms } from '@/lib/enrollment/access'
 import {
+  getAccountAnnouncements,
   getAccountApplication,
   getAccountInstructor,
   getAccountProgress,
@@ -79,6 +81,7 @@ export default async function OverviewPage({ params }: PageProps<'/[locale]/acco
   const sessions = instructor
     ? await getInstructorSessions(instructor, locale)
     : await getAccountSessions(programs, locale)
+  const announcements = await getAccountAnnouncements(programs, locale, 3)
   const progresses = (
     await Promise.all(
       programs.map(async (program) => {
@@ -127,6 +130,21 @@ export default async function OverviewPage({ params }: PageProps<'/[locale]/acco
             <p className="mt-5">
               <TextLink href="/account/application">{t('account.seeApplication')}</TextLink>
             </p>
+          </Card>
+        ) : null}
+
+        {announcements.length ? (
+          <Card title={t('account.announcements.latest')}>
+            <AnnouncementList
+              items={announcements}
+              locale={locale}
+              academyZone={tz}
+              labels={{
+                forAll: t('account.announcements.forAll'),
+                read: t('account.announcements.read'),
+              }}
+              fallbackSlug={programs[0]?.slug}
+            />
           </Card>
         ) : null}
 

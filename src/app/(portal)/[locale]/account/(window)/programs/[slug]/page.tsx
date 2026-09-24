@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
+import { AnnouncementList } from '@/components/portal/AnnouncementList'
 import { MaterialRow } from '@/components/sections/MaterialRow'
 import { SessionRow } from '@/components/sections/SessionRow'
 import { Card, PageOpening, Progress } from '@/components/portal/pieces'
@@ -10,6 +11,7 @@ import type { Locale } from '@/i18n/routing'
 import { getAccount } from '@/lib/auth/account'
 import { enrolledPrograms } from '@/lib/enrollment/access'
 import {
+  getAccountAnnouncements,
   getAccountMaterials,
   getAccountProgress,
   getAccountSessions,
@@ -48,12 +50,13 @@ export default async function MyProgramPage({
   const mine = (await enrolledPrograms(account, locale)).find((p) => p.slug === slug)
   if (!mine) redirect(`/${locale}/account/programs`)
 
-  const [program, settings, sessions, materials, progress] = await Promise.all([
+  const [program, settings, sessions, materials, progress, announcements] = await Promise.all([
     getProgramBySlug(locale, slug),
     getSiteSettings(locale),
     getAccountSessions([mine], locale),
     getAccountMaterials([mine], locale),
     getAccountProgress(account, mine),
+    getAccountAnnouncements([mine], locale),
   ])
   const welcome = (await searchParams).enrolled === '1'
   const tz = settings.academyTimeZone
@@ -75,6 +78,23 @@ export default async function MyProgramPage({
             {t('account.programs.page.welcome')}
           </p>
         ) : null}
+
+        <Card title={t('account.announcements.title')}>
+          {announcements.length ? (
+            <AnnouncementList
+              items={announcements}
+              locale={locale}
+              academyZone={tz}
+              labels={{
+                forAll: t('account.announcements.forAll'),
+                read: t('account.announcements.read'),
+              }}
+              full
+            />
+          ) : (
+            <p className="text-sm text-ink-500">{t('account.announcements.none')}</p>
+          )}
+        </Card>
 
         {progress ? (
           <Card title={t('account.progressTitle')}>

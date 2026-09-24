@@ -16,6 +16,7 @@ import * as migration_20260923_201816_instructor_invite from './20260923_201816_
 import * as migration_20260923_204202_attendance from './20260923_204202_attendance'
 import * as migration_20260924_071126_storage_prefix_always from './20260924_071126_storage_prefix_always'
 import * as migration_20260924_160041_enrollments from './20260924_160041_enrollments'
+import * as migration_20260924_165855_announcements from './20260924_165855_announcements'
 
 export const migrations = [
   {
@@ -107,5 +108,10 @@ export const migrations = [
     up: migration_20260924_160041_enrollments.up,
     down: migration_20260924_160041_enrollments.down,
     name: '20260924_160041_enrollments',
+  },
+  {
+    up: migration_20260924_165855_announcements.up,
+    down: migration_20260924_165855_announcements.down,
+    name: '20260924_165855_announcements',
   },
 ]

@@ -595,6 +595,13 @@
         "noMaterials": "No materials for this program yet.",
         "back": "All programs"
       }
+    },
+    "announcements": {
+      "title": "Announcements",
+      "latest": "Latest announcements",
+      "none": "No announcements yet.",
+      "forAll": "For every student",
+      "read": "Read on the program page"
     }
   },
   "students": {

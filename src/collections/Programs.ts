@@ -48,16 +48,18 @@ export const Programs: CollectionConfig = {
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },
   hooks: {
-    // A program's enrollments require it (NOT NULL), so they go first; nothing else is
-    // lost with them that the program's own deletion does not already take.
+    // A program's enrollments require it (NOT NULL), so they go first. Its announcements go
+    // too: left behind with an empty program they would read as "for every student" and
+    // reach people they were never written for.
     beforeDelete: [
       async ({ id, req }) => {
-        await req.payload.delete({
-          collection: 'enrollments',
-          where: { program: { equals: id } },
-          overrideAccess: true,
-          req,
-        })
+        for (const collection of ['enrollments', 'announcements'] as const)
+          await req.payload.delete({
+            collection,
+            where: { program: { equals: id } },
+            overrideAccess: true,
+            req,
+          })
       },
     ],
   },

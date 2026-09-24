@@ -830,7 +830,11 @@ test('an accepted student chooses Open Training and one directed program', async
   await trigger.click()
   await dialog.getByLabel('قرأت الشروط والسياسات وأوافق عليها.').check()
   await confirm.click()
-  await expect(page).toHaveURL(new RegExp(`/ar/account/programs/${chosen!.slug}\\?enrolled=1$`))
+  // A server action, a redirect and a first render: under a full four-worker suite this has
+  // taken 6.5 s (2026-09-24), past the default 5 s.
+  await expect(page).toHaveURL(new RegExp(`/ar/account/programs/${chosen!.slug}\\?enrolled=1$`), {
+    timeout: 15_000,
+  })
   await expect(page.getByRole('status')).toContainText('سُجّلت في البرنامج')
   await expect(page.locator('main h1')).toHaveText(chosen!.title)
   await page.screenshot({ path: `${SHOTS}/program-ar-1280.png`, fullPage: true })
@@ -845,7 +849,7 @@ test('an accepted student chooses Open Training and one directed program', async
   await openCard.getByRole('button', { name: 'التسجيل مجانًا' }).click()
   await dialog.getByLabel('قرأت الشروط والسياسات وأوافق عليها.').check()
   await dialog.getByRole('button', { name: 'أؤكّد التسجيل' }).click()
-  await expect(page.getByRole('status')).toContainText('سُجّلت في البرنامج')
+  await expect(page.getByRole('status')).toContainText('سُجّلت في البرنامج', { timeout: 15_000 })
 
   await page.goto('/ar/account/programs')
   await page.screenshot({ path: `${SHOTS}/programs-enrolled-ar-1280.png`, fullPage: true })
@@ -868,4 +872,95 @@ test('a student who is not accepted is told why, and offered nothing to click', 
   await expect(page.getByRole('button', { name: 'التسجيل مجانًا' })).toHaveCount(0)
   await api.delete(`/api/accounts/${account.id}`)
   await api.dispose()
+})
+
+/** A one-paragraph body in the rich-text shape Payload stores. */
+const paragraph = (text: string) => ({
+  root: {
+    type: 'root',
+    direction: 'rtl',
+    format: '',
+    indent: 0,
+    version: 1,
+    children: [
+      {
+        type: 'paragraph',
+        direction: 'rtl',
+        format: '',
+        indent: 0,
+        version: 1,
+        children: [{ type: 'text', text, version: 1 }],
+      },
+    ],
+  },
+})
+
+test('announcements reach the students of their program, and nobody else', async ({ page }) => {
+  const { api, email } = await acceptedApplicant(page)
+  const account = await findAccount(api, email)
+  const password = `pw-${Date.now()}-playwright`
+  expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
+  const program = await programWithSessions(api)
+  await enroll(api, account!.id, program.id)
+  const mine = (
+    await (
+      await api.get(
+        `/api/enrollments?where[account][equals]=${account!.id}&where[state][equals]=enrolled&depth=0`,
+      )
+    ).json()
+  ).docs.map((r: { program: number }) => r.program) as number[]
+  const others = (await (await api.get('/api/programs?limit=50&depth=0')).json()).docs as {
+    id: number
+    track: string
+  }[]
+  const elsewhere = others.find((p) => p.track !== 'projects' && !mine.includes(p.id))!
+
+  const stamp = Date.now()
+  const post = async (title: string, data: Record<string, unknown>) => {
+    const res = await api.post('/api/announcements?locale=ar', {
+      data: { title, body: paragraph(`نص ${title}`), status: 'published', ...data },
+    })
+    expect(res.status(), await res.text()).toBe(201)
+    return ((await res.json()).doc as { id: number }).id
+  }
+  const forProgram = `إعلان البرنامج ${stamp}`
+  const forAll = `إعلان للجميع ${stamp}`
+  const forOthers = `إعلان لبرنامج آخر ${stamp}`
+  const draft = `مسودة ${stamp}`
+  const ids = [
+    await post(forProgram, { program: program.id }),
+    await post(forAll, {}),
+    await post(forOthers, { program: elsewhere.id }),
+    await post(draft, { program: program.id, status: 'draft' }),
+  ]
+
+  await signInAs(page, email, password)
+  await expect(page).toHaveURL(/\/ar\/account$/)
+  const main = page.locator('main')
+  await expect(main).toContainText(forProgram)
+  await expect(main).toContainText(forAll)
+  await expect(main).not.toContainText(forOthers)
+  await expect(main).not.toContainText(draft)
+
+  const slug = (
+    (await (await api.get(`/api/programs/${program.id}?depth=0`)).json()) as {
+      slug: string
+    }
+  ).slug
+  await page.goto(`/ar/account/programs/${slug}`)
+  await expect(main).toContainText(`نص ${forProgram}`)
+  await expect(main.locator('li').filter({ hasText: forAll })).toContainText('لكل الطلبة')
+  await expect(main).not.toContainText(forOthers)
+  await expect(main).not.toContainText(draft)
+
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.screenshot({ path: `${SHOTS}/announcements-ar-1280.png`, fullPage: true })
+  await page.goto('/ar/account')
+  await page.screenshot({ path: `${SHOTS}/overview-announcements-ar-1280.png`, fullPage: true })
+
+  // Not a public collection: a signed-in student cannot list them over the API.
+  const listed = await page.request.get('/api/announcements')
+  expect([401, 403]).toContain(listed.status())
+
+  for (const id of ids) await api.delete(`/api/announcements/${id}`)
 })

@@ -1,7 +1,7 @@
 import type { Where } from 'payload'
 import { cache } from 'react'
 import type { Locale } from '@/i18n/routing'
-import type { Account, Application, Instructor, Material } from '@/payload-types'
+import type { Account, Announcement, Application, Instructor, Material } from '@/payload-types'
 import type { EnrolledProgram } from '@/lib/enrollment/access'
 import type { PublicSession } from './sessions'
 import { getClient } from './client'
@@ -201,5 +201,58 @@ export const getAccountProgress = cache(
     ])
     if (total.totalDocs === 0) return null
     return { attended: attended.totalDocs, excused: excused.totalDocs, total: total.totalDocs }
+  },
+)
+
+export type AccountAnnouncement = {
+  id: number
+  title: string
+  body: Announcement['body']
+  publishedAt: string
+  /** The program it was posted to, or null when it is for every enrolled student. */
+  program: { title: string; slug: string } | null
+}
+
+/**
+ * The announcements a student may read: published, dated now or earlier, posted to one of
+ * the programs they may open (`enrolledPrograms`) or to everyone. A student enrolled in
+ * nothing reads none — "everyone" means every enrolled student, not every account.
+ */
+export const getAccountAnnouncements = cache(
+  async (
+    programs: EnrolledProgram[],
+    locale: Locale,
+    limit = 20,
+  ): Promise<AccountAnnouncement[]> => {
+    if (!programs.length) return []
+    const payload = await getClient()
+    const res = await payload.find({
+      collection: 'announcements',
+      where: {
+        and: [
+          { status: { equals: 'published' } },
+          { publishedAt: { less_than_equal: new Date().toISOString() } },
+          {
+            or: [{ program: { in: programs.map((p) => p.id) } }, { program: { exists: false } }],
+          },
+        ],
+      },
+      sort: '-publishedAt',
+      depth: 1,
+      limit,
+      locale,
+      fallbackLocale: 'ar',
+      overrideAccess: true,
+    })
+    return res.docs.map((d) => {
+      const p = typeof d.program === 'object' && d.program ? d.program : null
+      return {
+        id: d.id,
+        title: d.title,
+        body: d.body,
+        publishedAt: d.publishedAt,
+        program: p ? { title: p.title, slug: p.slug } : null,
+      }
+    })
   },
 )

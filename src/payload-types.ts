@@ -72,6 +72,7 @@ export interface Config {
     sessions: Session;
     attendance: Attendance;
     enrollments: Enrollment;
+    announcements: Announcement;
     instructors: Instructor;
     projects: Project;
     'minbar-posts': MinbarPost;
@@ -104,6 +105,7 @@ export interface Config {
     sessions: SessionsSelect<false> | SessionsSelect<true>;
     attendance: AttendanceSelect<false> | AttendanceSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
+    announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
     instructors: InstructorsSelect<false> | InstructorsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'minbar-posts': MinbarPostsSelect<false> | MinbarPostsSelect<true>;
@@ -1139,6 +1141,42 @@ export interface Enrollment {
   createdAt: string;
 }
 /**
+ * Announcements for the students of a program, shown on the program's page in the student window. Leave the program empty to reach every enrolled student.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcements".
+ */
+export interface Announcement {
+  id: number;
+  title: string;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Empty means: every student enrolled in any program.
+   */
+  program?: (number | null) | Program;
+  publishedAt: string;
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects".
  */
@@ -1401,6 +1439,7 @@ export interface Activity {
     | 'sessions'
     | 'attendance'
     | 'enrollments'
+    | 'announcements'
     | 'instructors'
     | 'projects'
     | 'minbar-posts'
@@ -1649,6 +1688,10 @@ export interface PayloadLockedDocument {
         value: number | Enrollment;
       } | null)
     | ({
+        relationTo: 'announcements';
+        value: number | Announcement;
+      } | null)
+    | ({
         relationTo: 'instructors';
         value: number | Instructor;
       } | null)
@@ -1840,6 +1883,19 @@ export interface EnrollmentsSelect<T extends boolean = true> {
   state?: T;
   source?: T;
   agreedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcements_select".
+ */
+export interface AnnouncementsSelect<T extends boolean = true> {
+  title?: T;
+  body?: T;
+  program?: T;
+  publishedAt?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2863,6 +2919,7 @@ export interface TaskCreateCollectionExport {
       | 'sessions'
       | 'attendance'
       | 'enrollments'
+      | 'announcements'
       | 'instructors'
       | 'projects'
       | 'minbar-posts'

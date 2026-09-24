@@ -12,6 +12,7 @@ import { Accounts } from './collections/Accounts'
 import { Activity } from './collections/Activity'
 import { ApplicationFiles } from './collections/ApplicationFiles'
 import { Applications } from './collections/Applications'
+import { Announcements } from './collections/Announcements'
 import { Attendance } from './collections/Attendance'
 import { Enrollments } from './collections/Enrollments'
 import { ContactMessages } from './collections/ContactMessages'
@@ -55,6 +56,7 @@ const collections = [
   Sessions,
   Attendance,
   Enrollments,
+  Announcements,
   Instructors,
   Projects,
   MinbarPosts,
