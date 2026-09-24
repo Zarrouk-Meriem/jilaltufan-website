@@ -1381,6 +1381,7 @@ export interface Material {
   session?: (number | null) | Session;
   type: 'pdf' | 'link' | 'reading';
   file?: (number | null) | Media;
+  sessionFile?: (number | null) | SessionFile;
   url?: string | null;
   description?: string | null;
   /**
@@ -1393,6 +1394,38 @@ export interface Material {
   isPlaceholder?: boolean | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * What guest instructors send for their sessions. Students see none of it until the team publishes it as a material.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "session-files".
+ */
+export interface SessionFile {
+  id: number;
+  session?: (number | null) | Session;
+  sender?: (number | null) | Account;
+  originalName?: string | null;
+  note?: string | null;
+  /**
+   * The instructor sees this in their window. «Published» is set by the box below; «Not published» is for a file that will not be.
+   */
+  review: 'pending' | 'published' | 'declined';
+  /**
+   * Tick and save: a published material is created for this session and its program, named after the file (edit the title on the material if you like). Only a PDF publishes in one step; convert a Word or PowerPoint file to PDF first.
+   */
+  publish?: boolean | null;
+  material?: (number | null) | Material;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
 }
 /**
  * The Jil Altufan Camp (type "camp"), activities, and seminars.
@@ -1470,29 +1503,6 @@ export interface Event {
   isPlaceholder?: boolean | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * What guest instructors send for their sessions. Students see none of it until the team publishes it as a material.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "session-files".
- */
-export interface SessionFile {
-  id: number;
-  session?: (number | null) | Session;
-  sender?: (number | null) | Account;
-  originalName?: string | null;
-  note?: string | null;
-  prefix?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2147,6 +2157,7 @@ export interface MaterialsSelect<T extends boolean = true> {
   session?: T;
   type?: T;
   file?: T;
+  sessionFile?: T;
   url?: T;
   description?: T;
   status?: T;
@@ -2271,6 +2282,9 @@ export interface SessionFilesSelect<T extends boolean = true> {
   sender?: T;
   originalName?: T;
   note?: T;
+  review?: T;
+  publish?: T;
+  material?: T;
   prefix?: T;
   updatedAt?: T;
   createdAt?: T;

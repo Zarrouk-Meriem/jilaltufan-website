@@ -508,7 +508,12 @@
       "sendOne": "Send a file",
       "profileTitle": "Your profile on the instructors page",
       "publicPage": "See your public page",
-      "forSession": "For {session}"
+      "forSession": "For {session}",
+      "review": {
+        "pending": "Awaiting review",
+        "published": "Published to students",
+        "declined": "Not published"
+      }
     },
     "profile": {
       "title": "Your **details**",

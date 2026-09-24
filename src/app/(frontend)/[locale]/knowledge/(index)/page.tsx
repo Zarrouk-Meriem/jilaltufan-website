@@ -9,6 +9,7 @@ import { TextLink } from '@/components/ui/TextLink'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { getSiteSettings, listMaterials, listMinbarPosts } from '@/lib/queries'
+import { materialFileUrl } from '@/lib/materials'
 import { rel } from '@/lib/relations'
 import { formatInZone } from '@/lib/time'
 import { ordinalFor } from '@/lib/view'
@@ -96,7 +97,6 @@ export default async function KnowledgePage({ params }: PageProps<'/[locale]/kno
             {materials.length ? (
               <div className="divide-y divide-line border-y border-line">
                 {materials.slice(0, 6).map((m) => {
-                  const file = rel(m.file)
                   const program = rel(m.program)
                   return (
                     <MaterialRow
@@ -104,7 +104,7 @@ export default async function KnowledgePage({ params }: PageProps<'/[locale]/kno
                       title={m.title}
                       type={m.type}
                       typeLabel={t(`knowledge.${m.type}` as 'knowledge.pdf')}
-                      href={m.type === 'pdf' ? file?.url : m.url}
+                      href={m.type === 'pdf' ? materialFileUrl(m) : m.url}
                       description={m.description}
                       programTitle={program?.title}
                       actionLabel={m.type === 'pdf' ? t('knowledge.download') : t('knowledge.open')}

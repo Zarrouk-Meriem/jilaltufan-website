@@ -18,6 +18,29 @@ export const Materials: CollectionConfig = {
     },
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },
+  hooks: {
+    // A material made from an instructor's file is what makes that file public; deleting
+    // the material closes it again (back to «بانتظار المراجعة»), so nothing stays
+    // downloadable that no material links to.
+    afterDelete: [
+      async ({ doc, req }) => {
+        const fileId =
+          typeof doc.sessionFile === 'object' && doc.sessionFile
+            ? doc.sessionFile.id
+            : doc.sessionFile
+        if (!fileId) return
+        await req.payload
+          .update({
+            collection: 'session-files',
+            id: fileId,
+            data: { review: 'pending', material: null },
+            overrideAccess: true,
+            req,
+          })
+          .catch(() => {})
+      },
+    ],
+  },
   fields: [
     localizedText('title', { ar: 'العنوان', en: 'Title' }, { required: true }),
     {
@@ -55,6 +78,18 @@ export const Materials: CollectionConfig = {
       relationTo: 'media',
       label: { ar: 'الملف', en: 'File' },
       admin: { condition: (data) => data?.type === 'pdf' },
+    },
+    {
+      // Set when staff publish an instructor's file (Instructor files → «انشره مادةً»): the
+      // material points at that file where it is instead of a copy in the media library.
+      name: 'sessionFile',
+      type: 'upload',
+      relationTo: 'session-files',
+      label: { ar: 'ملف المحاضر', en: 'Instructor’s file' },
+      admin: {
+        readOnly: true,
+        condition: (data) => data?.type === 'pdf' && !!data?.sessionFile,
+      },
     },
     {
       name: 'url',

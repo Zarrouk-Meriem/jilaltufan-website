@@ -519,7 +519,12 @@
       "sendOne": "أرسل ملفًا",
       "profileTitle": "ملفك في صفحة المحاضرين",
       "publicPage": "اعرض صفحتك العامة",
-      "forSession": "لحصة {session}"
+      "forSession": "لحصة {session}",
+      "review": {
+        "pending": "بانتظار المراجعة",
+        "published": "نُشر للطلبة",
+        "declined": "لم يُنشر"
+      }
     },
     "profile": {
       "title": "**بياناتك**",

@@ -18,7 +18,7 @@ import {
   getProgramBySlug,
   getSiteSettings,
 } from '@/lib/queries'
-import { rel } from '@/lib/relations'
+import { materialFileUrl } from '@/lib/materials'
 import { sessionView } from '@/lib/view'
 
 export const dynamic = 'force-dynamic'
@@ -146,14 +146,13 @@ export default async function MyProgramPage({
           {materials.length ? (
             <div className="divide-y divide-line">
               {materials.map((m) => {
-                const file = rel(m.file)
                 return (
                   <MaterialRow
                     key={m.id}
                     title={m.title}
                     type={m.type}
                     typeLabel={t(`knowledge.${m.type}` as 'knowledge.pdf')}
-                    href={m.type === 'pdf' ? file?.url : m.url}
+                    href={m.type === 'pdf' ? materialFileUrl(m) : m.url}
                     description={m.description}
                     actionLabel={m.type === 'pdf' ? t('knowledge.download') : t('knowledge.open')}
                   />

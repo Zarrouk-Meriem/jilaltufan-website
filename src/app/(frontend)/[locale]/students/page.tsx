@@ -22,7 +22,7 @@ import {
   listPrograms,
   listSchedule,
 } from '@/lib/queries'
-import { rel } from '@/lib/relations'
+import { materialFileUrl } from '@/lib/materials'
 import { ordinalFor, sessionView } from '@/lib/view'
 
 export const revalidate = 60
@@ -184,14 +184,13 @@ export default async function StudentsPage({
                   {materials.length ? (
                     <div className="divide-y divide-line border-y border-line">
                       {materials.map((m) => {
-                        const file = rel(m.file)
                         return (
                           <MaterialRow
                             key={m.id}
                             title={m.title}
                             type={m.type}
                             typeLabel={t(`knowledge.${m.type}` as 'knowledge.pdf')}
-                            href={m.type === 'pdf' ? file?.url : m.url}
+                            href={m.type === 'pdf' ? materialFileUrl(m) : m.url}
                             description={m.description}
                             actionLabel={
                               m.type === 'pdf' ? t('knowledge.download') : t('knowledge.open')

@@ -399,9 +399,13 @@ test('a guest sees their session, and sends a file only for a session of theirs'
   await page.reload()
   await expect(main).toContainText('deck.pdf')
 
-  // It is not published to anyone: students read `materials`, and this is not one.
+  // It is not published to anyone: a visitor sees only files staff have published, and
+  // this one is still awaiting review.
   const anyone = await request.newContext({ baseURL: test.info().project.use.baseURL })
-  expect((await anyone.get('/api/session-files')).status()).toBe(403)
+  const listed = await anyone.get('/api/session-files?limit=100&depth=0')
+  expect(listed.status()).toBe(200)
+  for (const d of (await listed.json()).docs as { review: string }[])
+    expect(d.review).toBe('published')
   await anyone.dispose()
 
   // And the action refuses a session that is not theirs, whatever the form says.
@@ -411,10 +415,13 @@ test('a guest sees their session, and sends a file only for a session of theirs'
     baseURL: test.info().project.use.baseURL,
     extraHTTPHeaders: { Authorization: `JWT ${(await login.json()).token}` },
   })
-  // Even reading the collection, a guest sees only what they sent.
-  const own = await guest.get('/api/session-files')
+  // Even reading the collection, a guest sees only what they sent — and, like any
+  // visitor, files staff have published as materials.
+  const own = await guest.get('/api/session-files?limit=100&depth=0')
   expect(own.status()).toBe(200)
-  expect((await own.json()).totalDocs).toBe(1)
+  const seen = (await own.json()).docs as { sender: number; review: string }[]
+  expect(seen.filter((d) => d.sender === account!.id)).toHaveLength(1)
+  for (const d of seen) expect(d.sender === account!.id || d.review === 'published').toBe(true)
   await guest.dispose()
   expect(notMine.id).not.toBe(mine.id)
 })
@@ -1241,4 +1248,82 @@ test('staff tools: re-send the invite, correct the address, withdraw, open an ac
       })
     ).ok(),
   ).toBe(true)
+})
+
+test('staff publish an instructor’s PDF as a material in one step, and unpublish it by deleting it', async ({
+  page,
+}) => {
+  const { api, email, account, instructorId } = await invitedInstructor(page)
+  const password = `pw-${Date.now()}-playwright`
+  expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
+  const session = (
+    await (
+      await api.get('/api/sessions?where[status][equals]=published&limit=1&depth=0&sort=startsAt')
+    ).json()
+  ).docs[0] as { id: number; program: number; instructors?: number[] }
+  await api.patch(`/api/sessions/${session.id}`, {
+    data: { instructors: [...(session.instructors ?? []), instructorId] },
+  })
+
+  // The guest sends a PDF.
+  await signInAs(page, email, password)
+  await page.goto('/ar/account/materials')
+  const stamp = Date.now()
+  await page.getByLabel(/^الملف/).setInputFiles({
+    name: `slides-${stamp}.pdf`,
+    mimeType: 'application/pdf',
+    buffer: MINIMAL_PDF,
+  })
+  await page.getByRole('button', { name: 'أرسل', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('وصلنا الملف')
+  await page.reload()
+  const row = page.locator('main li').filter({ hasText: `slides-${stamp}.pdf` })
+  await expect(row).toContainText('بانتظار المراجعة')
+
+  // Staff tick «انشره مادةً»: a published material appears, pointing at the file.
+  const file = (
+    await (
+      await api.get(
+        `/api/session-files?where[sender][equals]=${account!.id}&sort=-createdAt&limit=1&depth=0`,
+      )
+    ).json()
+  ).docs[0] as { id: number; url: string }
+  const published = await api.patch(`/api/session-files/${file.id}`, { data: { publish: true } })
+  expect(published.ok(), await published.text()).toBe(true)
+  const after = (await (await api.get(`/api/session-files/${file.id}?depth=0`)).json()) as {
+    review: string
+    publish: boolean
+    material: number
+  }
+  expect(after).toMatchObject({ review: 'published', publish: false })
+  const material = (await (
+    await api.get(`/api/materials/${after.material}?depth=0&locale=ar`)
+  ).json()) as { title: string; status: string; sessionFile: number; program: number }
+  expect(material).toMatchObject({
+    title: `slides-${stamp}`,
+    status: 'published',
+    sessionFile: file.id,
+    program: session.program,
+  })
+
+  // Anyone can download it now, and the guest sees it published. (Payload's URL is
+  // absolute on the configured site address; the path is what this server answers.)
+  const path = new URL(file.url, 'http://x').pathname
+  const visitor = await request.newContext({ baseURL: test.info().project.use.baseURL })
+  expect((await visitor.get(path)).status()).toBe(200)
+  await page.reload()
+  await expect(row).toContainText('نُشر للطلبة')
+
+  // Deleting the material closes the file again.
+  expect((await api.delete(`/api/materials/${after.material}`)).ok()).toBe(true)
+  const closed = (await (await api.get(`/api/session-files/${file.id}?depth=0`)).json()) as {
+    review: string
+  }
+  expect(closed.review).toBe('pending')
+  expect((await visitor.get(path)).status()).not.toBe(200)
+  await visitor.dispose()
+
+  await api.patch(`/api/sessions/${session.id}`, {
+    data: { instructors: session.instructors ?? [] },
+  })
 })

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { SessionFileForm } from '@/components/forms/AccountForms'
 import { MaterialRow } from '@/components/sections/MaterialRow'
 import { Card, PageOpening } from '@/components/portal/pieces'
+import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import { EmptyState } from '@/components/ui/EmptyState'
 import type { Locale } from '@/i18n/routing'
 import { getAccount } from '@/lib/auth/account'
@@ -15,11 +16,17 @@ import {
   getInstructorSessions,
   getSiteSettings,
 } from '@/lib/queries'
-import { rel } from '@/lib/relations'
+import { materialFileUrl } from '@/lib/materials'
 import { formatInZone } from '@/lib/time'
 import { sendSessionFile } from '../../actions'
 
 export const dynamic = 'force-dynamic'
+
+const REVIEW_TONES: Record<'pending' | 'published' | 'declined', BadgeTone> = {
+  pending: 'neutral',
+  published: 'accent',
+  declined: 'muted',
+}
 
 export async function generateMetadata({
   params,
@@ -73,6 +80,11 @@ export default async function MaterialsPage({ params }: PageProps<'/[locale]/acc
                       ) : (
                         <span className="font-medium text-ink-900">{f.name}</span>
                       )}
+                      <span className="mt-1 self-start">
+                        <Badge tone={REVIEW_TONES[f.review]}>
+                          {t(`account.teaching.review.${f.review}`)}
+                        </Badge>
+                      </span>
                       {session ? (
                         <span className="text-xs text-ink-500">
                           {t('account.teaching.forSession', {
@@ -117,14 +129,13 @@ export default async function MaterialsPage({ params }: PageProps<'/[locale]/acc
       {materials.length ? (
         <div className="divide-y divide-line rounded-brand border border-line bg-paper px-6">
           {materials.map((m) => {
-            const file = rel(m.file)
             return (
               <MaterialRow
                 key={m.id}
                 title={m.title}
                 type={m.type}
                 typeLabel={t(`knowledge.${m.type}` as 'knowledge.pdf')}
-                href={m.type === 'pdf' ? file?.url : m.url}
+                href={m.type === 'pdf' ? materialFileUrl(m) : m.url}
                 description={m.description}
                 actionLabel={m.type === 'pdf' ? t('knowledge.download') : t('knowledge.open')}
               />

@@ -311,6 +311,7 @@ export async function sendSessionFile(_prev: FormState, fd: FormData): Promise<F
         sender: account.id,
         originalName: parsed.data.file.name.slice(0, 200),
         note: parsed.data.note || undefined,
+        review: 'pending',
       },
       file: {
         data: buffer,

@@ -147,7 +147,14 @@ export const getInstructorSessions = cache(
 )
 
 /** What this guest has already sent for their sessions. */
-export type SentFile = { id: number; name: string; url: string | null; sessionId: number | null }
+export type SentFile = {
+  id: number
+  name: string
+  url: string | null
+  sessionId: number | null
+  /** Where staff's review stands: awaiting it, published as a material, or not published. */
+  review: 'pending' | 'published' | 'declined'
+}
 
 export const getInstructorFiles = cache(async (account: Account): Promise<SentFile[]> => {
   const payload = await getClient()
@@ -164,6 +171,7 @@ export const getInstructorFiles = cache(async (account: Account): Promise<SentFi
     name: d.originalName || d.filename || '',
     url: d.url ?? null,
     sessionId: idOf(d.session),
+    review: (d.review ?? 'pending') as SentFile['review'],
   }))
 })
 
