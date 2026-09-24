@@ -423,6 +423,7 @@
     "nav": {
       "overview": "Overview",
       "application": "My application",
+      "programs": "Programs",
       "sessions": "My sessions",
       "materials": "My materials",
       "sentMaterials": "Session materials",
@@ -552,6 +553,48 @@
       "fileRequired": "Choose a file",
       "fileTooBig": "The file is larger than 20 MB",
       "fileType": "Accepted formats: PDF, Word and PowerPoint"
+    },
+    "programs": {
+      "title": "Programs",
+      "intro": "Open Training is open to everyone accepted, and you may add one directed program. Enrollment is free.",
+      "openTitle": "Open Training",
+      "openIntro": "Open to everyone accepted by the Academy; you can take it alongside a directed program.",
+      "directedTitle": "Directed programs",
+      "directedIntro": "You choose one directed program only. Once you confirm, you cannot change it yourself; write to the team if you need to.",
+      "state": {
+        "available": "Open for enrollment",
+        "enrolled": "Enrolled",
+        "otherDirected": "Unavailable: you are in another directed program",
+        "closed": "Enrollment closed"
+      },
+      "enroll": "Enroll for free",
+      "open": "Go to the program",
+      "choose": "Choose your program",
+      "notYet": "Enrollment opens once your application is accepted.",
+      "dialog": {
+        "title": "Confirm enrollment",
+        "lead": "You are about to enroll in “{program}”. Enrollment is free.",
+        "directedNote": "This is a directed program: once you confirm, you cannot enroll in another directed program; to change it, write to the team.",
+        "termsTitle": "Terms and policies",
+        "terms": "[Placeholder] The enrollment terms and policies will appear here once the Academy approves them.",
+        "agree": "I have read the terms and policies and agree to them.",
+        "confirm": "Confirm enrollment",
+        "cancel": "Cancel"
+      },
+      "errors": {
+        "mustAgree": "Agree to the terms and policies to complete your enrollment.",
+        "otherDirected": "You are already in another directed program; two directed programs cannot be combined.",
+        "closed": "Enrollment in this program is closed right now.",
+        "notEligible": "Enrollment is for accepted students only.",
+        "failed": "Your enrollment could not be completed. Try again in a moment."
+      },
+      "page": {
+        "welcome": "You are enrolled. Welcome.",
+        "scheduleTitle": "Schedule",
+        "materialsTitle": "Materials",
+        "noMaterials": "No materials for this program yet.",
+        "back": "All programs"
+      }
     }
   },
   "students": {

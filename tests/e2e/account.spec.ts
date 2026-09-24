@@ -780,3 +780,92 @@ test('one directed program at a time holds for staff too, and projects are not e
   expect((await left.json()).totalDocs).toBe(0)
   await api.dispose()
 })
+
+const SHOTS = '.artifacts/screens/enrollment'
+
+test('an accepted student chooses Open Training and one directed program', async ({ page }) => {
+  const { api, email } = await acceptedApplicant(page)
+  const account = await findAccount(api, email)
+  const password = `pw-${Date.now()}-playwright`
+  expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
+  // Start clean: earlier tests in this file enrolled this applicant.
+  const mine = await (
+    await api.get(`/api/enrollments?where[account][equals]=${account!.id}&depth=0`)
+  ).json()
+  for (const row of mine.docs as { id: number }[])
+    await api.patch(`/api/enrollments/${row.id}`, { data: { state: 'withdrawn' } })
+
+  const list = (
+    await (
+      await api.get('/api/programs?where[track][equals]=directed&depth=0&locale=ar&limit=10')
+    ).json()
+  ).docs as { title: string; slug: string; registrationMode: string }[]
+  const [chosen, other] = list.filter((p) => p.registrationMode !== 'closed')
+  expect(chosen && other, 'two open directed programs are needed').toBeTruthy()
+  const card = (title: string) =>
+    page.locator('main li').filter({ has: page.getByRole('heading', { name: title }) })
+
+  await signInAs(page, email, password)
+  await page.locator('main').getByRole('link', { name: 'اختر برنامجك' }).click()
+  await expect(page).toHaveURL(/\/ar\/account\/programs$/)
+  await expect(card(chosen!.title)).toContainText('متاح للتسجيل')
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.screenshot({ path: `${SHOTS}/programs-ar-1280.png`, fullPage: true })
+
+  // The dialog: nothing happens until the terms are agreed; Escape closes it and gives
+  // focus back to the button that opened it.
+  const trigger = card(chosen!.title).getByRole('button', { name: 'التسجيل مجانًا' })
+  await trigger.click()
+  const dialog = page.getByRole('dialog', { name: 'تأكيد التسجيل' })
+  await expect(dialog).toBeVisible()
+  await expect(dialog).toContainText('[نص مؤقت]')
+  const confirm = dialog.getByRole('button', { name: 'أؤكّد التسجيل' })
+  await expect(confirm).toBeDisabled()
+  await page.waitForTimeout(300) // let the fade finish for the picture
+  await page.screenshot({ path: `${SHOTS}/dialog-ar-1280.png` })
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeHidden()
+  await expect(trigger).toBeFocused()
+
+  await trigger.click()
+  await dialog.getByLabel('قرأت الشروط والسياسات وأوافق عليها.').check()
+  await confirm.click()
+  await expect(page).toHaveURL(new RegExp(`/ar/account/programs/${chosen!.slug}\\?enrolled=1$`))
+  await expect(page.getByRole('status')).toContainText('سُجّلت في البرنامج')
+  await expect(page.locator('main h1')).toHaveText(chosen!.title)
+  await page.screenshot({ path: `${SHOTS}/program-ar-1280.png`, fullPage: true })
+
+  // Back on the list: this one is theirs, the other directed programs are closed to them,
+  // and Open Training can still be added.
+  await page.goto('/ar/account/programs')
+  await expect(card(chosen!.title)).toContainText('مسجّل')
+  await expect(card(other!.title)).toContainText('غير متاح لأنك مسجّل في برنامج موجّه آخر')
+  await expect(card(other!.title).getByRole('button', { name: 'التسجيل مجانًا' })).toHaveCount(0)
+  const openCard = page.locator('main section').first().locator('li')
+  await openCard.getByRole('button', { name: 'التسجيل مجانًا' }).click()
+  await dialog.getByLabel('قرأت الشروط والسياسات وأوافق عليها.').check()
+  await dialog.getByRole('button', { name: 'أؤكّد التسجيل' }).click()
+  await expect(page.getByRole('status')).toContainText('سُجّلت في البرنامج')
+
+  await page.goto('/ar/account/programs')
+  await page.screenshot({ path: `${SHOTS}/programs-enrolled-ar-1280.png`, fullPage: true })
+  await page.setViewportSize({ width: 375, height: 812 })
+  await page.screenshot({ path: `${SHOTS}/programs-enrolled-ar-375.png`, fullPage: true })
+  await page.goto('/en/account/programs')
+  await page.screenshot({ path: `${SHOTS}/programs-enrolled-en-375.png`, fullPage: true })
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.screenshot({ path: `${SHOTS}/programs-enrolled-en-1280.png`, fullPage: true })
+})
+
+test('a student who is not accepted is told why, and offered nothing to click', async ({
+  page,
+}) => {
+  const { api, email, password, account } = await activatedAccount(page)
+  await signInAs(page, email, password)
+  await expect(page).toHaveURL(/\/ar\/account$/)
+  await page.goto('/ar/account/programs')
+  await expect(page.locator('main')).toContainText('يُفتح التسجيل في البرامج بعد قبول طلبك.')
+  await expect(page.getByRole('button', { name: 'التسجيل مجانًا' })).toHaveCount(0)
+  await api.delete(`/api/accounts/${account.id}`)
+  await api.dispose()
+})

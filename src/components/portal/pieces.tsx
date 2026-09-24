@@ -48,13 +48,16 @@ export function Card({
   action?: ReactNode
   children: ReactNode
   className?: string
-  tone?: 'paper' | 'navy'
+  /** `quiet`: the same card on the recessed paper, for something that is not on offer. */
+  tone?: 'paper' | 'quiet' | 'navy'
 }) {
   return (
     <section
       className={cn(
         'rounded-brand p-6 md:p-7',
-        tone === 'paper' ? 'border border-line bg-paper' : 'bg-navy-900 text-on-navy',
+        tone === 'navy'
+          ? 'bg-navy-900 text-on-navy'
+          : cn('border border-line', tone === 'quiet' ? 'bg-paper-2' : 'bg-paper'),
         className,
       )}
     >
@@ -64,7 +67,7 @@ export function Card({
             <h2
               className={cn(
                 'text-xs font-semibold',
-                tone === 'paper' ? 'text-ink-500' : 'text-on-navy/70',
+                tone === 'navy' ? 'text-on-navy/70' : 'text-ink-500',
               )}
             >
               {title}

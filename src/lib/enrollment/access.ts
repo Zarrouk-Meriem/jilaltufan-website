@@ -45,6 +45,11 @@ async function studentInGoodStanding(payload: Payload, account: Account): Promis
   return application?.applicationStatus === 'accepted'
 }
 
+/** May this account enroll at all — an active student whose application is accepted? */
+export const canEnroll = cache(async (account: Account): Promise<boolean> =>
+  studentInGoodStanding(await getClient(), account),
+)
+
 /** The programs this student may open now, open training first. */
 export const enrolledPrograms = cache(
   async (account: Account, locale: Locale): Promise<EnrolledProgram[]> => {

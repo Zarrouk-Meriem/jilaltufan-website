@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { SessionRow } from '@/components/sections/SessionRow'
 import { Card, PageOpening, Progress, QuickLinks } from '@/components/portal/pieces'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
+import { ButtonLink } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { TextLink } from '@/components/ui/TextLink'
 import { Link } from '@/i18n/navigation'
@@ -118,6 +119,11 @@ export default async function OverviewPage({ params }: PageProps<'/[locale]/acco
             <p className="mt-4 measure text-base text-ink-700">
               {t(`application.note.${application.status}`)}
             </p>
+            {application.status === 'accepted' && programs.length === 0 ? (
+              <p className="mt-5">
+                <ButtonLink href="/account/programs">{t('account.programs.choose')}</ButtonLink>
+              </p>
+            ) : null}
             <p className="mt-5">
               <TextLink href="/account/application">{t('account.seeApplication')}</TextLink>
             </p>
