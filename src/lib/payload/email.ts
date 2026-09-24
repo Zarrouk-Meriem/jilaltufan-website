@@ -14,25 +14,34 @@ export function linksIn(message: Record<string, unknown>): string[] {
 }
 
 /**
- * No provider configured: print every email to the console instead of dropping it.
+ * Print an email to the console instead of sending it, saying why it was not sent.
  * Payload's built-in fallback only logs "Email attempted" with the subject, which hides
- * password-reset links during development. Production must configure a provider.
+ * password-reset links during development.
  */
-export const consoleAdapter: EmailAdapter<void> = () => ({
-  name: 'console',
-  ...from,
-  sendEmail: async (message) => {
-    const to = Array.isArray(message.to) ? message.to.join(', ') : String(message.to ?? '')
-    const lines = [
-      `── email (not sent: EMAIL_PROVIDER is unset) ──`,
-      `to:      ${to}`,
-      `subject: ${message.subject ?? ''}`,
-      ...linksIn(message).map((u) => `link:    ${u}`),
-      `──`,
-    ]
-    console.info(lines.join('\n'))
-  },
-})
+const logAdapter =
+  (reason: string): EmailAdapter<void> =>
+  () => ({
+    name: 'console',
+    ...from,
+    sendEmail: async (message) => {
+      const to = Array.isArray(message.to) ? message.to.join(', ') : String(message.to ?? '')
+      const lines = [
+        `── email (not sent: ${reason}) ──`,
+        `to:      ${to}`,
+        ...(message.replyTo ? [`reply-to: ${recipientsOf(message.replyTo).join(', ')}`] : []),
+        `subject: ${message.subject ?? ''}`,
+        ...linksIn(message).map((u) => `link:    ${u}`),
+        `──`,
+      ]
+      console.info(lines.join('\n'))
+    },
+  })
+
+/** No provider configured: every email goes to the console. Production must configure one. */
+export const consoleAdapter = logAdapter('EMAIL_PROVIDER is unset')
+
+/** A provider is configured, but the message concerns a test address (below). */
+const reservedLog = logAdapter('test address, reserved domain')
 
 /**
  * Names reserved by RFC 2606 and RFC 6761: they are guaranteed to belong to nobody, so
@@ -72,7 +81,7 @@ export function withoutReservedRecipients(
   adapter: EmailAdapter | Promise<EmailAdapter>,
 ): EmailAdapter {
   return (args) => {
-    const log = consoleAdapter(args)
+    const log = reservedLog(args)
     // The provider's factory may be a promise (nodemailer verifies its transport), so it is
     // resolved on the first real send rather than at config time.
     let inner: ReturnType<EmailAdapter> | undefined

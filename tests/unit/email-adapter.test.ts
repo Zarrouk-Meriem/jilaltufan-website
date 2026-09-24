@@ -21,6 +21,7 @@ describe('email console adapter', () => {
       text: 'Go to http://localhost:3000/admin/reset/tok',
     })
     const out = info.mock.calls.map((c) => String(c[0])).join('\n')
+    expect(out).toContain('not sent: EMAIL_PROVIDER is unset')
     expect(out).toContain('to:      admin@jilaltufan.org')
     expect(out).toContain('subject: Reset your password')
     expect(out).toContain('link:    http://localhost:3000/admin/reset/tok')
@@ -61,7 +62,12 @@ describe('reserved recipients are never delivered', () => {
     const { sent, adapter } = provider()
     await withoutReservedRecipients(adapter)({ payload }).sendEmail({ to: address, subject: 's' })
     expect(sent, 'nothing should reach the provider').toEqual([])
-    expect(info.mock.calls.map((c) => String(c[0])).join('\n')).toContain(address)
+    const out = info.mock.calls.map((c) => String(c[0])).join('\n')
+    expect(out).toContain(address)
+    expect(out, 'the log says why, not that no provider is set').toContain(
+      'not sent: test address, reserved domain',
+    )
+    expect(out).not.toContain('EMAIL_PROVIDER is unset')
     info.mockRestore()
   })
 
@@ -79,6 +85,9 @@ describe('reserved recipients are never delivered', () => {
         subject: 's',
       })
       expect(sent, 'nothing should reach the provider').toEqual([])
+      expect(info.mock.calls.map((c) => String(c[0])).join('\n')).toContain(
+        'reply-to: playwright-1@example.com',
+      )
       info.mockRestore()
     },
   )
