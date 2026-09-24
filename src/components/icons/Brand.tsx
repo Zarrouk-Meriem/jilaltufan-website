@@ -21,7 +21,44 @@ const PATHS = {
 
 export type Brand = keyof typeof PATHS
 
-export function BrandIcon({ brand, className }: { brand: Brand; className?: string }) {
+/**
+ * One family per group of icons (user feedback, 2026-09-24: the application form mixed
+ * a filled Facebook disc, an outlined Instagram, and a filled LinkedIn square).
+ * Instagram's own glyph is already an outline; Facebook and LinkedIn are drawn here
+ * in the same language: a ring 2.16 thick (Instagram's weight) around the solid
+ * letterform, all three in Instagram's rounded-square frame (same shape, user
+ * feedback, 2026-09-24).
+ * Each entry is a list of paths; `ring` ones use even-odd so the inside stays open.
+ */
+const RING_SQUARE =
+  'M6.5 0h11A6.5 6.5 0 0 1 24 6.5v11a6.5 6.5 0 0 1-6.5 6.5h-11A6.5 6.5 0 0 1 0 17.5v-11A6.5 6.5 0 0 1 6.5 0Zm0 2.16A4.34 4.34 0 0 0 2.16 6.5v11a4.34 4.34 0 0 0 4.34 4.34h11a4.34 4.34 0 0 0 4.34-4.34v-11a4.34 4.34 0 0 0-4.34-4.34Z'
+const OUTLINE: Partial<Record<Brand, { d: string; ring?: boolean }[]>> = {
+  facebook: [
+    { d: RING_SQUARE, ring: true },
+    {
+      d: 'M10.45 22.4V13.1H8.3v-2.55h2.15V8.7c0-2.3 1.25-3.5 3.35-3.5.8 0 1.55.06 1.95.12v2.3h-1.25c-.95 0-1.35.45-1.35 1.3v1.63h2.5l-.35 2.55h-2.15v9.3Z',
+    },
+  ],
+  instagram: [{ d: siInstagram.path }],
+  linkedin: [
+    { d: RING_SQUARE, ring: true },
+    {
+      d: 'M7.2 8.75a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3ZM5.85 9.9h2.7v8.3h-2.7ZM10.55 9.9h2.6v1.15c.45-.8 1.45-1.35 2.7-1.35 2 0 2.75 1.25 2.75 3.4v5.1h-2.7v-4.6c0-1.1-.3-1.7-1.2-1.7-1 0-1.45.7-1.45 1.8v4.5h-2.7Z',
+    },
+  ],
+}
+
+export function BrandIcon({
+  brand,
+  variant = 'solid',
+  className,
+}: {
+  brand: Brand
+  /** `outline` where a group mixes platforms (the application form's social fields). */
+  variant?: 'solid' | 'outline'
+  className?: string
+}) {
+  const outline = variant === 'outline' ? OUTLINE[brand] : undefined
   return (
     <svg
       aria-hidden
@@ -29,7 +66,11 @@ export function BrandIcon({ brand, className }: { brand: Brand; className?: stri
       fill="currentColor"
       className={cn('size-4 shrink-0', className)}
     >
-      <path d={PATHS[brand]} />
+      {outline ? (
+        outline.map((p) => <path key={p.d} d={p.d} fillRule={p.ring ? 'evenodd' : undefined} />)
+      ) : (
+        <path d={PATHS[brand]} />
+      )}
     </svg>
   )
 }

@@ -414,7 +414,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
             <Input
               id="facebook"
               label={t('fields.facebook')}
-              icon={<BrandIcon brand="facebook" />}
+              icon={<BrandIcon brand="facebook" variant="outline" />}
               dir="ltr"
               autoComplete="url"
               error={err('facebook')}
@@ -423,7 +423,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
             <Input
               id="instagram"
               label={t('fields.instagram')}
-              icon={<BrandIcon brand="instagram" />}
+              icon={<BrandIcon brand="instagram" variant="outline" />}
               dir="ltr"
               autoComplete="url"
               error={err('instagram')}
@@ -432,7 +432,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
             <Input
               id="linkedin"
               label={t('fields.linkedin')}
-              icon={<BrandIcon brand="linkedin" />}
+              icon={<BrandIcon brand="linkedin" variant="outline" />}
               dir="ltr"
               autoComplete="url"
               error={err('linkedin')}
