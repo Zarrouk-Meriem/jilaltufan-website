@@ -14,6 +14,7 @@ import { ApplicationFiles } from './collections/ApplicationFiles'
 import { Applications } from './collections/Applications'
 import { Announcements } from './collections/Announcements'
 import { Attendance } from './collections/Attendance'
+import { BadgeAwards, Badges } from './collections/Badges'
 import { Certificates } from './collections/Certificates'
 import { Enrollments } from './collections/Enrollments'
 import { ContactMessages } from './collections/ContactMessages'
@@ -59,6 +60,8 @@ const collections = [
   Enrollments,
   Announcements,
   Certificates,
+  Badges,
+  BadgeAwards,
   Instructors,
   Projects,
   MinbarPosts,

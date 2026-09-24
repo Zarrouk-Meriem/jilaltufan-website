@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
+import { BadgeGrid } from '@/components/portal/BadgeGrid'
 import { Card, PageOpening } from '@/components/portal/pieces'
 import { Badge } from '@/components/ui/Badge'
 import { ButtonLink } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import type { Locale } from '@/i18n/routing'
 import { getAccount } from '@/lib/auth/account'
+import { studentBadges } from '@/lib/badges/award'
 import { issueDueCertificates } from '@/lib/certificates/issue'
 import { getSiteSettings } from '@/lib/queries'
 import { formatInZone } from '@/lib/time'
@@ -37,10 +39,12 @@ export default async function CertificatesPage({
   if (!account) redirect(`/${locale}/account/sign-in`)
   if (account.kind !== 'student') redirect(`/${locale}/account`)
 
+  // Certificates first: a certificate issued now can earn a badge in the same visit.
   const [{ certificates, waitingForName }, settings] = await Promise.all([
     issueDueCertificates(account),
     getSiteSettings(locale),
   ])
+  const badges = await studentBadges(account, locale)
 
   return (
     <>
@@ -100,6 +104,27 @@ export default async function CertificatesPage({
             body={t('account.certificates.noneBody')}
           />
         )}
+
+        {badges.length ? (
+          <section aria-labelledby="badges-title" className="mt-8">
+            <h2 id="badges-title" className="text-xl">
+              {t('account.badges.title')}
+            </h2>
+            <p className="mt-2 mb-5 measure text-sm text-ink-500">{t('account.badges.intro')}</p>
+            <BadgeGrid
+              badges={badges}
+              locale={locale}
+              academyZone={settings.academyTimeZone}
+              labels={{
+                awarded: (date) => t('account.badges.awarded', { date }),
+                how: (b) =>
+                  t(`account.badges.how.${b.rule}` as 'account.badges.how.manual', {
+                    n: b.threshold ?? 0,
+                  }),
+              }}
+            />
+          </section>
+        ) : null}
       </div>
     </>
   )

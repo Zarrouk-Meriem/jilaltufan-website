@@ -50,11 +50,11 @@ export const Accounts: CollectionConfig = {
     admin: () => false,
   },
   hooks: {
-    // Their rows go first: enrollments and attendance require an account, so the database
+    // Their rows go first: enrollments, attendance and badge awards require an account, so the database
     // would otherwise refuse the delete (their links are NOT NULL).
     beforeDelete: [
       async ({ id, req }) => {
-        for (const collection of ['enrollments', 'attendance'] as const)
+        for (const collection of ['enrollments', 'attendance', 'badge-awards'] as const)
           await req.payload.delete({
             collection,
             where: { account: { equals: id } },

@@ -74,6 +74,8 @@ export interface Config {
     enrollments: Enrollment;
     announcements: Announcement;
     certificates: Certificate;
+    badges: Badge;
+    'badge-awards': BadgeAward;
     instructors: Instructor;
     projects: Project;
     'minbar-posts': MinbarPost;
@@ -108,6 +110,8 @@ export interface Config {
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
     certificates: CertificatesSelect<false> | CertificatesSelect<true>;
+    badges: BadgesSelect<false> | BadgesSelect<true>;
+    'badge-awards': BadgeAwardsSelect<false> | BadgeAwardsSelect<true>;
     instructors: InstructorsSelect<false> | InstructorsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'minbar-posts': MinbarPostsSelect<false> | MinbarPostsSelect<true>;
@@ -1214,6 +1218,46 @@ export interface Certificate {
   createdAt: string;
 }
 /**
+ * The badges the Academy gives. A badge is awarded by hand (see «Badge awards») or automatically when a student meets its rule. Students see published badges only.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "badges".
+ */
+export interface Badge {
+  id: number;
+  name: string;
+  description: string;
+  rule: 'manual' | 'sessions' | 'graduated' | 'certificate';
+  /**
+   * Awarded after attending this many sessions in any program. Empty = never awarded.
+   */
+  threshold?: number | null;
+  icon:
+    'award' | 'graduation' | 'target' | 'compass' | 'book' | 'calendar' | 'check-circle' | 'users' | 'globe' | 'quote';
+  order?: number | null;
+  /**
+   * Only "Published" is visible to visitors.
+   */
+  status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * To award a badge by hand, add a row with the student and the badge. Automatic badges are added here by themselves. Deleting a row takes the badge back.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "badge-awards".
+ */
+export interface BadgeAward {
+  id: number;
+  account: number | Account;
+  badge: number | Badge;
+  source: 'rule' | 'staff';
+  awardedAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects".
  */
@@ -1478,6 +1522,8 @@ export interface Activity {
     | 'enrollments'
     | 'announcements'
     | 'certificates'
+    | 'badges'
+    | 'badge-awards'
     | 'instructors'
     | 'projects'
     | 'minbar-posts'
@@ -1734,6 +1780,14 @@ export interface PayloadLockedDocument {
         value: number | Certificate;
       } | null)
     | ({
+        relationTo: 'badges';
+        value: number | Badge;
+      } | null)
+    | ({
+        relationTo: 'badge-awards';
+        value: number | BadgeAward;
+      } | null)
+    | ({
         relationTo: 'instructors';
         value: number | Instructor;
       } | null)
@@ -1959,6 +2013,33 @@ export interface CertificatesSelect<T extends boolean = true> {
   program?: T;
   revoked?: T;
   revokedReason?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "badges_select".
+ */
+export interface BadgesSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  rule?: T;
+  threshold?: T;
+  icon?: T;
+  order?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "badge-awards_select".
+ */
+export interface BadgeAwardsSelect<T extends boolean = true> {
+  account?: T;
+  badge?: T;
+  source?: T;
+  awardedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2996,6 +3077,8 @@ export interface TaskCreateCollectionExport {
       | 'enrollments'
       | 'announcements'
       | 'certificates'
+      | 'badges'
+      | 'badge-awards'
       | 'instructors'
       | 'projects'
       | 'minbar-posts'

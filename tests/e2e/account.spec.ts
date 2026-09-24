@@ -1051,3 +1051,63 @@ test('a graduated student confirms their name and gets a certificate anyone can 
   await api.delete(`/api/certificates/${cert.id}`)
   await api.patch(`/api/enrollments/${row.id}`, { data: { graduated: false } })
 })
+
+test('badges: earned ones in full, the rest faded with how to earn them, drafts unseen', async ({
+  page,
+}) => {
+  const { api, email, password, account } = await activatedAccount(page)
+  const stamp = Date.now()
+  const make = async (name: string, data: Record<string, unknown>) => {
+    const res = await api.post('/api/badges?locale=ar', {
+      data: { name, description: `وصف ${name}`, status: 'published', ...data },
+    })
+    expect(res.status(), await res.text()).toBe(201)
+    return ((await res.json()).doc as { id: number }).id
+  }
+  const manual = await make(`وسام يدوي ${stamp}`, { rule: 'manual', icon: 'users' })
+  const oneSession = await make(`وسام الحضور ${stamp}`, { rule: 'sessions', threshold: 1 })
+  const certificate = await make(`وسام الشهادة ${stamp}`, {
+    rule: 'certificate',
+    icon: 'graduation',
+  })
+  const draft = await make(`وسام مسودة ${stamp}`, { rule: 'manual', status: 'draft' })
+
+  // One session attended, and one badge given by hand.
+  const session = (
+    await (
+      await api.get(
+        '/api/sessions?where[status][equals]=published&where[sessionStatus][not_equals]=cancelled&limit=1&depth=0',
+      )
+    ).json()
+  ).docs[0] as { id: number }
+  const mark = await api.post('/api/attendance', {
+    data: { session: session.id, account: account.id, state: 'present' },
+  })
+  expect(mark.status(), await mark.text()).toBe(201)
+  const given = await api.post('/api/badge-awards', {
+    data: { account: account.id, badge: manual },
+  })
+  expect(given.status(), await given.text()).toBe(201)
+
+  await signInAs(page, email, password)
+  await expect(page).toHaveURL(/\/ar\/account$/)
+  await page.goto('/ar/account/certificates')
+  const section = page.locator('section[aria-labelledby="badges-title"]')
+  const tile = (name: string) => section.locator('li').filter({ hasText: name })
+  await expect(tile(`وسام يدوي ${stamp}`)).toContainText('مُنح في')
+  await expect(tile(`وسام الحضور ${stamp}`)).toContainText('مُنح في')
+  await expect(tile(`وسام الشهادة ${stamp}`)).toContainText('بالحصول على شهادة')
+  await expect(section).not.toContainText(`وسام مسودة ${stamp}`)
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.screenshot({ path: `${SHOTS}/badges-ar-1280.png`, fullPage: true })
+
+  // Not public: a signed-in student cannot list the badges over the API.
+  expect([401, 403]).toContain((await page.request.get('/api/badges')).status())
+
+  // Deleting a badge takes it back from everyone (its awards go with it).
+  for (const id of [manual, oneSession, certificate, draft]) await api.delete(`/api/badges/${id}`)
+  const left = await api.get(`/api/badge-awards?where[account][equals]=${account.id}&limit=0`)
+  expect((await left.json()).totalDocs).toBe(0)
+  await api.delete(`/api/accounts/${account.id}`)
+  await api.dispose()
+})

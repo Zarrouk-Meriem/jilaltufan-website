@@ -426,7 +426,7 @@
       "programs": "Programs",
       "sessions": "My sessions",
       "materials": "My materials",
-      "certificates": "My certificates",
+      "certificates": "Certificates & badges",
       "sentMaterials": "Session materials",
       "profile": "My details"
     },
@@ -617,8 +617,8 @@
       "saved": "Your name is saved."
     },
     "certificates": {
-      "title": "My certificates",
-      "intro": "Your certificates from the Academy: after graduating from a directed program, or after attending Open Training at the required share.",
+      "title": "Certificates & badges",
+      "intro": "Your certificates from the Academy, and your badges for attendance and achievement.",
       "none": "No certificates yet.",
       "noneBody": "A graduation certificate is issued after the graduation panel’s decision; an attendance certificate once you reach the required attendance in Open Training.",
       "waitingTitle": "Your certificate is waiting for your name",
@@ -628,6 +628,18 @@
       "revoked": "Revoked",
       "print": "Print or save as PDF",
       "back": "All certificates"
+    },
+    "badges": {
+      "title": "My badges",
+      "intro": "Badges the Academy gives in recognition of your attendance and achievements. Those you have not earned yet appear faded, with how to earn them.",
+      "awarded": "Awarded on {date}",
+      "how": {
+        "manual": "Given by the Academy’s team",
+        "sessions": "Attend {n} sessions",
+        "graduated": "Graduate from a directed program",
+        "certificate": "Receive a certificate"
+      },
+      "none": "No badges yet."
     }
   },
   "students": {
