@@ -60,7 +60,9 @@ case "$cmd" in
     [[ -z "$(dirty "$dir")" ]] || { echo "$dir has uncommitted changes: commit them first"; exit 1; }
     [[ -z "$(dirty "$MAIN")" ]] || { echo "the main checkout has uncommitted changes: sort them out first"; exit 1; }
     git -C "$dir" rebase -q main
-    (cd "$dir" && pnpm check)
+    # Regenerate route types first: a production check (NEXT_DIST_DIR=.next-prod) points
+    # next-env.d.ts at its own folder, and once that is removed every PageProps is unknown.
+    (cd "$dir" && npx --no-install next typegen >/dev/null && pnpm check)
     git -C "$MAIN" merge --ff-only -q "$name"
     echo "main is now $(git -C "$MAIN" log -1 --format='%h %s')  — not pushed"
     ;;
