@@ -36,3 +36,6 @@ coverage/
 .vscode/
 .artifacts*
 tsconfig.tsbuildinfo
+
+# scripts/wt.sh: the dev-server port a task worktree owns
+.port

@@ -13,6 +13,16 @@ Read `PLAN.md` before changing architecture. Read `TODO.md` before inventing con
 - **`next dev` and `next start` share one `.next/` output directory by default.** Running a local production check (`pnpm build && pnpm start`) at the same time as `pnpm dev`, or wiping `.next` for a dev restart while a production server is still running against it, corrupts whichever one isn't currently (re)building — symptom: `Invariant: client reference manifest does not exist` / missing `pages/500.html` on nearly every route, or a mass of unrelated 500s in one process while the other looks fine. Fix: give the production check its own directory — `NEXT_DIST_DIR=.next-prod pnpm build` then `NEXT_DIST_DIR=.next-prod PORT=3002 pnpm start` (see `next.config.ts`'s `distDir`). Never `rm -rf .next`/`--clean` a dev restart while a production server built from the plain `.next` is still up.
 - **CSP has no nonce, on purpose.** Public pages are ISR/SSG; a per-request nonce never matches the nonce baked into cached HTML (every inline script was blocked in production — Lighthouse caught it, dev never could because dev renders per request). Only reintroduce a nonce if every page becomes dynamic. Test security headers against `pnpm build && pnpm start`, not `pnpm dev`.
 
+## Working flow — one task, one worktree (user decision, 2026-09-24)
+
+The main checkout (`JAA`, dev server on 3001) only integrates: **no session edits code in it.** Sessions editing the shared tree hot-reloaded each other's dev server mid-suite (147 false failures on 2026-09-24).
+
+1. **Start:** `scripts/wt.sh new <name>` → `../JAA-<name>` on branch `<name>` from `main`, `.env` copied, its own port (3010+, in `.port`), dev server warmed. Work, test, and commit there; Playwright targets it with `PORT=$(cat .port) npx playwright test …`.
+2. **Land:** `scripts/wt.sh land <name>` — rebase on `main`, `pnpm check`, fast-forward `main`. It never pushes; push only when the user asks.
+3. **Clean up:** `scripts/wt.sh done <name>` (refuses while anything is uncommitted or not yet in `main`), then archive the session.
+
+`scripts/wt.sh list` shows every worktree, its port, and what is unmerged; `scripts/wt.sh tidy` prunes, drops `.next-prod`, and compacts git. Production checks stay on `.next-prod` / 3002, one at a time.
+
 ## Stack
 
 Next 16 (App Router, RSC-first) · React 19 · Payload 3 (embedded, Postgres) · Tailwind v4 · next-intl 4 · zod 4 + react-hook-form · Playwright + Vitest · **pnpm** (via `corepack enable`).
