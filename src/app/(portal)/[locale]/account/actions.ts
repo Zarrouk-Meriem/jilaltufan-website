@@ -76,6 +76,9 @@ export async function signIn(_prev: FormState, fd: FormData): Promise<FormState>
     // addresses have accounts.
     if (err instanceof APIError && err.status === 401 && /locked/i.test(err.message))
       return error('locked')
+    // Thrown by the accounts' beforeLogin hook, after the password was checked.
+    if (err instanceof APIError && err.status === 403 && err.message === 'account-disabled')
+      return error('disabled')
     return error('credentials')
   }
   redirect(`/${locale}/account`)

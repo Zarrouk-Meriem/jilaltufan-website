@@ -1,7 +1,7 @@
 import { cache } from 'react'
 import type { Locale } from '@/i18n/routing'
 import { statusTokenExpired } from '@/lib/applications/status-token'
-import type { Application, Program } from '@/payload-types'
+import type { Application } from '@/payload-types'
 import { getClient } from './client'
 
 /**
@@ -13,14 +13,10 @@ import { getClient } from './client'
 export type ApplicationStatusView = {
   fullName: string
   status: NonNullable<Application['applicationStatus']>
-  program: string | null
   submittedAt: string
   /** True when the link has aged out: the page then offers to send a fresh one. */
   expired: boolean
 }
-
-const titleOf = (program: Application['program']): string | null =>
-  program && typeof program === 'object' ? ((program as Program).title ?? null) : null
 
 /**
  * The application behind a follow-up token, or null when the token is unknown.
@@ -42,14 +38,13 @@ export const getApplicationByStatusToken = cache(
       collection: 'applications',
       where: { statusToken: { equals: token } },
       limit: 1,
-      depth: 1,
+      depth: 0,
       locale,
       fallbackLocale: 'ar',
       overrideAccess: true,
       select: {
         fullName: true,
         applicationStatus: true,
-        program: true,
         statusTokenExpiresAt: true,
         createdAt: true,
       },
@@ -59,7 +54,6 @@ export const getApplicationByStatusToken = cache(
     return {
       fullName: doc.fullName,
       status: doc.applicationStatus ?? 'new',
-      program: titleOf(doc.program),
       submittedAt: doc.createdAt,
       expired: statusTokenExpired(doc.statusTokenExpiresAt),
     }

@@ -196,15 +196,11 @@ export function reviewingEmail(locale: Locale, name: string) {
 }
 
 /**
- * Sent once when staff move an application to «accepted». The program line appears only
- * when one has been assigned; otherwise the team settles it with the applicant by email.
+ * Sent once when staff move an application to «accepted». Since 2026-09-24 the student
+ * chooses their program themselves in the window (open training, plus one directed
+ * program), so the letter points there instead of naming a program.
  */
-export function acceptanceEmail(
-  locale: Locale,
-  name: string,
-  program?: string,
-  inviteUrl?: string,
-) {
+export function acceptanceEmail(locale: Locale, name: string, inviteUrl?: string) {
   // Acceptance is also where the account is born (PLAN.md §13.3). One letter, not two: the
   // link sets a password the person chooses themselves — we never send one.
   const action = inviteUrl
@@ -220,9 +216,7 @@ export function acceptanceEmail(
         [
           `أهلًا ${name}،`,
           'يسرّنا أن نبلغك بقبول طلب التحاقك بأكاديمية جيل الطوفان. مرحبًا بك بيننا.',
-          program
-            ? `برنامجك: ${program}.`
-            : 'سيتواصل معك فريق الأكاديمية على هذا البريد لتحديد برنامجك.',
+          'من نافذة الطالب تختار برنامجك: التدريب المفتوح متاح لكل مقبول، ولك أن تختار معه برنامجًا موجّهًا واحدًا.',
           ...(inviteUrl
             ? [
                 'فُتح لك حساب في نافذة الطالب. اختر كلمة السر من الرابط أدناه خلال أربع وعشرين ساعة؛ وإن انتهت صلاحيته فاطلب رابطًا جديدًا من الصفحة نفسها.',
@@ -245,9 +239,7 @@ export function acceptanceEmail(
       [
         `Hello ${name},`,
         'We are glad to let you know that your application to Jil Altufan Academy has been accepted. Welcome.',
-        program
-          ? `Your program: ${program}.`
-          : "The Academy's team will be in touch at this address to settle your program.",
+        'You choose your program in the student window: Open Training is open to everyone accepted, and you may add one directed program.',
         ...(inviteUrl
           ? [
               'An account has been opened for you in the student window. Choose your password from the link below within twenty-four hours; if it expires, ask for a new one on the same page.',

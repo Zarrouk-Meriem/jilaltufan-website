@@ -82,9 +82,6 @@ export default async function ApplicationPage({
               label={t('application.submitted')}
               value={formatInZone(application.submittedAt, locale, settings.academyTimeZone).date}
             />
-            {application.program ? (
-              <Fact label={t('application.programLabel')} value={application.program.title} />
-            ) : null}
             {application.details.map((d) => (
               <Fact
                 key={d.label}

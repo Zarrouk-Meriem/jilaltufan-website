@@ -1,4 +1,4 @@
-import type { CollectionAfterChangeHook, Payload } from 'payload'
+import type { CollectionAfterChangeHook } from 'payload'
 import {
   acceptanceEmail,
   rejectionEmail,
@@ -70,7 +70,7 @@ export const sendStatusEmail: CollectionAfterChangeHook<Application> = async ({
   }
 
   const [mail, settings] = await Promise.all([
-    compose(payload, doc, locale, inviteUrl),
+    compose(doc, locale, inviteUrl),
     payload.findGlobal({ slug: 'site-settings', depth: 0 }),
   ])
   try {
@@ -106,47 +106,15 @@ export const sendStatusEmail: CollectionAfterChangeHook<Application> = async ({
   return { ...doc, [rule.stamp]: sentAt }
 }
 
-async function compose(
-  payload: Payload,
-  doc: Application,
-  locale: Locale,
-  inviteUrl?: string,
-): Promise<Mail> {
+async function compose(doc: Application, locale: Locale, inviteUrl?: string): Promise<Mail> {
   switch (doc.applicationStatus) {
     case 'reviewing':
       return reviewingEmail(locale, doc.fullName)
     case 'accepted':
-      return acceptanceEmail(
-        locale,
-        doc.fullName,
-        await programTitle(payload, doc.program, locale),
-        inviteUrl,
-      )
+      return acceptanceEmail(locale, doc.fullName, inviteUrl)
     case 'waitlisted':
       return waitlistEmail(locale, doc.fullName)
     default:
       return rejectionEmail(locale, doc.fullName)
-  }
-}
-
-/** The program's name in the applicant's language; undefined when none is assigned or it cannot be read. */
-async function programTitle(
-  payload: Payload,
-  program: Application['program'],
-  locale: Locale,
-): Promise<string | undefined> {
-  const id = typeof program === 'object' && program ? program.id : program
-  if (!id) return undefined
-  try {
-    const doc = await payload.findByID({
-      collection: 'programs',
-      id,
-      locale,
-      depth: 0,
-      overrideAccess: true,
-    })
-    return doc.title || undefined
-  } catch {
-    return undefined
   }
 }

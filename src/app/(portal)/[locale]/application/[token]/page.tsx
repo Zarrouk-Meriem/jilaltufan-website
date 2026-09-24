@@ -75,9 +75,6 @@ export default async function ApplicationStatusPage({
         <Card title={t('submitted')}>
           <Facts>
             <Fact label={t('submitted')} value={submitted} />
-            {application.program ? (
-              <Fact label={t('programLabel')} value={application.program} />
-            ) : null}
           </Facts>
         </Card>
         <p className="text-sm text-ink-500">{t('privateNote')}</p>

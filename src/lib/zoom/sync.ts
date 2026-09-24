@@ -1,4 +1,5 @@
 import type { Payload } from 'payload'
+import { programRoster } from '@/lib/enrollment/access'
 import { meetingParticipants, zoomConfigured, ZoomError } from './client'
 import { reconcile, type ExistingRow, type RosterEntry, type ZoomParticipant } from './reconcile'
 
@@ -46,29 +47,10 @@ export async function syncSessionAttendance(
 
   const participants: ZoomParticipant[] = await meetingParticipants(String(meetingId), fetchImpl)
 
-  // The roster: accounts opened from an application accepted onto this program.
-  const applications = await payload.find({
-    collection: 'applications',
-    where: {
-      and: [{ program: { equals: programId } }, { applicationStatus: { equals: 'accepted' } }],
-    },
-    limit: 1000,
-    depth: 0,
-    overrideAccess: true,
-    select: { applicationStatus: true },
-  })
-  const applicationIds = applications.docs.map((d) => d.id)
-  const accounts = applicationIds.length
-    ? await payload.find({
-        collection: 'accounts',
-        where: { application: { in: applicationIds } },
-        limit: 1000,
-        depth: 0,
-        overrideAccess: true,
-      })
-    : { docs: [] }
-
-  const roster: RosterEntry[] = accounts.docs.map((a) => ({ accountId: a.id, email: a.email }))
+  // The roster: the program's students by the one access rule (enrolled, accepted,
+  // account active) — the same list the staff register shows.
+  const students = await programRoster(payload, programId)
+  const roster: RosterEntry[] = students.map((a) => ({ accountId: a.id, email: a.email }))
 
   const rows = await payload.find({
     collection: 'attendance',

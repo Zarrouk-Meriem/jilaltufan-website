@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { APIError } from 'payload'
 import { accountSelfOrStaff, adminOnly, staffFieldOnly, staffOnly } from '@/access'
 
 /**
@@ -48,6 +49,29 @@ export const Accounts: CollectionConfig = {
     // Never the Payload admin, whatever else goes wrong.
     admin: () => false,
   },
+  hooks: {
+    // Their rows go first: enrollments and attendance require an account, so the database
+    // would otherwise refuse the delete (their links are NOT NULL).
+    beforeDelete: [
+      async ({ id, req }) => {
+        for (const collection of ['enrollments', 'attendance'] as const)
+          await req.payload.delete({
+            collection,
+            where: { account: { equals: id } },
+            overrideAccess: true,
+            req,
+          })
+      },
+    ],
+    // Runs after the password has been checked, so saying why is safe: only the owner of
+    // the account can reach this answer (the sign-in action shows `errors.disabled`).
+    beforeLogin: [
+      ({ user }) => {
+        if ((user as { disabled?: boolean | null }).disabled)
+          throw new APIError('account-disabled', 403)
+      },
+    ],
+  },
   defaultSort: '-createdAt',
   fields: [
     {
@@ -64,6 +88,21 @@ export const Accounts: CollectionConfig = {
       ],
     },
     { name: 'name', type: 'text', label: { ar: 'الاسم', en: 'Name' } },
+    {
+      name: 'disabled',
+      type: 'checkbox',
+      defaultValue: false,
+      index: true,
+      label: { ar: 'موقوف', en: 'Deactivated' },
+      access: { update: staffFieldOnly },
+      admin: {
+        position: 'sidebar',
+        description: {
+          ar: 'الحساب الموقوف لا يدخل، ولا يرى شيئًا من البرامج ولا الحصص، ولو كان داخلًا وقت الإيقاف. يبقى السجلّ كما هو.',
+          en: 'A deactivated account cannot sign in or see any program or session, even if it was signed in at the time. The record stays as it is.',
+        },
+      },
+    },
     {
       name: 'locale',
       type: 'select',

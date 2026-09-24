@@ -75,6 +75,22 @@ async function programWithSessions(api: APIRequestContext): Promise<{ id: number
 }
 
 /**
+ * Staff enroll a student in a program, or re-enroll them if a row already exists (the
+ * tests in this file share one applicant, in order).
+ */
+async function enroll(api: APIRequestContext, accountId: number, programId: number) {
+  const found = await api.get(
+    `/api/enrollments?where[account][equals]=${accountId}&where[program][equals]=${programId}&depth=0`,
+  )
+  const existing = ((await found.json()).docs as { id: number }[])[0]
+  const res = existing
+    ? await api.patch(`/api/enrollments/${existing.id}`, { data: { state: 'enrolled' } })
+    : await api.post('/api/enrollments', { data: { account: accountId, program: programId } })
+  expect(res.ok(), await res.text()).toBe(true)
+  return existing?.id ?? ((await res.json()).doc as { id: number }).id
+}
+
+/**
  * An accepted applicant, and the account acceptance opened for them.
  *
  * One real submission for the whole file, made on first use: the apply form is rate limited
@@ -148,16 +164,14 @@ test('acceptance opens the account, invited but not yet activated', async ({ pag
 test('the window shows the student their own application, sessions and materials', async ({
   page,
 }) => {
-  const { api, email, applicationId } = await acceptedApplicant(page)
+  const { api, email } = await acceptedApplicant(page)
   const account = await findAccount(api, email)
   const password = `pw-${Date.now()}-playwright`
   expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
 
-  // Staff settle the program, which is what fills the sessions and materials sections.
+  // An enrollment is what fills the sessions and materials sections.
   const program = (await programWithSessions(api)) as { id: number; title: string }
-  expect(
-    (await api.patch(`/api/applications/${applicationId}`, { data: { program: program.id } })).ok(),
-  ).toBe(true)
+  await enroll(api, account!.id, program.id)
 
   await page.goto('/ar/account/sign-in')
   await page.getByLabel('البريد الإلكتروني').fill(email)
@@ -408,15 +422,13 @@ test('a guest sees their session, and sends a file only for a session of theirs'
 test('the register is staff-only, sticks against Zoom, and shows the student their progress', async ({
   page,
 }) => {
-  const { api, email, applicationId } = await acceptedApplicant(page)
+  const { api, email } = await acceptedApplicant(page)
   const account = await findAccount(api, email)
   const password = `pw-${Date.now()}-playwright`
   expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
 
   const program = await programWithSessions(api)
-  expect(
-    (await api.patch(`/api/applications/${applicationId}`, { data: { program: program.id } })).ok(),
-  ).toBe(true)
+  await enroll(api, account!.id, program.id)
   const sessions = await (
     await api.get(
       `/api/sessions?where[program][equals]=${program.id}&limit=2&depth=0&sort=startsAt`,
@@ -653,4 +665,118 @@ test('an account is not staff: no admin, and no reading anyone else', async ({ p
   await page.goto('/admin')
   await expect(page).toHaveURL(/\/admin\/unauthorized$/)
   await expect(page).not.toHaveURL(/\/admin\/collections/)
+})
+
+/** Signs in through the form, the way a student does. */
+async function signInAs(page: Page, email: string, password: string) {
+  await page.goto('/ar/account/sign-in')
+  await page.getByLabel('البريد الإلكتروني').fill(email)
+  await page.getByLabel(/^كلمة السر/).fill(password)
+  await page.getByRole('button', { name: 'دخول' }).click()
+}
+
+// Access follows three things at once (src/lib/enrollment/access.ts): an `enrolled` row,
+// an application still `accepted`, and an account that is not deactivated. Until
+// 2026-09-24 only "a program is set" was checked, so a reversed acceptance kept every link.
+test('a program stays open only while enrolled and accepted', async ({ page }) => {
+  const { api, email, applicationId } = await acceptedApplicant(page)
+  const account = await findAccount(api, email)
+  const password = `pw-${Date.now()}-playwright`
+  expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
+  const program = await programWithSessions(api)
+  const enrollmentId = await enroll(api, account!.id, program.id)
+
+  await signInAs(page, email, password)
+  await expect(page).toHaveURL(/\/ar\/account$/)
+  const noSessions = page.locator('main').getByText('لا حصص بعد')
+
+  await page.goto('/ar/account/sessions')
+  await expect(noSessions).toHaveCount(0)
+
+  // Staff withdraw the enrollment: the program is gone on the next request.
+  await api.patch(`/api/enrollments/${enrollmentId}`, { data: { state: 'withdrawn' } })
+  await page.reload()
+  await expect(noSessions).toBeVisible()
+
+  // Enrolled again, then the acceptance is reversed: gone again.
+  await enroll(api, account!.id, program.id)
+  await page.reload()
+  await expect(noSessions).toHaveCount(0)
+  const reverse = await api.patch(`/api/applications/${applicationId}`, {
+    data: { applicationStatus: 'rejected' },
+  })
+  expect(reverse.ok(), await reverse.text()).toBe(true)
+  await page.reload()
+  await expect(noSessions).toBeVisible()
+
+  const restore = await api.patch(`/api/applications/${applicationId}`, {
+    data: { applicationStatus: 'accepted' },
+  })
+  expect(restore.ok(), await restore.text()).toBe(true)
+})
+
+test('a deactivated account is signed out at once and told why at the door', async ({ page }) => {
+  const { api, email, password, account } = await activatedAccount(page)
+  await signInAs(page, email, password)
+  await expect(page).toHaveURL(/\/ar\/account$/)
+
+  await api.patch(`/api/accounts/${account.id}`, { data: { disabled: true } })
+  // The session it already had is worth nothing now.
+  await page.goto('/ar/account')
+  await expect(page).toHaveURL(/\/ar\/account\/sign-in/)
+
+  // The right password gets a plain answer; only the owner can reach it.
+  await signInAs(page, email, password)
+  await expect(page.locator('main').getByRole('alert')).toContainText('أُوقف هذا الحساب')
+  await expect(page).toHaveURL(/\/ar\/account\/sign-in/)
+
+  await api.delete(`/api/accounts/${account.id}`)
+  await api.dispose()
+})
+
+test('one directed program at a time holds for staff too, and projects are not enrollable', async ({
+  page,
+}) => {
+  const { api, account } = await activatedAccount(page)
+  const programs = (await (await api.get('/api/programs?limit=50&depth=0')).json()).docs as {
+    id: number
+    track: string
+  }[]
+  const directed = programs.filter((p) => p.track === 'directed')
+  const open = programs.find((p) => p.track === 'open')
+  const projects = programs.find((p) => p.track === 'projects')
+  expect(directed.length).toBeGreaterThanOrEqual(2)
+
+  expect(
+    (
+      await api.post('/api/enrollments', { data: { account: account.id, program: open!.id } })
+    ).status(),
+  ).toBe(201)
+  expect(
+    (
+      await api.post('/api/enrollments', {
+        data: { account: account.id, program: directed[0]!.id },
+      })
+    ).status(),
+  ).toBe(201)
+
+  const second = await api.post('/api/enrollments', {
+    data: { account: account.id, program: directed[1]!.id },
+  })
+  expect(second.status()).toBe(400)
+  expect(await second.text()).toContain('برنامج موجّه آخر')
+
+  if (projects) {
+    const refused = await api.post('/api/enrollments', {
+      data: { account: account.id, program: projects.id },
+    })
+    expect(refused.status()).toBe(400)
+  }
+
+  // Deleting the student takes their enrollments with them (they require an account).
+  const removed = await api.delete(`/api/accounts/${account.id}`)
+  expect(removed.ok(), await removed.text()).toBe(true)
+  const left = await api.get(`/api/enrollments?where[account][equals]=${account.id}&limit=0`)
+  expect((await left.json()).totalDocs).toBe(0)
+  await api.dispose()
 })

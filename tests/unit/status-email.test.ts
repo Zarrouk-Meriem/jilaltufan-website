@@ -79,22 +79,16 @@ describe('status email hook — accepted', () => {
     expect(result.acceptanceEmailSentAt).toEqual(expect.any(String))
   })
 
-  it('uses the applicant locale and names the program in that locale', async () => {
-    const payload = fakePayload({ programTitle: 'Open Track' })
-    await run({ ...base, locale: 'en', program: 3 }, { applicationStatus: 'new' }, payload)
-    expect(payload.findByID).toHaveBeenCalledWith(
-      expect.objectContaining({ collection: 'programs', id: 3, locale: 'en' }),
-    )
+  it('writes in the applicant locale and points them to their window to choose a program', async () => {
+    const payload = fakePayload({})
+    await run({ ...base, locale: 'en' }, { applicationStatus: 'new' }, payload)
     const msg = payload.sendEmail.mock.calls[0]![0]
     expect(msg['subject']).toBe(acceptanceEmail('en', 'x').subject)
-    expect(msg['text']).toContain('Your program: Open Track.')
-  })
-
-  it('accepts a populated program relation too', async () => {
-    const payload = fakePayload({ programTitle: 'المسار المفتوح' })
-    await run({ ...base, program: { id: 9 } }, { applicationStatus: 'new' }, payload)
-    expect(payload.findByID).toHaveBeenCalledWith(expect.objectContaining({ id: 9, locale: 'ar' }))
-    expect(payload.sendEmail.mock.calls[0]![0]['text']).toContain('برنامجك: المسار المفتوح.')
+    expect(msg['text']).toContain('You choose your program in the student window')
+    // The application no longer carries a program, so none is looked up.
+    expect(payload.findByID).not.toHaveBeenCalledWith(
+      expect.objectContaining({ collection: 'programs' }),
+    )
   })
 
   it('falls back to the contact email as reply-to when no applications mailbox is set', async () => {
@@ -242,10 +236,12 @@ describe('status email hook — guards', () => {
 })
 
 describe('status email templates', () => {
-  it('omits the program line when none is assigned, in both locales', () => {
-    expect(acceptanceEmail('ar', 'ليلى').text).not.toContain('برنامجك:')
-    expect(acceptanceEmail('en', 'Leila').text).not.toContain('Your program:')
-    expect(acceptanceEmail('ar', 'ليلى', 'المسار').text).toContain('برنامجك: المسار.')
+  it('points to the student window instead of naming a program, in both locales', () => {
+    expect(acceptanceEmail('ar', 'ليلى').text).toContain('من نافذة الطالب تختار برنامجك')
+    expect(acceptanceEmail('en', 'Leila').text).toContain(
+      'You choose your program in the student window',
+    )
+    expect(acceptanceEmail('ar', 'ليلى').text).not.toContain('لتحديد برنامجك')
   })
 
   it('every template exists in both locales with a subject, text and html', () => {

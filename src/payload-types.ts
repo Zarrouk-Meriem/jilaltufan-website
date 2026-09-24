@@ -71,6 +71,7 @@ export interface Config {
     programs: Program;
     sessions: Session;
     attendance: Attendance;
+    enrollments: Enrollment;
     instructors: Instructor;
     projects: Project;
     'minbar-posts': MinbarPost;
@@ -102,6 +103,7 @@ export interface Config {
     programs: ProgramsSelect<false> | ProgramsSelect<true>;
     sessions: SessionsSelect<false> | SessionsSelect<true>;
     attendance: AttendanceSelect<false> | AttendanceSelect<true>;
+    enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     instructors: InstructorsSelect<false> | InstructorsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'minbar-posts': MinbarPostsSelect<false> | MinbarPostsSelect<true>;
@@ -514,6 +516,10 @@ export interface Account {
   id: number;
   kind: 'student' | 'instructor';
   name?: string | null;
+  /**
+   * A deactivated account cannot sign in or see any program or session, even if it was signed in at the time. The record stays as it is.
+   */
+  disabled?: boolean | null;
   locale?: ('ar' | 'en') | null;
   /**
    * The application this account came from.
@@ -545,17 +551,13 @@ export interface Account {
   collection: 'accounts';
 }
 /**
- * Submissions from the apply form. Filter by program and status; export CSV from the export button.
+ * Submissions from the apply form. Filter by status; export CSV from the export button. The program is chosen by the accepted student (see Enrollments).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "applications".
  */
 export interface Application {
   id: number;
-  /**
-   * Applications are to the academy; set the program here after acceptance.
-   */
-  program?: (number | null) | Program;
   /**
    * The applicant is emailed, in their language, on the move to Reviewing (from New only), Accepted, and Waitlisted — once, on the change; each send time appears below. Rejected sends nothing until the send box is ticked.
    */
@@ -1118,6 +1120,25 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Who is enrolled in which program. An accepted student enrolls from their window: Open Training, and one directed program only. Staff can enroll a student here, move them by changing the program, or withdraw them.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enrollments".
+ */
+export interface Enrollment {
+  id: number;
+  account: number | Account;
+  program: number | Program;
+  /**
+   * Withdrawing stops the student's access to the program's sessions and materials, and keeps the record.
+   */
+  state: 'enrolled' | 'withdrawn';
+  source: 'student' | 'staff';
+  agreedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects".
  */
@@ -1379,6 +1400,7 @@ export interface Activity {
     | 'programs'
     | 'sessions'
     | 'attendance'
+    | 'enrollments'
     | 'instructors'
     | 'projects'
     | 'minbar-posts'
@@ -1623,6 +1645,10 @@ export interface PayloadLockedDocument {
         value: number | Attendance;
       } | null)
     | ({
+        relationTo: 'enrollments';
+        value: number | Enrollment;
+      } | null)
+    | ({
         relationTo: 'instructors';
         value: number | Instructor;
       } | null)
@@ -1806,6 +1832,19 @@ export interface AttendanceSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enrollments_select".
+ */
+export interface EnrollmentsSelect<T extends boolean = true> {
+  account?: T;
+  program?: T;
+  state?: T;
+  source?: T;
+  agreedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "instructors_select".
  */
 export interface InstructorsSelect<T extends boolean = true> {
@@ -1966,7 +2005,6 @@ export interface EventsSelect<T extends boolean = true> {
  * via the `definition` "applications_select".
  */
 export interface ApplicationsSelect<T extends boolean = true> {
-  program?: T;
   applicationStatus?: T;
   fullName?: T;
   gender?: T;
@@ -2084,6 +2122,7 @@ export interface UsersSelect<T extends boolean = true> {
 export interface AccountsSelect<T extends boolean = true> {
   kind?: T;
   name?: T;
+  disabled?: T;
   locale?: T;
   application?: T;
   instructor?: T;
@@ -2823,6 +2862,7 @@ export interface TaskCreateCollectionExport {
       | 'programs'
       | 'sessions'
       | 'attendance'
+      | 'enrollments'
       | 'instructors'
       | 'projects'
       | 'minbar-posts'

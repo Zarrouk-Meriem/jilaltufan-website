@@ -1,5 +1,6 @@
 import type { UIFieldServerProps } from 'payload'
 import React from 'react'
+import { programRoster } from '@/lib/enrollment/access'
 import {
   SessionAttendanceRoster,
   type RosterRow,
@@ -94,31 +95,10 @@ export async function SessionAttendanceField({ data, i18n, payload }: UIFieldSer
       </p>,
     )
 
-  // The students of this program: accounts opened from an application that was assigned it.
-  const applications = await payload.find({
-    collection: 'applications',
-    where: {
-      and: [{ program: { equals: programId } }, { applicationStatus: { equals: 'accepted' } }],
-    },
-    limit: 500,
-    depth: 0,
-    overrideAccess: true,
-    // `id` comes back regardless; naming any one field keeps the row small.
-    select: { applicationStatus: true },
-  })
-  const applicationIds = applications.docs.map((d) => d.id)
-
-  const [accounts, marked] = await Promise.all([
-    applicationIds.length
-      ? payload.find({
-          collection: 'accounts',
-          where: { application: { in: applicationIds } },
-          limit: 500,
-          depth: 0,
-          sort: 'name',
-          overrideAccess: true,
-        })
-      : Promise.resolve({ docs: [] as { id: number; name?: string | null; email: string }[] }),
+  // The students of this program by the one access rule (enrolled, accepted, account
+  // active) — the same list the student window and the Zoom sync use.
+  const [students, marked] = await Promise.all([
+    programRoster(payload, programId),
     payload.find({
       collection: 'attendance',
       where: { session: { equals: sessionId } },
@@ -135,7 +115,7 @@ export async function SessionAttendanceField({ data, i18n, payload }: UIFieldSer
     ]),
   )
 
-  const rows: RosterRow[] = accounts.docs.map((a) => {
+  const rows: RosterRow[] = students.map((a) => {
     const row = bySource.get(a.id)
     return {
       accountId: a.id,
@@ -149,7 +129,7 @@ export async function SessionAttendanceField({ data, i18n, payload }: UIFieldSer
   if (rows.length === 0)
     return wrap(
       <p className="field-description">
-        {ar ? 'لا طلبة مقبولين في هذا البرنامج بعد.' : 'No accepted students in this program yet.'}
+        {ar ? 'لا طلبة مسجّلين في هذا البرنامج بعد.' : 'No students enrolled in this program yet.'}
       </p>,
     )
 

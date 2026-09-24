@@ -47,6 +47,20 @@ export const Programs: CollectionConfig = {
     },
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },
+  hooks: {
+    // A program's enrollments require it (NOT NULL), so they go first; nothing else is
+    // lost with them that the program's own deletion does not already take.
+    beforeDelete: [
+      async ({ id, req }) => {
+        await req.payload.delete({
+          collection: 'enrollments',
+          where: { program: { equals: id } },
+          overrideAccess: true,
+          req,
+        })
+      },
+    ],
+  },
   defaultSort: 'order',
   fields: [
     localizedText('title', { ar: 'اسم البرنامج', en: 'Program name' }, { required: true }),

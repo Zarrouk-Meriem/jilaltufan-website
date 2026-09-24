@@ -50,31 +50,17 @@ export const Applications: CollectionConfig = {
   admin: {
     group: { ar: 'الطلبات', en: 'Submissions' },
     useAsTitle: 'fullName',
-    defaultColumns: ['fullName', 'program', 'applicationStatus', 'country', 'createdAt'],
+    defaultColumns: ['fullName', 'applicationStatus', 'country', 'createdAt'],
     listSearchableFields: ['fullName', 'email', 'phone', 'affiliationName'],
     description: {
-      ar: 'الطلبات الواردة من نموذج التسجيل. صفّها حسب البرنامج والحالة، وصدّرها كملف CSV من زر التصدير.',
-      en: 'Submissions from the apply form. Filter by program and status; export CSV from the export button.',
+      ar: 'الطلبات الواردة من نموذج التسجيل. صفّها حسب الحالة، وصدّرها كملف CSV من زر التصدير. البرنامج يختاره الطالب المقبول بنفسه (مجموعة «التسجيلات»).',
+      en: 'Submissions from the apply form. Filter by status; export CSV from the export button. The program is chosen by the accepted student (see Enrollments).',
     },
   },
   access: { read: staffOnly, create: nobody, update: staffOnly, delete: staffOnly },
   hooks: { beforeChange: [mintOnCreate], afterChange: [sendStatusEmail] },
   defaultSort: '-createdAt',
   fields: [
-    {
-      name: 'program',
-      type: 'relationship',
-      relationTo: 'programs',
-      index: true,
-      label: { ar: 'البرنامج', en: 'Program' },
-      admin: {
-        position: 'sidebar',
-        description: {
-          ar: 'الطلب عام للأكاديمية؛ يُحدَّد البرنامج هنا بعد القبول.',
-          en: 'Applications are to the academy; set the program here after acceptance.',
-        },
-      },
-    },
     {
       name: 'applicationStatus',
       type: 'select',

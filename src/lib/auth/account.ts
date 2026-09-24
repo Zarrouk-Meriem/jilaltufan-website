@@ -17,6 +17,8 @@ export const getAccount = cache(async (): Promise<Account | null> => {
   const payload = await getClient()
   const { user } = await payload.auth({ headers: await nextHeaders() })
   if (!user || user.collection !== 'accounts') return null
+  // Deactivated by staff: nobody, even with a token issued before the switch.
+  if ((user as unknown as Account).disabled) return null
   return user as unknown as Account
 })
 

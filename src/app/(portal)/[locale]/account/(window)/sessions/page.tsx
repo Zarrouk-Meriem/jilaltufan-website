@@ -6,8 +6,8 @@ import { PageOpening } from '@/components/portal/pieces'
 import { EmptyState } from '@/components/ui/EmptyState'
 import type { Locale } from '@/i18n/routing'
 import { getAccount } from '@/lib/auth/account'
+import { enrolledPrograms } from '@/lib/enrollment/access'
 import {
-  getAccountApplication,
   getAccountInstructor,
   getAccountSessions,
   getInstructorSessions,
@@ -37,10 +37,10 @@ export default async function SessionsPage({ params }: PageProps<'/[locale]/acco
   const settings = await getSiteSettings(locale)
   const teaching = account.kind === 'instructor'
   const instructor = teaching ? await getAccountInstructor(account, locale) : null
-  const application = teaching ? null : await getAccountApplication(account, locale)
+  const programs = teaching ? [] : await enrolledPrograms(account, locale)
   const sessions = teaching
     ? await getInstructorSessions(instructor, locale)
-    : await getAccountSessions(application, locale)
+    : await getAccountSessions(programs, locale)
   const tz = settings.academyTimeZone
   const now = new Date()
 
@@ -82,7 +82,7 @@ export default async function SessionsPage({ params }: PageProps<'/[locale]/acco
           body={
             teaching
               ? t('account.teaching.noSessionsBody')
-              : application?.program
+              : programs.length
                 ? undefined
                 : t('account.noProgramYet')
           }

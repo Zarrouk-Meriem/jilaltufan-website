@@ -425,4 +425,11 @@ one row by the 2026-09-18 feedback.
 4. **The instructor invite and window** — «أرسل دعوة», their session, upload, bio.
 5. **Attendance by hand** — the collection and the staff marking UI; progress in the window.
 6. **Zoom sync** — S2S OAuth, the report pull, reconciliation that never overwrites staff.
-7. _(held)_ Minbar commenting.
+7. ~~Minbar commenting~~ — cancelled for now (2026-09-24).
+8. **Enrollment** (decided 2026-09-24) — the accepted student enrolls themselves: open
+   training plus one directed program at a time, locked for the student, staff override in
+   admin. An `enrollments` collection replaces the program on the application; access to a
+   program needs an active account, an accepted application and an `enrolled` row
+   (`src/lib/enrollment/access.ts`). Screens next: the program list with states, the
+   confirmation dialog with the terms (placeholder), a personal page per program, and
+   per-program announcements.

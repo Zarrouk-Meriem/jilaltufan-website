@@ -18,17 +18,20 @@ function fakePayload(existing: { id: number; account: number; source: 'staff' | 
       return { id: 7, zoomMeetingId: '88899', program: 3, durationMinutes: 60 }
     },
     find: async ({ collection }: { collection: string }) => {
-      if (collection === 'applications')
-        return { docs: [{ id: 11 }, { id: 12 }, { id: 13 }, { id: 14 }] }
+      // The roster: enrolled rows → their accounts → accepted applications.
+      if (collection === 'enrollments')
+        return { docs: [{ account: 1 }, { account: 2 }, { account: 3 }, { account: 4 }] }
       if (collection === 'accounts')
         return {
           docs: [
-            { id: 1, email: 'maryam@example.org' },
-            { id: 2, email: 'ahmad@example.org' },
-            { id: 3, email: 'sara@example.org' },
-            { id: 4, email: 'khaled@example.org' },
+            { id: 1, email: 'maryam@example.org', application: 11 },
+            { id: 2, email: 'ahmad@example.org', application: 12 },
+            { id: 3, email: 'sara@example.org', application: 13 },
+            { id: 4, email: 'khaled@example.org', application: 14 },
           ],
         }
+      if (collection === 'applications')
+        return { docs: [{ id: 11 }, { id: 12 }, { id: 13 }, { id: 14 }] }
       if (collection === 'attendance')
         return { docs: existing.map((r) => ({ id: r.id, account: r.account, source: r.source })) }
       throw new Error(`unexpected find: ${collection}`)

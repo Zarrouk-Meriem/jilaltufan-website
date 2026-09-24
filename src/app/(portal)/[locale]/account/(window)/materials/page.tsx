@@ -7,8 +7,8 @@ import { Card, PageOpening } from '@/components/portal/pieces'
 import { EmptyState } from '@/components/ui/EmptyState'
 import type { Locale } from '@/i18n/routing'
 import { getAccount } from '@/lib/auth/account'
+import { enrolledPrograms } from '@/lib/enrollment/access'
 import {
-  getAccountApplication,
   getAccountInstructor,
   getAccountMaterials,
   getInstructorFiles,
@@ -98,8 +98,8 @@ export default async function MaterialsPage({ params }: PageProps<'/[locale]/acc
     )
   }
 
-  const application = await getAccountApplication(account, locale)
-  const materials = await getAccountMaterials(application, locale)
+  const programs = await enrolledPrograms(account, locale)
+  const materials = await getAccountMaterials(programs, locale)
 
   return (
     <>
@@ -124,7 +124,7 @@ export default async function MaterialsPage({ params }: PageProps<'/[locale]/acc
       ) : (
         <EmptyState
           title={t('account.noMaterials')}
-          body={application?.program ? undefined : t('account.noProgramYet')}
+          body={programs.length ? undefined : t('account.noProgramYet')}
         />
       )}
     </>

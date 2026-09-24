@@ -9,6 +9,7 @@ import { TextLink } from '@/components/ui/TextLink'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { getAccount } from '@/lib/auth/account'
+import { enrolledPrograms } from '@/lib/enrollment/access'
 import {
   getAccountApplication,
   getAccountInstructor,
@@ -72,10 +73,19 @@ export default async function OverviewPage({ params }: PageProps<'/[locale]/acco
     account.kind === 'instructor' ? await getAccountInstructor(account, locale) : null
   const application =
     account.kind === 'instructor' ? null : await getAccountApplication(account, locale)
+  // Only what the access rule allows: active account, accepted application, enrolled.
+  const programs = account.kind === 'student' ? await enrolledPrograms(account, locale) : []
   const sessions = instructor
     ? await getInstructorSessions(instructor, locale)
-    : await getAccountSessions(application, locale)
-  const progress = application ? await getAccountProgress(account, application) : null
+    : await getAccountSessions(programs, locale)
+  const progresses = (
+    await Promise.all(
+      programs.map(async (program) => {
+        const progress = await getAccountProgress(account, program)
+        return progress ? { program, ...progress } : null
+      }),
+    )
+  ).filter((p) => p !== null)
 
   const upcoming = sessions.filter((s) => {
     const state = getSessionState(
@@ -99,9 +109,9 @@ export default async function OverviewPage({ params }: PageProps<'/[locale]/acco
               <Badge tone={STATUS_TONES[application.status] ?? 'neutral'}>
                 {t(`application.status.${application.status}`)}
               </Badge>
-              {application.program ? (
+              {programs.length ? (
                 <span className="text-md font-medium text-ink-900">
-                  {application.program.title}
+                  {programs.map((p) => p.title).join(' · ')}
                 </span>
               ) : null}
             </div>
@@ -147,7 +157,7 @@ export default async function OverviewPage({ params }: PageProps<'/[locale]/acco
               body={
                 account.kind === 'instructor'
                   ? t('account.teaching.noSessionsBody')
-                  : application?.program
+                  : programs.length
                     ? undefined
                     : t('account.noProgramYet')
               }
@@ -155,18 +165,32 @@ export default async function OverviewPage({ params }: PageProps<'/[locale]/acco
           )}
         </Card>
 
-        {progress ? (
+        {progresses.length ? (
           <Card title={t('account.progressTitle')}>
-            <Progress
-              attended={progress.attended}
-              total={progress.total}
-              label={t('account.progress', { attended: progress.attended, total: progress.total })}
-              note={
-                progress.excused > 0
-                  ? t('account.progressExcused', { excused: progress.excused })
-                  : undefined
-              }
-            />
+            <div className="flex flex-col gap-6">
+              {progresses.map((progress) => (
+                <div key={progress.program.id}>
+                  {progresses.length > 1 ? (
+                    <p className="mb-2 text-sm font-medium text-ink-900">
+                      {progress.program.title}
+                    </p>
+                  ) : null}
+                  <Progress
+                    attended={progress.attended}
+                    total={progress.total}
+                    label={t('account.progress', {
+                      attended: progress.attended,
+                      total: progress.total,
+                    })}
+                    note={
+                      progress.excused > 0
+                        ? t('account.progressExcused', { excused: progress.excused })
+                        : undefined
+                    }
+                  />
+                </div>
+              ))}
+            </div>
           </Card>
         ) : null}
 

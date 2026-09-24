@@ -1,6 +1,8 @@
+import type { Where } from 'payload'
 import { cache } from 'react'
 import type { Locale } from '@/i18n/routing'
-import type { Account, Application, Instructor, Material, Program } from '@/payload-types'
+import type { Account, Application, Instructor, Material } from '@/payload-types'
+import type { EnrolledProgram } from '@/lib/enrollment/access'
 import type { PublicSession } from './sessions'
 import { getClient } from './client'
 import { listMaterials } from './materials'
@@ -17,7 +19,6 @@ export type AccountApplication = {
   id: number
   status: NonNullable<Application['applicationStatus']>
   submittedAt: string
-  program: { id: number; title: string; slug: string } | null
   /** As they filled it in. Shown back to them, not editable here — see `account.detailsNote`. */
   details: { label: 'fullName' | 'email' | 'phone' | 'profession'; value: string }[]
   document: { name: string; url: string; size: number | null } | null
@@ -55,14 +56,12 @@ export const getAccountApplication = cache(
       .catch(() => null)
     if (!doc) return null
 
-    const program = typeof doc.program === 'object' && doc.program ? (doc.program as Program) : null
     const cv = typeof doc.cv === 'object' && doc.cv ? doc.cv : null
 
     return {
       id: doc.id,
       status: doc.applicationStatus ?? 'new',
       submittedAt: doc.createdAt,
-      program: program ? { id: program.id, title: program.title, slug: program.slug } : null,
       details: [
         { label: 'fullName', value: doc.fullName },
         { label: 'email', value: doc.email },
@@ -78,16 +77,23 @@ export const getAccountApplication = cache(
   },
 )
 
-/** The sessions of the student's program, with the join link gated exactly as in public. */
+/**
+ * The sessions of the programs the student may open (`enrolledPrograms`), with the join
+ * link gated exactly as in public, soonest first.
+ */
 export const getAccountSessions = cache(
-  async (application: AccountApplication | null, locale: Locale): Promise<PublicSession[]> =>
-    application?.program ? listSessionsForProgram(locale, application.program.id) : [],
+  async (programs: EnrolledProgram[], locale: Locale): Promise<PublicSession[]> => {
+    const lists = await Promise.all(programs.map((p) => listSessionsForProgram(locale, p.id)))
+    return lists.flat().sort((a, b) => a.startsAt.localeCompare(b.startsAt))
+  },
 )
 
-/** The materials of the student's program. */
+/** The materials of the programs the student may open, newest first. */
 export const getAccountMaterials = cache(
-  async (application: AccountApplication | null, locale: Locale): Promise<Material[]> =>
-    application?.program ? listMaterials(locale, application.program.slug) : [],
+  async (programs: EnrolledProgram[], locale: Locale): Promise<Material[]> => {
+    const lists = await Promise.all(programs.map((p) => listMaterials(locale, p.slug)))
+    return lists.flat().sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  },
 )
 
 /** The public profile a guest instructor's account points at. */
@@ -120,7 +126,10 @@ export const getInstructorSessions = cache(
     const [payload, settings] = await Promise.all([getClient(), getSiteSettings(locale)])
     const res = await payload.find({
       collection: 'sessions',
-      where: { instructors: { contains: instructor.id } },
+      // Published only: a draft session is staff's work in progress, not a teaching slot.
+      where: {
+        and: [{ instructors: { contains: instructor.id } }, { status: { equals: 'published' } }],
+      },
       locale,
       fallbackLocale: 'ar',
       sort: 'startsAt',
@@ -166,30 +175,29 @@ export const getInstructorFiles = cache(async (account: Account): Promise<SentFi
 export type Progress = { attended: number; excused: number; total: number }
 
 export const getAccountProgress = cache(
-  async (account: Account, application: AccountApplication | null): Promise<Progress | null> => {
-    if (!application?.program) return null
+  async (account: Account, program: EnrolledProgram): Promise<Progress | null> => {
     const payload = await getClient()
+    // This program's sessions only, and never a cancelled one: a session that did not
+    // happen is not one the student could have attended (until 2026-09-24 it was counted).
+    const held: Where = {
+      and: [
+        { program: { equals: program.id } },
+        { status: { equals: 'published' } },
+        { sessionStatus: { not_equals: 'cancelled' } },
+      ],
+    }
+    const mine = (state: 'present' | 'excused'): Where => ({
+      and: [
+        { account: { equals: account.id } },
+        { state: { equals: state } },
+        { 'session.program': { equals: program.id } },
+        { 'session.sessionStatus': { not_equals: 'cancelled' } },
+      ],
+    })
     const [total, attended, excused] = await Promise.all([
-      payload.count({
-        collection: 'sessions',
-        where: {
-          and: [
-            { program: { equals: application.program.id } },
-            { status: { equals: 'published' } },
-          ],
-        },
-        overrideAccess: true,
-      }),
-      payload.count({
-        collection: 'attendance',
-        where: { and: [{ account: { equals: account.id } }, { state: { equals: 'present' } }] },
-        overrideAccess: true,
-      }),
-      payload.count({
-        collection: 'attendance',
-        where: { and: [{ account: { equals: account.id } }, { state: { equals: 'excused' } }] },
-        overrideAccess: true,
-      }),
+      payload.count({ collection: 'sessions', where: held, overrideAccess: true }),
+      payload.count({ collection: 'attendance', where: mine('present'), overrideAccess: true }),
+      payload.count({ collection: 'attendance', where: mine('excused'), overrideAccess: true }),
     ])
     if (total.totalDocs === 0) return null
     return { attended: attended.totalDocs, excused: excused.totalDocs, total: total.totalDocs }

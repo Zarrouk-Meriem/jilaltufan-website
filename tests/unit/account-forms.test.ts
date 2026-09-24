@@ -64,10 +64,10 @@ describe('the letters that open an account', () => {
   const url = 'https://jilaltufan.org/ar/account/set-password?token=abc'
 
   it('puts the invite in the acceptance letter, not in a second one', () => {
-    const mail = acceptanceEmail('ar', 'مريم', 'المشاريع الاستراتيجية', url)
+    const mail = acceptanceEmail('ar', 'مريم', url)
     expect(mail.html).toContain(`href="${url}"`)
     expect(mail.text).toContain('اختر كلمة السر')
-    expect(mail.text).toContain('المشاريع الاستراتيجية')
+    expect(mail.text).toContain('من نافذة الطالب تختار برنامجك')
   })
 
   it('reads as an ordinary acceptance when there is no invite to give', () => {
@@ -78,10 +78,7 @@ describe('the letters that open an account', () => {
   })
 
   it('never says a password, in either letter', () => {
-    for (const mail of [
-      acceptanceEmail('ar', 'مريم', undefined, url),
-      passwordResetEmail('ar', 'مريم', url),
-    ])
+    for (const mail of [acceptanceEmail('ar', 'مريم', url), passwordResetEmail('ar', 'مريم', url)])
       expect(mail.text).not.toMatch(/كلمة السر الخاصة بك هي|your password is/i)
   })
 
