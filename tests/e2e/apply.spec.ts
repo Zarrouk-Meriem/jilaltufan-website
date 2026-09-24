@@ -121,3 +121,40 @@ test('a reload keeps what was typed and the step reached; start over clears it',
   await expect(page.getByText(L.en.step(1), { exact: true })).toBeVisible()
   await expect(page.getByLabel(L.en.name)).toHaveValue('')
 })
+
+// The draft is written 300 ms after the last change; leaving inside that window (a
+// link clicked by mistake, a closed tab) used to lose what was just typed.
+test('leaving at once through a link keeps what was just typed', async ({ page }) => {
+  await page.goto('/en/apply', { waitUntil: 'networkidle' })
+  await page.getByLabel(L.en.name).fill('Left In A Hurry')
+  await page.getByRole('banner').getByRole('link', { name: 'Programs', exact: true }).click()
+  await expect(page).toHaveURL(/\/en\/programs$/)
+
+  await page.goBack({ waitUntil: 'networkidle' })
+  await expect(page.getByText(/We restored what you typed/)).toBeVisible()
+  await expect(page.getByLabel(L.en.name)).toHaveValue('Left In A Hurry')
+  await page.getByRole('button', { name: 'Start over', exact: true }).click()
+})
+
+test('closing the tab at once keeps what was just typed', async ({ page, context }) => {
+  await page.goto('/ar/apply', { waitUntil: 'networkidle' })
+  await page.getByLabel(L.ar.name).fill('أغلقت الصفحة')
+  await page.close({ runBeforeUnload: true })
+
+  const again = await context.newPage()
+  await again.goto('/ar/apply', { waitUntil: 'networkidle' })
+  await expect(again.getByLabel(L.ar.name)).toHaveValue('أغلقت الصفحة')
+})
+
+test('opening the form without touching it never erases a stored draft', async ({ page }) => {
+  await page.goto('/en/apply', { waitUntil: 'networkidle' })
+  await page.getByLabel(L.en.name).fill('Kept Across Visits')
+  await page.waitForTimeout(500)
+  // Two untouched visits in a row: the empty first render must not write over it.
+  for (let i = 0; i < 2; i++) {
+    await page.reload({ waitUntil: 'networkidle' })
+    await page.waitForTimeout(500)
+  }
+  await expect(page.getByLabel(L.en.name)).toHaveValue('Kept Across Visits')
+  await page.getByRole('button', { name: 'Start over', exact: true }).click()
+})

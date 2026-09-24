@@ -120,11 +120,40 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
     })
     return () => cancelAnimationFrame(id)
   }, [reset, getValues])
+  // Saving is debounced, and whatever is still pending is written at once when the
+  // visitor leaves by mistake: a link, Back, a closed tab, or a phone suspending the
+  // page (pagehide / hidden) — a debounce alone lost the last 300 ms of typing then.
+  // Only after the visitor has touched the form: the first render (empty defaults,
+  // before the restore lands) must never overwrite or remove a stored draft.
   const values = useWatch({ control })
+  const touched = useRef(false)
+  const pendingDraft = useRef<{ step: number; values: Partial<ApplyInput> } | null>(null)
   useEffect(() => {
-    const timer = setTimeout(() => writeDraft(step, values as Partial<ApplyInput>), 300)
+    if (!touched.current) return
+    pendingDraft.current = { step, values: values as Partial<ApplyInput> }
+    const timer = setTimeout(flushDraft, 300)
     return () => clearTimeout(timer)
   }, [values, step])
+  function flushDraft() {
+    const d = pendingDraft.current
+    pendingDraft.current = null
+    if (d) writeDraft(d.step, d.values)
+  }
+  useEffect(() => {
+    const onHidden = () => {
+      if (document.visibilityState === 'hidden') flushDraft()
+    }
+    window.addEventListener('pagehide', flushDraft)
+    document.addEventListener('visibilitychange', onHidden)
+    return () => {
+      window.removeEventListener('pagehide', flushDraft)
+      document.removeEventListener('visibilitychange', onHidden)
+      flushDraft() // leaving through a link unmounts the form
+    }
+  }, [])
+  const markTouched = () => {
+    touched.current = true
+  }
   const startOver = () => {
     clearDraft()
     reset()
@@ -144,7 +173,12 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
   const [state, formAction] = useActionState(
     async (prev: ApplyResult, fd: FormData) => {
       const r = await action(prev, fd)
-      if (r.status === 'success') clearDraft()
+      if (r.status === 'success') {
+        // Sent: nothing pending may bring the draft back when the form unmounts.
+        touched.current = false
+        pendingDraft.current = null
+        clearDraft()
+      }
       if (r.status === 'error') {
         const fieldErrors = r.fieldErrors ?? {}
         for (const [k, v] of Object.entries(fieldErrors))
@@ -204,6 +238,9 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
     <form
       ref={formRef}
       onSubmit={onSubmit}
+      onPointerDownCapture={markTouched}
+      onKeyDownCapture={markTouched}
+      onInputCapture={markTouched}
       noValidate
       className="grid scroll-mt-28 gap-10"
       aria-busy={pending}
