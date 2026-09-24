@@ -54,6 +54,27 @@ async function findAccount(api: APIRequestContext, email: string): Promise<Accou
 }
 
 /**
+ * A program that actually runs sessions.
+ *
+ * Taking the first program there is was fragile: any other spec that creates one — the
+ * activity log's screenshots do — could leave a fresh, session-less program at the front of
+ * the list, and a student put on it sees «لا حصص بعد» (2026-09-24). Ask for what the test
+ * needs instead.
+ */
+async function programWithSessions(api: APIRequestContext): Promise<{ id: number; title: string }> {
+  const res = await api.get('/api/programs?limit=50&depth=0')
+  expect(res.status(), await res.text()).toBe(200)
+  const programs = (await res.json()).docs as { id: number; title: string }[]
+  for (const program of programs) {
+    const count = await api.get(
+      `/api/sessions?where[program][equals]=${program.id}&limit=0&depth=0`,
+    )
+    if (((await count.json()).totalDocs as number) > 0) return program
+  }
+  throw new Error('no program has any sessions — is the database seeded?')
+}
+
+/**
  * An accepted applicant, and the account acceptance opened for them.
  *
  * One real submission for the whole file, made on first use: the apply form is rate limited
@@ -133,8 +154,7 @@ test('the window shows the student their own application, sessions and materials
   expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
 
   // Staff settle the program, which is what fills the sessions and materials sections.
-  const programs = await (await api.get('/api/programs?limit=1&depth=0')).json()
-  const program = programs.docs[0] as { id: number; title: string }
+  const program = (await programWithSessions(api)) as { id: number; title: string }
   expect(
     (await api.patch(`/api/applications/${applicationId}`, { data: { program: program.id } })).ok(),
   ).toBe(true)
@@ -378,8 +398,7 @@ test('the register is staff-only, sticks against Zoom, and shows the student the
   const password = `pw-${Date.now()}-playwright`
   expect((await api.patch(`/api/accounts/${account!.id}`, { data: { password } })).ok()).toBe(true)
 
-  const programs = await (await api.get('/api/programs?limit=1&depth=0')).json()
-  const program = programs.docs[0] as { id: number }
+  const program = await programWithSessions(api)
   expect(
     (await api.patch(`/api/applications/${applicationId}`, { data: { program: program.id } })).ok(),
   ).toBe(true)

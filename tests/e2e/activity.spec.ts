@@ -51,6 +51,7 @@ async function signIn(page: Page, who: Who) {
 }
 
 type Row = {
+  id: number
   action: string
   target: string
   docId: string | null
@@ -293,6 +294,40 @@ async function shoot(page: Page, name: string) {
   })
 }
 
+/**
+ * A program whose status was changed, and the id of the log row that recorded it — made
+ * here so the detail screenshot always has something with a before and an after to show.
+ */
+async function statusChangeRow(page: Page): Promise<number> {
+  const request = await api(page, admin)
+  const stamp = Date.now()
+  const created = await request.post('/api/programs?locale=ar', {
+    data: {
+      title: `برنامج لقطة ${stamp}`,
+      slug: `e2e-screens-${stamp}`,
+      track: 'directed',
+      registrationMode: 'closed',
+      status: 'draft',
+    },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+  const id = (await created.json()).doc.id as number
+  const updated = await request.patch(`/api/programs/${id}?locale=ar`, {
+    data: { status: 'published' },
+  })
+  expect(updated.status(), await updated.text()).toBe(200)
+
+  const row = (await rowsFor(request, 'programs', id)).find((r) => r.action === 'update')
+  expect(row, 'the status change should have been logged').toBeTruthy()
+
+  // Tidy the program away. The log row survives a deletion — that is the point of a log —
+  // but a published program that outlives this test does not: `account.spec` takes the
+  // first program it finds as a student's, and a fresh one has no sessions, so leaving it
+  // there failed two of that file's tests (2026-09-24).
+  expect((await request.delete(`/api/programs/${id}`)).status()).toBe(200)
+  return (row as unknown as { id: number }).id
+}
+
 test('screens', async ({ browser }) => {
   for (const locale of ['ar', 'en']) {
     const context = await browser.newContext({
@@ -313,13 +348,12 @@ test('screens', async ({ browser }) => {
     await page.setViewportSize({ width: 375, height: 812 })
     await shoot(page, `activity-${locale}-375`)
     await page.setViewportSize({ width: 1440, height: 900 })
-    await page
-      .locator('table tbody tr')
-      .filter({ hasText: /الحالة|Status/ })
-      .first()
-      .locator('a')
-      .first()
-      .click()
+
+    // Open a row this test made, by id, rather than hunting the list for one with a status
+    // change in it. The list is shared: every other spec writes to this log too, and under
+    // parallel load a row that was on the first page when the shot was taken is on the
+    // second by the time it is clicked (2026-09-24).
+    await page.goto(`/admin/collections/activity/${await statusChangeRow(page)}`)
     await expect(page.locator('.jaa-changes__table')).toBeVisible()
     // The read-only selects show their value once the client form state has loaded.
     await expect(page.locator('#field-action').locator('xpath=..')).toContainText(/تعديل|Update/, {
