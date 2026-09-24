@@ -4,6 +4,10 @@
  *   pnpm payload:tsx run scripts/e2e-staff.ts            → create (or reset) and print
  *   pnpm payload:tsx run scripts/e2e-staff.ts delete     → remove them and their log rows
  *
+ * They are also written to `.e2e-staff.json` (gitignored), which the specs read. Every run
+ * rotates every password, so a shell still exporting an older set fails half a suite with
+ * «invalid credentials»; the file is always the current one.
+ *
  * One admin per spec file that needs one, rather than one shared between them: Payload
  * loses a session when two logins for the same account land at the same moment (see the
  * note at the top of `activity.spec.ts`), and spec *files* run in parallel workers, so a
@@ -11,6 +15,7 @@
  */
 import 'dotenv/config'
 import { randomBytes } from 'node:crypto'
+import { rmSync, writeFileSync } from 'node:fs'
 import config from '@payload-config'
 import { getPayload } from 'payload'
 
@@ -26,6 +31,8 @@ const ACCOUNTS = [
 
 const payload = await getPayload({ config })
 const mode = process.argv[2] === 'delete' ? 'delete' : 'create'
+
+const saved: Record<string, { email: string; password: string }> = {}
 
 for (const account of ACCOUNTS) {
   const { docs } = await payload.find({
@@ -49,7 +56,21 @@ for (const account of ACCOUNTS) {
   if (docs[0])
     await payload.update({ collection: 'users', id: docs[0].id, data, overrideAccess: true })
   else await payload.create({ collection: 'users', data, overrideAccess: true })
+  // Resetting a password must also clear a lock, or the script hands out credentials that
+  // Payload then refuses: a run with stale credentials locks the account after ten attempts,
+  // and the next run's fresh password cannot get in either (2026-09-24).
+  // `unlock` is typed with the login shape and only uses the address; the password it has
+  // just been given is the one written above.
+  await payload.unlock({
+    collection: 'users',
+    data: { email: account.email, password },
+    overrideAccess: true,
+  })
+  saved[account.key] = { email: account.email, password }
   console.log(`export E2E_${account.key}_EMAIL=${account.email}`)
   console.log(`export E2E_${account.key}_PASSWORD=${password}`)
 }
+
+if (mode === 'delete') rmSync('.e2e-staff.json', { force: true })
+else writeFileSync('.e2e-staff.json', `${JSON.stringify(saved, null, 2)}\n`)
 process.exit(0)

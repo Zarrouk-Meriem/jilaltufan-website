@@ -18,6 +18,9 @@ next-env.d.ts
 /public/media/
 /application-files/
 /session-files/
+
+# Throwaway staff credentials for the e2e specs, local database only.
+/.e2e-staff.json
 /public/flags/
 
 # test + build artifacts

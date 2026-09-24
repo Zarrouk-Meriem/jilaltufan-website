@@ -1,13 +1,13 @@
 import { expect, request, test, type APIRequestContext, type Page } from '@playwright/test'
+import { staffConfigured, staffCredentials } from './helpers/staff'
 
 /**
  * The activity log: every staff write lands in it, admins see it as a page, editors do
  * not see it at all. Needs the throwaway accounts from `scripts/e2e-staff.ts`; skips
  * without them.
  */
-const admin = { email: process.env.E2E_ADMIN_EMAIL, password: process.env.E2E_ADMIN_PASSWORD }
-const editor = { email: process.env.E2E_EDITOR_EMAIL, password: process.env.E2E_EDITOR_PASSWORD }
-const configured = !!(admin.email && admin.password && editor.email && editor.password)
+const admin = staffCredentials('ADMIN')
+const editor = staffCredentials('EDITOR')
 type Who = typeof admin
 
 // The admin follows the browser language; the assertions below read the Arabic admin.
@@ -25,7 +25,7 @@ test.use({ locale: 'ar-PS' })
 test.describe.configure({ mode: 'default' })
 
 test.skip(
-  !configured,
+  !staffConfigured('ADMIN', 'EDITOR'),
   'set E2E_ADMIN_* and E2E_EDITOR_* (pnpm payload:tsx run scripts/e2e-staff.ts)',
 )
 
@@ -65,6 +65,37 @@ async function latest(request: APIRequestContext, limit = 5): Promise<Row[]> {
   return (await res.json()).docs
 }
 
+/** The rows a given account's own actions produced, asked for by name. */
+async function rowsByUser(request: APIRequestContext, email: string): Promise<Row[]> {
+  const res = await request.get(
+    `/api/activity?where[userEmail][equals]=${encodeURIComponent(email)}` +
+      '&sort=-createdAt&limit=20&depth=0',
+  )
+  expect(res.status(), await res.text()).toBe(200)
+  return (await res.json()).docs
+}
+
+/**
+ * The rows for one document, asked for by name.
+ *
+ * Reading the few most recent rows and filtering them here was enough until other specs
+ * started writing to this log too — marking a register is staff activity, so `account.spec`
+ * fills the same window, and the oldest of these three rows fell out of it (2026-09-24). A
+ * query that names what it wants does not care what else the suite is doing.
+ */
+async function rowsFor(
+  request: APIRequestContext,
+  target: string,
+  docId: number | string,
+): Promise<Row[]> {
+  const res = await request.get(
+    `/api/activity?where[target][equals]=${target}&where[docId][equals]=${docId}` +
+      '&sort=-createdAt&limit=20&depth=0',
+  )
+  expect(res.status(), await res.text()).toBe(200)
+  return (await res.json()).docs
+}
+
 test('an editor cannot read the log, and does not see it in the admin', async ({ page }) => {
   const request = await api(page, editor)
   expect((await request.get('/api/activity')).status()).toBe(403)
@@ -98,9 +129,7 @@ test('the log records create, update, and delete with the editor, the title, and
   expect(updated.status(), await updated.text()).toBe(200)
   expect((await request.delete(`/api/programs/${id}`)).status()).toBe(200)
 
-  const mine = (await latest(request)).filter(
-    (r) => r.target === 'programs' && r.docId === String(id),
-  )
+  const mine = await rowsFor(request, 'programs', id)
   expect(mine.map((r) => r.action)).toEqual(['delete', 'update', 'create'])
   for (const r of mine) {
     expect(r.userEmail).toBe(admin.email)
@@ -191,7 +220,7 @@ test('a login, a failed login, and a logout are rows too, and the action filter 
   })
   expect(rows.find((r) => r.title === editor.email)).toBeTruthy()
 
-  const recent = await latest(request, 10)
+  const recent = await rowsByUser(request, editor.email!)
   const login = recent.find((r) => r.action === 'login' && r.userEmail === editor.email)
   expect(login).toMatchObject({ target: 'users', title: editor.email })
   const logout = recent.find((r) => r.action === 'logout' && r.userEmail === editor.email)

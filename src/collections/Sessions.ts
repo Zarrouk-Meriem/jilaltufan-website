@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
-import { publishedOrStaff, staffFieldOnly, staffOnly } from '@/access'
+import { isStaffUser, publishedOrStaff, staffFieldOnly, staffOnly } from '@/access'
+import { ZoomError } from '@/lib/zoom/client'
+import { syncSessionAttendance } from '@/lib/zoom/sync'
 import {
   isPlaceholderField,
   localizedRichText,
@@ -26,6 +28,32 @@ export const Sessions: CollectionConfig = {
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },
   defaultSort: 'startsAt',
+  endpoints: [
+    {
+      path: '/:id/sync-attendance',
+      method: 'post',
+      /**
+       * Pull the register from Zoom for one session. Staff only — the roster's button is
+       * the only caller, and it runs from the admin with the staff cookie.
+       */
+      handler: async (req) => {
+        if (!isStaffUser(req)) return Response.json({ message: 'Forbidden' }, { status: 403 })
+        const id = Number(req.routeParams?.id)
+        if (!Number.isFinite(id)) return Response.json({ message: 'Bad id' }, { status: 400 })
+        try {
+          const result = await syncSessionAttendance(req.payload, id)
+          return Response.json(result)
+        } catch (err) {
+          const reason = err instanceof ZoomError ? err.reason : 'http'
+          req.payload.logger.error({ msg: 'zoom attendance sync failed', session: id, err })
+          return Response.json(
+            { reason, message: err instanceof Error ? err.message : 'Sync failed' },
+            { status: reason === 'unconfigured' ? 501 : 502 },
+          )
+        }
+      },
+    },
+  ],
   fields: [
     {
       type: 'row',

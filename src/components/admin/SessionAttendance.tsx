@@ -28,6 +28,16 @@ export async function SessionAttendanceField({ data, i18n, payload }: UIFieldSer
         fromZoom: 'من Zoom',
         unmarked: 'لم يُعلَّم',
         count: '{marked} من {total} حاضرون',
+        sync: {
+          pull: 'اسحب الحضور من Zoom',
+          pulling: 'يُسحب…',
+          done: 'سُجّل {marked}، وبقي {kept} كما علّمه الفريق.',
+          unmatched: 'لم نتعرّف على: {people}. علّمهم بيدك إن كانوا من الطلبة.',
+          unconfigured: 'لم يُربط Zoom بعد. أضف بيانات التطبيق في إعدادات الخادم.',
+          noReport: 'خطة Zoom الحالية لا تتيح تقارير الحضور.',
+          notFound: 'لا سجلّ لهذا الاجتماع في Zoom بعد. التقرير يتوفّر بعد انتهاء الحصة.',
+          failed: 'تعذّر السحب. حاول مرّة أخرى.',
+        },
       }
     : {
         present: 'Present',
@@ -40,6 +50,18 @@ export async function SessionAttendanceField({ data, i18n, payload }: UIFieldSer
         fromZoom: 'From Zoom',
         unmarked: 'Not marked',
         count: '{marked} of {total} present',
+        sync: {
+          pull: 'Pull attendance from Zoom',
+          pulling: 'Pulling…',
+          done: 'Recorded {marked}; {kept} left as the team marked them.',
+          unmatched: 'Not recognised: {people}. Mark them by hand if they are students.',
+          unconfigured:
+            'Zoom is not connected yet. Add the app’s credentials to the server settings.',
+          noReport: 'This Zoom plan does not include attendance reports.',
+          notFound:
+            'Zoom has no record of this meeting yet. The report appears after the session ends.',
+          failed: 'That could not be pulled. Try again.',
+        },
       }
 
   const sessionId = typeof data?.id === 'number' ? data.id : null
@@ -140,7 +162,12 @@ export async function SessionAttendanceField({ data, i18n, payload }: UIFieldSer
           ? 'علّم الحضور بعد انتهاء الحصة. ما تعلّمه هنا يبقى ولا يستبدله تحديث لاحق من Zoom.'
           : 'Mark the register after the session. What you mark here stays, and a later sync from Zoom does not replace it.'}
       </p>
-      <SessionAttendanceRoster sessionId={sessionId} rows={rows} t={t} />
+      <SessionAttendanceRoster
+        sessionId={sessionId}
+        rows={rows}
+        t={t}
+        canSync={!!data?.zoomMeetingId}
+      />
     </div>
   )
 }

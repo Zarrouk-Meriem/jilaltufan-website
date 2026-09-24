@@ -1,4 +1,5 @@
 import { expect, request, test, type APIRequestContext, type Page } from '@playwright/test'
+import { staffConfigured, staffCredentials } from './helpers/staff'
 import { isDevServer } from './helpers/dev'
 import { submitApplication } from './helpers/apply'
 
@@ -12,13 +13,10 @@ import { submitApplication } from './helpers/apply'
  */
 // This spec's own admin, not the one `activity.spec.ts` uses: two logins for a single
 // account at the same moment lose each other's session, and spec files run in parallel.
-const admin = {
-  email: process.env.E2E_ADMIN_B_EMAIL,
-  password: process.env.E2E_ADMIN_B_PASSWORD,
-}
+const admin = staffCredentials('ADMIN_B')
 
 test.skip(
-  !(admin.email && admin.password),
+  !staffConfigured('ADMIN_B'),
   'set E2E_ADMIN_B_* (pnpm payload:tsx run scripts/e2e-staff.ts)',
 )
 

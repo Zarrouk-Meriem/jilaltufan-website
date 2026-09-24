@@ -1,0 +1,63 @@
+{
+  "_comment": "A participants report shaped like Zoom's /report/meetings/{id}/participants, trimmed to the fields the sync relies on. The awkward cases are the point: a student who rejoined twice, one who looked in for a moment, one whose address is capitalised differently from ours, a guest with no account, and a phone join with no address at all.",
+  "page_count": 1,
+  "page_size": 300,
+  "total_records": 7,
+  "participants": [
+    {
+      "id": "aa1",
+      "name": "مريم الزروق",
+      "user_email": "maryam@example.org",
+      "join_time": "2026-10-15T16:00:12Z",
+      "leave_time": "2026-10-15T16:41:00Z",
+      "duration": 2448
+    },
+    {
+      "id": "bb2",
+      "name": "أحمد",
+      "user_email": "ahmad@example.org",
+      "join_time": "2026-10-15T16:01:00Z",
+      "leave_time": "2026-10-15T16:14:00Z",
+      "duration": 780
+    },
+    {
+      "id": "bb2",
+      "name": "أحمد",
+      "user_email": "ahmad@example.org",
+      "join_time": "2026-10-15T16:16:00Z",
+      "leave_time": "2026-10-15T16:38:00Z",
+      "duration": 1320
+    },
+    {
+      "id": "cc3",
+      "name": "سارة",
+      "user_email": "SARA@Example.org",
+      "join_time": "2026-10-15T16:02:00Z",
+      "leave_time": "2026-10-15T16:06:00Z",
+      "duration": 240
+    },
+    {
+      "id": "dd4",
+      "name": "ضيف الحصة",
+      "user_email": "guest-lecturer@example.net",
+      "join_time": "2026-10-15T15:58:00Z",
+      "leave_time": "2026-10-15T16:45:00Z",
+      "duration": 2820
+    },
+    {
+      "id": "ee5",
+      "name": "16041234567",
+      "user_email": "",
+      "join_time": "2026-10-15T16:05:00Z",
+      "leave_time": "2026-10-15T16:44:00Z",
+      "duration": 2340
+    },
+    {
+      "id": "ff6",
+      "name": "خالد",
+      "join_time": "2026-10-15T16:03:00Z",
+      "leave_time": "2026-10-15T16:40:00Z",
+      "duration": 2220
+    }
+  ]
+}

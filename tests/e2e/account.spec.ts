@@ -1,4 +1,5 @@
 import { expect, request, test, type APIRequestContext, type Page } from '@playwright/test'
+import { staffConfigured, staffCredentials } from './helpers/staff'
 import { MINIMAL_PDF, submitApplication } from './helpers/apply'
 
 /**
@@ -16,13 +17,10 @@ import { MINIMAL_PDF, submitApplication } from './helpers/apply'
  */
 // This spec's own admin, not the one `activity.spec.ts` uses: two logins for a single
 // account at the same moment lose each other's session, and spec files run in parallel.
-const admin = {
-  email: process.env.E2E_ADMIN_C_EMAIL,
-  password: process.env.E2E_ADMIN_C_PASSWORD,
-}
+const admin = staffCredentials('ADMIN_C')
 
 test.skip(
-  !(admin.email && admin.password),
+  !staffConfigured('ADMIN_C'),
   'set E2E_ADMIN_C_* (pnpm payload:tsx run scripts/e2e-staff.ts)',
 )
 
@@ -435,6 +433,34 @@ test('the register is staff-only, sticks against Zoom, and shows the student the
   const anyone = await request.newContext({ baseURL: test.info().project.use.baseURL })
   expect((await anyone.get('/api/attendance')).status()).toBe(403)
   await anyone.dispose()
+})
+
+test('the Zoom sync endpoint is staff-only, and says plainly that Zoom is not connected', async ({
+  page,
+}) => {
+  const api = await staffApi(page)
+  const sessions = await (await api.get('/api/sessions?limit=1&depth=0')).json()
+  const session = sessions.docs[0] as { id: number }
+
+  // Nobody, and a student, are both refused before Zoom is ever contacted.
+  const anyone = await request.newContext({ baseURL: test.info().project.use.baseURL })
+  expect((await anyone.post(`/api/sessions/${session.id}/sync-attendance`)).status()).toBe(403)
+  await anyone.dispose()
+
+  const { email, password } = await activatedAccount(page)
+  const login = await page.request.post('/api/accounts/login', { data: { email, password } })
+  const student = await request.newContext({
+    baseURL: test.info().project.use.baseURL,
+    extraHTTPHeaders: { Authorization: `JWT ${(await login.json()).token}` },
+  })
+  expect((await student.post(`/api/sessions/${session.id}/sync-attendance`)).status()).toBe(403)
+  await student.dispose()
+
+  // Staff get an answer they can act on: the academy has not connected Zoom yet. 501 rather
+  // than 502, so "we have not set this up" is not confused with "Zoom is broken".
+  const res = await api.post(`/api/sessions/${session.id}/sync-attendance`)
+  expect(res.status()).toBe(501)
+  expect((await res.json()).reason).toBe('unconfigured')
 })
 
 test('the window is behind the door: signed out, /account sends you to sign in', async ({

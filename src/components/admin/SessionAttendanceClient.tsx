@@ -10,6 +10,17 @@ export type RosterRow = {
   rowId: number | null
 }
 
+export type SyncStrings = {
+  pull: string
+  pulling: string
+  done: string
+  unmatched: string
+  unconfigured: string
+  noReport: string
+  notFound: string
+  failed: string
+}
+
 export type RosterStrings = {
   present: string
   absent: string
@@ -22,6 +33,7 @@ export type RosterStrings = {
   unmarked: string
   /** A template, not a formatter: a function cannot cross from a server component. */
   count: string
+  sync: SyncStrings
 }
 
 const STATES = ['present', 'absent', 'excused'] as const
@@ -39,13 +51,70 @@ export function SessionAttendanceRoster({
   sessionId,
   rows: initial,
   t,
+  canSync,
 }: {
   sessionId: number
   rows: RosterRow[]
   t: RosterStrings
+  canSync: boolean
 }) {
   const [rows, setRows] = useState(initial)
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle')
+  const [sync, setSync] = useState<
+    | { state: 'idle' | 'pulling' }
+    | { state: 'done'; text: string }
+    | { state: 'failed'; text: string }
+  >({ state: 'idle' })
+
+  /**
+   * Ask the server to read the meeting's report. What comes back never overwrites a mark a
+   * person made, so the page simply reloads to show the result rather than merging it here.
+   */
+  const pull = async () => {
+    setSync({ state: 'pulling' })
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}/sync-attendance`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+      const body = (await res.json()) as {
+        reason?: string
+        created?: number
+        updated?: number
+        keptStaffMarks?: number
+        unmatched?: { name: string; minutes: number }[]
+      }
+      if (!res.ok) {
+        const text =
+          body.reason === 'unconfigured'
+            ? t.sync.unconfigured
+            : body.reason === 'no-report'
+              ? t.sync.noReport
+              : body.reason === 'not-found'
+                ? t.sync.notFound
+                : t.sync.failed
+        setSync({ state: 'failed', text })
+        return
+      }
+      const marked = (body.created ?? 0) + (body.updated ?? 0)
+      const strangers = body.unmatched ?? []
+      const text =
+        t.sync.done
+          .replace('{marked}', String(marked))
+          .replace('{kept}', String(body.keptStaffMarks ?? 0)) +
+        (strangers.length
+          ? ' ' +
+            t.sync.unmatched.replace(
+              '{people}',
+              strangers.map((u) => `${u.name} (${u.minutes})`).join('، '),
+            )
+          : '')
+      setSync({ state: 'done', text })
+      window.location.reload()
+    } catch {
+      setSync({ state: 'failed', text: t.sync.failed })
+    }
+  }
 
   const set = (accountId: number, state: RosterRow['state']) => {
     setStatus('idle')
@@ -170,6 +239,21 @@ export function SessionAttendanceRoster({
         {status === 'saved' ? <span role="status">{t.saved}</span> : null}
         {status === 'failed' ? <span role="alert">{t.failed}</span> : null}
       </div>
+
+      {canSync ? (
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className="btn btn--style-secondary btn--size-small"
+            onClick={pull}
+            disabled={sync.state === 'pulling'}
+          >
+            {sync.state === 'pulling' ? t.sync.pulling : t.sync.pull}
+          </button>
+          {sync.state === 'done' ? <span role="status">{sync.text}</span> : null}
+          {sync.state === 'failed' ? <span role="alert">{sync.text}</span> : null}
+        </div>
+      ) : null}
     </div>
   )
 }
