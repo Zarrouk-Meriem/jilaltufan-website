@@ -673,6 +673,15 @@ async function signInAs(page: Page, email: string, password: string) {
   await page.getByLabel('البريد الإلكتروني').fill(email)
   await page.getByLabel(/^كلمة السر/).fill(password)
   await page.getByRole('button', { name: 'دخول' }).click()
+  // The action, the redirect and the overview's first render: well past the default 5 s
+  // under a full four-worker suite now that the overview reads enrollments and
+  // announcements (a sign-in was still in flight at 5 s on 2026-09-24).
+  // Either outcome settles it: the overview (signed in) or an alert on the form (refused,
+  // which the deactivated-account test expects).
+  await Promise.race([
+    page.waitForURL(/\/account$/, { timeout: 15_000 }),
+    page.locator('main [role="alert"]').first().waitFor({ timeout: 15_000 }),
+  ]).catch(() => {})
 }
 
 // Access follows three things at once (src/lib/enrollment/access.ts): an `enrolled` row,
