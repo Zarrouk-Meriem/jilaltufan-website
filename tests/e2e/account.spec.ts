@@ -256,7 +256,7 @@ test('a student edits their own name, and changes their password with the old on
   await expect(page).toHaveURL(/\/ar\/account$/)
 
   await page.goto('/ar/account/profile')
-  await page.getByLabel(/^الاسم/).fill('اسم جديد')
+  await page.getByLabel(/^الاسم(?! الرسمي)/).fill('اسم جديد')
   await page.getByRole('button', { name: 'احفظ', exact: true }).click()
   await expect(page.getByRole('status')).toContainText('حُفظ')
   // The new name greets them on the overview and names them in the portal's own rail —
@@ -567,7 +567,7 @@ test('the window and the profile page raise nothing in the console', async ({ pa
   await page.getByRole('button', { name: 'دخول' }).click()
   await expect(page).toHaveURL(/\/ar\/account$/)
   await page.goto('/ar/account/profile')
-  await expect(page.getByLabel(/^الاسم/)).toBeVisible()
+  await expect(page.getByLabel(/^الاسم(?! الرسمي)/)).toBeVisible()
 
   // The language the account is written to is the one shown as chosen.
   await expect(page.getByRole('radio', { name: 'العربية' })).toBeChecked()
@@ -963,4 +963,91 @@ test('announcements reach the students of their program, and nobody else', async
   expect([401, 403]).toContain(listed.status())
 
   for (const id of ids) await api.delete(`/api/announcements/${id}`)
+})
+
+test('a graduated student confirms their name and gets a certificate anyone can verify', async ({
+  page,
+}) => {
+  const { api, email } = await acceptedApplicant(page)
+  const account = await findAccount(api, email)
+  const password = `pw-${Date.now()}-playwright`
+  expect(
+    (
+      await api.patch(`/api/accounts/${account!.id}`, {
+        data: { password, officialNameAr: null, officialNameEn: null },
+      })
+    ).ok(),
+  ).toBe(true)
+  // Their directed program (earlier tests enrolled one), or the first one.
+  const rows = (
+    await (
+      await api.get(
+        `/api/enrollments?where[account][equals]=${account!.id}&where[state][equals]=enrolled&depth=1&locale=ar`,
+      )
+    ).json()
+  ).docs as { id: number; program: { id: number; track: string; title: string } }[]
+  let row = rows.find((r) => r.program.track === 'directed')
+  if (!row) {
+    const directed = (
+      await (
+        await api.get('/api/programs?where[track][equals]=directed&depth=0&locale=ar&limit=1')
+      ).json()
+    ).docs[0] as { id: number; title: string }
+    const id = await enroll(api, account!.id, directed.id)
+    row = { id, program: { ...directed, track: 'directed' } }
+  }
+  // Staff record the panel's decision.
+  expect((await api.patch(`/api/enrollments/${row.id}`, { data: { graduated: true } })).ok()).toBe(
+    true,
+  )
+
+  await signInAs(page, email, password)
+  await expect(page).toHaveURL(/\/ar\/account$/)
+  await page.goto('/ar/account/certificates')
+  const main = page.locator('main')
+  await expect(main).toContainText('شهادتك في انتظار اسمك')
+  await main.getByRole('link', { name: 'أكّد اسمك' }).click()
+  await expect(page).toHaveURL(/\/ar\/account\/profile#official-name$/)
+
+  // The script is checked: an Arabic name typed in Latin letters is refused.
+  await page.getByLabel(/^الاسم الرسمي بالعربية/).fill('Maryam Test')
+  await page.getByLabel(/^الاسم الرسمي بالإنجليزية/).fill('Maryam Test')
+  await page.getByRole('button', { name: 'احفظ الاسم' }).click()
+  await expect(main).toContainText('اكتب الاسم بالحروف العربية.')
+  await page.getByLabel(/^الاسم الرسمي بالعربية/).fill('مريم اختبار')
+  await page.getByRole('button', { name: 'احفظ الاسم' }).click()
+  await expect(main.getByRole('status')).toContainText('حُفظ اسمك.')
+
+  await page.goto('/ar/account/certificates')
+  const card = main.locator('li').filter({ hasText: row.program.title })
+  await expect(card).toContainText('شهادة تخرّج')
+  await card.getByRole('link', { name: 'اعرض الشهادة' }).click()
+  await expect(page).toHaveURL(/\/ar\/account\/certificates\/JAA-\d{4}-[A-Z2-9]{6}$/)
+  const number = page.url().split('/').pop()!
+  const sheet = page.locator('[data-print-root]')
+  await expect(sheet).toContainText('مريم اختبار')
+  await expect(sheet).toContainText('Maryam Test')
+  await expect(sheet).toContainText(number)
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.screenshot({ path: `${SHOTS}/certificate-ar-1280.png`, fullPage: true })
+
+  // Anyone with the number can check it, and a revocation shows there at once.
+  const visitor = await page.context().browser()!.newPage()
+  await visitor.goto(`/en/verify/${number}`)
+  await expect(visitor.locator('main')).toContainText('Valid certificate')
+  await expect(visitor.locator('main')).toContainText('Maryam Test')
+  await visitor.screenshot({ path: `${SHOTS}/verify-en-1280.png`, fullPage: true })
+  const cert = (
+    await (await api.get(`/api/certificates?where[number][equals]=${number}&depth=0`)).json()
+  ).docs[0] as { id: number }
+  await api.patch(`/api/certificates/${cert.id}`, { data: { revoked: true } })
+  await visitor.reload()
+  await expect(visitor.locator('main')).toContainText('This certificate has been revoked')
+  await visitor.goto('/en/verify/JAA-2026-ZZZZZZ')
+  await expect(visitor.locator('main')).toContainText('No certificate has this number.')
+  await visitor.close()
+
+  // Clean for the next run: no certificate, not graduated.
+  await api.delete(`/api/certificates/${cert.id}`)
+  await api.patch(`/api/enrollments/${row.id}`, { data: { graduated: false } })
 })

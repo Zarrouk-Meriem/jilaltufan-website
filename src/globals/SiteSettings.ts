@@ -138,6 +138,45 @@ export const SiteSettings: GlobalConfig = {
           ],
         },
         {
+          // Both empty until the academy decides (TODO.md): an empty share issues nothing
+          // and shows no check — no number is invented here.
+          label: { ar: 'الشهادات', en: 'Certificates' },
+          fields: [
+            {
+              name: 'attendanceCertificateShare',
+              type: 'number',
+              min: 1,
+              max: 100,
+              label: {
+                ar: 'نسبة الحضور لشهادة الحضور (التدريب المفتوح، ٪)',
+                en: 'Attendance for the attendance certificate (Open Training, %)',
+              },
+              admin: {
+                description: {
+                  ar: 'حين يبلغ الطالب هذه النسبة من محاضرات التدريب المفتوح تصدر له شهادة حضور تلقائيًا. فارغ = لا تصدر.',
+                  en: 'A student who attends this share of the Open Training lectures receives an attendance certificate automatically. Empty = none are issued.',
+                },
+              },
+            },
+            {
+              name: 'graduationAttendanceShare',
+              type: 'number',
+              min: 1,
+              max: 100,
+              label: {
+                ar: 'نسبة الحضور المطلوبة للتخرّج (البرامج الموجّهة، ٪)',
+                en: 'Attendance required to graduate (directed programs, %)',
+              },
+              admin: {
+                description: {
+                  ar: 'تُعرض للفريق عند منح شهادة التخرّج للتحقق فقط؛ قرار التخرّج يبقى للفريق (المشروع والتقييم خارج الموقع).',
+                  en: 'Shown to staff when awarding a graduation certificate, as a check only; graduating stays the team’s decision (the project and assessment happen outside the site).',
+                },
+              },
+            },
+          ],
+        },
+        {
           label: { ar: 'شريط الإعلان', en: 'Announcement bar' },
           fields: [
             {

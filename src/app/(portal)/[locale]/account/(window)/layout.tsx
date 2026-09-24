@@ -28,6 +28,7 @@ export default async function WindowLayout({ children, params }: LayoutProps<'/[
     { href: '/account/programs', label: t('nav.programs') },
     { href: '/account/sessions', label: t('nav.sessions') },
     { href: '/account/materials', label: t('nav.materials') },
+    { href: '/account/certificates', label: t('nav.certificates') },
     { href: '/account/profile', label: t('nav.profile') },
   ]
   const instructor: PortalNavItem[] = [

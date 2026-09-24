@@ -400,3 +400,23 @@
     margin-block: 2.5em;
   }
 }
+
+/* Printing a certificate: only the sheet reaches the paper (CertificateDocument sets
+   `data-print-root`); the portal around it — navigation, buttons — is left off. */
+@media print {
+  body:has([data-print-root]) * {
+    visibility: hidden;
+  }
+  [data-print-root],
+  [data-print-root] * {
+    visibility: visible;
+  }
+  [data-print-root] {
+    position: absolute;
+    inset: 0 0 auto;
+  }
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+}

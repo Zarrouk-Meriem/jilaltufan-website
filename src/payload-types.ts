@@ -73,6 +73,7 @@ export interface Config {
     attendance: Attendance;
     enrollments: Enrollment;
     announcements: Announcement;
+    certificates: Certificate;
     instructors: Instructor;
     projects: Project;
     'minbar-posts': MinbarPost;
@@ -106,6 +107,7 @@ export interface Config {
     attendance: AttendanceSelect<false> | AttendanceSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
+    certificates: CertificatesSelect<false> | CertificatesSelect<true>;
     instructors: InstructorsSelect<false> | InstructorsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'minbar-posts': MinbarPostsSelect<false> | MinbarPostsSelect<true>;
@@ -518,6 +520,11 @@ export interface Account {
   id: number;
   kind: 'student' | 'instructor';
   name?: string | null;
+  /**
+   * As printed on certificates. The student fills it in from their window.
+   */
+  officialNameAr?: string | null;
+  officialNameEn?: string | null;
   /**
    * A deactivated account cannot sign in or see any program or session, even if it was signed in at the time. The record stays as it is.
    */
@@ -1136,6 +1143,11 @@ export interface Enrollment {
    */
   state: 'enrolled' | 'withdrawn';
   source: 'student' | 'staff';
+  /**
+   * After the panel's decision (project and assessment). Issues the graduation certificate in the student's window once their official name is confirmed. Attendance is shown below as a check.
+   */
+  graduated?: boolean | null;
+  graduatedAt?: string | null;
   agreedAt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1173,6 +1185,31 @@ export interface Announcement {
    * Only "Published" is visible to visitors.
    */
   status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Issued certificates. A graduation certificate is issued when «Graduated» is ticked on the student’s enrollment, an attendance certificate automatically at the share set in Site settings; both once the student has confirmed their official name. Revoking one here shows it as revoked on the verification page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "certificates".
+ */
+export interface Certificate {
+  id: number;
+  number: string;
+  kind: 'graduation' | 'attendance';
+  nameAr: string;
+  nameEn: string;
+  programTitleAr: string;
+  programTitleEn: string;
+  issuedAt: string;
+  account?: (number | null) | Account;
+  program?: (number | null) | Program;
+  /**
+   * The certificate stays on record; the verification page says it is revoked.
+   */
+  revoked?: boolean | null;
+  revokedReason?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1440,6 +1477,7 @@ export interface Activity {
     | 'attendance'
     | 'enrollments'
     | 'announcements'
+    | 'certificates'
     | 'instructors'
     | 'projects'
     | 'minbar-posts'
@@ -1692,6 +1730,10 @@ export interface PayloadLockedDocument {
         value: number | Announcement;
       } | null)
     | ({
+        relationTo: 'certificates';
+        value: number | Certificate;
+      } | null)
+    | ({
         relationTo: 'instructors';
         value: number | Instructor;
       } | null)
@@ -1882,6 +1924,8 @@ export interface EnrollmentsSelect<T extends boolean = true> {
   program?: T;
   state?: T;
   source?: T;
+  graduated?: T;
+  graduatedAt?: T;
   agreedAt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1896,6 +1940,25 @@ export interface AnnouncementsSelect<T extends boolean = true> {
   program?: T;
   publishedAt?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "certificates_select".
+ */
+export interface CertificatesSelect<T extends boolean = true> {
+  number?: T;
+  kind?: T;
+  nameAr?: T;
+  nameEn?: T;
+  programTitleAr?: T;
+  programTitleEn?: T;
+  issuedAt?: T;
+  account?: T;
+  program?: T;
+  revoked?: T;
+  revokedReason?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2178,6 +2241,8 @@ export interface UsersSelect<T extends boolean = true> {
 export interface AccountsSelect<T extends boolean = true> {
   kind?: T;
   name?: T;
+  officialNameAr?: T;
+  officialNameEn?: T;
   disabled?: T;
   locale?: T;
   application?: T;
@@ -2599,6 +2664,14 @@ export interface SiteSetting {
     | null;
   joinLinkVisibility: 'always' | 'window' | 'email-only';
   joinWindowMinutes?: number | null;
+  /**
+   * A student who attends this share of the Open Training lectures receives an attendance certificate automatically. Empty = none are issued.
+   */
+  attendanceCertificateShare?: number | null;
+  /**
+   * Shown to staff when awarding a graduation certificate, as a check only; graduating stays the team’s decision (the project and assessment happen outside the site).
+   */
+  graduationAttendanceShare?: number | null;
   announcementEnabled?: boolean | null;
   announcementText?: string | null;
   announcementLink?: string | null;
@@ -2827,6 +2900,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
       };
   joinLinkVisibility?: T;
   joinWindowMinutes?: T;
+  attendanceCertificateShare?: T;
+  graduationAttendanceShare?: T;
   announcementEnabled?: T;
   announcementText?: T;
   announcementLink?: T;
@@ -2920,6 +2995,7 @@ export interface TaskCreateCollectionExport {
       | 'attendance'
       | 'enrollments'
       | 'announcements'
+      | 'certificates'
       | 'instructors'
       | 'projects'
       | 'minbar-posts'

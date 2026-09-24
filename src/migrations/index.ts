@@ -17,6 +17,7 @@ import * as migration_20260923_204202_attendance from './20260923_204202_attenda
 import * as migration_20260924_071126_storage_prefix_always from './20260924_071126_storage_prefix_always'
 import * as migration_20260924_160041_enrollments from './20260924_160041_enrollments'
 import * as migration_20260924_165855_announcements from './20260924_165855_announcements'
+import * as migration_20260924_183138_certificates from './20260924_183138_certificates'
 
 export const migrations = [
   {
@@ -113,5 +114,10 @@ export const migrations = [
     up: migration_20260924_165855_announcements.up,
     down: migration_20260924_165855_announcements.down,
     name: '20260924_165855_announcements',
+  },
+  {
+    up: migration_20260924_183138_certificates.up,
+    down: migration_20260924_183138_certificates.down,
+    name: '20260924_183138_certificates',
   },
 ]

@@ -426,6 +426,7 @@
       "programs": "Programs",
       "sessions": "My sessions",
       "materials": "My materials",
+      "certificates": "My certificates",
       "sentMaterials": "Session materials",
       "profile": "My details"
     },
@@ -552,7 +553,9 @@
       "notYourSession": "That session is not one of yours.",
       "fileRequired": "Choose a file",
       "fileTooBig": "The file is larger than 20 MB",
-      "fileType": "Accepted formats: PDF, Word and PowerPoint"
+      "fileType": "Accepted formats: PDF, Word and PowerPoint",
+      "arabicName": "Write the name in Arabic letters.",
+      "latinName": "Write the name in Latin letters."
     },
     "programs": {
       "title": "Programs",
@@ -602,6 +605,29 @@
       "none": "No announcements yet.",
       "forAll": "For every student",
       "read": "Read on the program page"
+    },
+    "officialName": {
+      "title": "Your name on certificates",
+      "intro": "Your certificates carry your name exactly as you write it here, in Arabic and in English. Check the spelling: a certificate keeps the name it was issued with.",
+      "ar": "Official name in Arabic",
+      "arHint": "As you want it printed, e.g. مريم أحمد الخطيب",
+      "en": "Official name in English",
+      "enHint": "As in your passport if you have one, e.g. Maryam Ahmad Al-Khatib",
+      "save": "Save the name",
+      "saved": "Your name is saved."
+    },
+    "certificates": {
+      "title": "My certificates",
+      "intro": "Your certificates from the Academy: after graduating from a directed program, or after attending Open Training at the required share.",
+      "none": "No certificates yet.",
+      "noneBody": "A graduation certificate is issued after the graduation panel’s decision; an attendance certificate once you reach the required attendance in Open Training.",
+      "waitingTitle": "Your certificate is waiting for your name",
+      "waitingBody": "Confirm your official name in Arabic and English so your certificate can be issued with it.",
+      "confirmName": "Confirm your name",
+      "view": "View the certificate",
+      "revoked": "Revoked",
+      "print": "Print or save as PDF",
+      "back": "All certificates"
     }
   },
   "students": {
@@ -817,5 +843,27 @@
     "tiktok": "TikTok",
     "linkedin": "LinkedIn",
     "other": "Link"
+  },
+  "certificate": {
+    "graduation": "Certificate of Graduation",
+    "attendance": "Certificate of Attendance",
+    "graduationLine": "Jil Altufan Academy certifies that",
+    "graduationBody": "has completed the program “{program}” and met the requirements for graduation.",
+    "attendanceBody": "has attended the lectures of “{program}” at the required share.",
+    "issued": "Issued on {date}",
+    "number": "Certificate number",
+    "verify": "Verify at"
+  },
+  "verify": {
+    "title": "Verify a certificate",
+    "intro": "Check a certificate issued by Jil Altufan Academy by its number.",
+    "valid": "Valid certificate",
+    "revoked": "This certificate has been revoked",
+    "notFound": "No certificate has this number.",
+    "name": "Name",
+    "program": "Program",
+    "kind": "Kind",
+    "issued": "Issued on",
+    "number": "Certificate number"
   }
 }

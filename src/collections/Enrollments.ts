@@ -57,6 +57,12 @@ const enforceRules: CollectionBeforeChangeHook = async ({ data, originalDoc, req
     // Who made the row is taken from the request, never from the body.
     ...(staff ? { source: 'staff' } : {}),
   }
+  // The graduation date follows the box: stamped when it is ticked, cleared if it is not.
+  const graduated = next.graduated ?? originalDoc?.graduated ?? false
+  if (graduated && !originalDoc?.graduatedAt && !next.graduatedAt)
+    next.graduatedAt = new Date().toISOString()
+  if (!graduated) next.graduatedAt = null
+
   const state = next.state ?? originalDoc?.state ?? 'enrolled'
   if (state !== 'enrolled') return next
 
@@ -191,6 +197,40 @@ export const Enrollments: CollectionConfig = {
         { label: { ar: 'الفريق', en: 'The team' }, value: 'staff' },
       ],
       admin: { position: 'sidebar', readOnly: true },
+    },
+    {
+      name: 'graduated',
+      type: 'checkbox',
+      defaultValue: false,
+      index: true,
+      label: { ar: 'تخرّج', en: 'Graduated' },
+      admin: {
+        position: 'sidebar',
+        description: {
+          ar: 'بعد قرار اللجنة (المشروع والتقييم). يُصدر شهادة التخرّج في نافذة الطالب فور تأكيد اسمه الرسمي. الحضور معروض أدناه للتحقق.',
+          en: "After the panel's decision (project and assessment). Issues the graduation certificate in the student's window once their official name is confirmed. Attendance is shown below as a check.",
+        },
+      },
+    },
+    {
+      name: 'attendanceCheck',
+      type: 'ui',
+      label: { ar: 'الحضور', en: 'Attendance' },
+      admin: {
+        position: 'sidebar',
+        components: { Field: '@/components/admin/EnrollmentAttendance#EnrollmentAttendanceField' },
+      },
+    },
+    {
+      name: 'graduatedAt',
+      type: 'date',
+      label: { ar: 'تاريخ التخرّج', en: 'Graduated on' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => !!data?.graduatedAt,
+        date: { pickerAppearance: 'dayOnly', displayFormat: 'yyyy-MM-dd' },
+      },
     },
     {
       name: 'agreedAt',

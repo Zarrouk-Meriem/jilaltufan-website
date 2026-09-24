@@ -1,7 +1,7 @@
 'use client'
 
 import { useLocale, useTranslations } from 'next-intl'
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
 import { Input, RadioGroup, Textarea } from '@/components/ui/Field'
@@ -364,6 +364,70 @@ export function SessionFileForm({
         {state.status === 'done' ? (
           <p role="status" className="enter font-medium text-ink-900">
             {t('teaching.sent')}
+          </p>
+        ) : null}
+      </div>
+    </form>
+  )
+}
+
+/**
+ * The names printed on certificates. Both scripts, spelled by the student; a certificate
+ * waits for them and keeps the ones it was issued with.
+ */
+export function OfficialNameForm({
+  action,
+  nameAr,
+  nameEn,
+}: {
+  action: (prev: FormState, fd: FormData) => Promise<FormState>
+  nameAr: string
+  nameEn: string
+}) {
+  const t = useTranslations('account')
+  const te = useTranslations('account.errors')
+  const locale = useLocale()
+  const [state, submit, pending] = useActionState(action, idle)
+  const err = (k: string) => (state.fieldErrors?.[k] ? te(state.fieldErrors[k]) : undefined)
+  // Controlled on purpose: React resets a form after its action runs, and with
+  // `defaultValue` a refused save wiped what the student had just typed (the second field
+  // came back empty; found by account.spec, 2026-09-24).
+  const [ar, setAr] = useState(nameAr)
+  const [en, setEn] = useState(nameEn)
+
+  return (
+    <form action={submit} className="relative flex flex-col gap-4" noValidate>
+      <input type="hidden" name="locale" value={locale} />
+      <FormError state={state} />
+      <Input
+        id="nameAr"
+        name="nameAr"
+        dir="rtl"
+        lang="ar"
+        value={ar}
+        onChange={(e) => setAr(e.currentTarget.value)}
+        required
+        label={t('officialName.ar')}
+        hint={t('officialName.arHint')}
+        error={err('nameAr')}
+      />
+      <Input
+        id="nameEn"
+        name="nameEn"
+        dir="ltr"
+        lang="en"
+        value={en}
+        onChange={(e) => setEn(e.currentTarget.value)}
+        required
+        label={t('officialName.en')}
+        hint={t('officialName.enHint')}
+        error={err('nameEn')}
+      />
+      <Submit label={t('officialName.save')} pending={pending} />
+      <div className="min-h-6">
+        {state.status === 'done' ? (
+          <p role="status" className="enter font-medium text-ink-900">
+            {t('officialName.saved')}
           </p>
         ) : null}
       </div>

@@ -52,7 +52,28 @@ export const changePasswordSchema = z
   })
   .refine((v) => v.password === v.confirm, { path: ['confirm'], message: 'passwordMismatch' })
 
+/**
+ * The names printed on certificates, as the student spells them. The one check worth
+ * making is the script — the common slip is the Arabic name typed in Latin letters, or the
+ * reverse — not the spelling, which is theirs.
+ */
+export const officialNameSchema = z.object({
+  nameAr: z
+    .string()
+    .trim()
+    .min(2, 'required')
+    .max(120, 'tooLong')
+    .regex(/^[\p{Script=Arabic}\s.'-]+$/u, 'arabicName'),
+  nameEn: z
+    .string()
+    .trim()
+    .min(2, 'required')
+    .max(120, 'tooLong')
+    .regex(/^[\p{Script=Latin}\s.'-]+$/u, 'latinName'),
+})
+
 export type ProfileInput = z.input<typeof profileSchema>
+export type OfficialNameInput = z.input<typeof officialNameSchema>
 export type ChangePasswordInput = z.input<typeof changePasswordSchema>
 
 export type SignInInput = z.input<typeof signInSchema>
@@ -83,6 +104,11 @@ export const setPasswordFormData = (fd: FormData): SetPasswordInput => ({
 export const profileFormData = (fd: FormData): ProfileInput => ({
   name: str(fd, 'name'),
   locale: str(fd, 'accountLocale') === 'en' ? 'en' : 'ar',
+})
+
+export const officialNameFormData = (fd: FormData): OfficialNameInput => ({
+  nameAr: str(fd, 'nameAr'),
+  nameEn: str(fd, 'nameEn'),
 })
 
 export const changePasswordFormData = (fd: FormData): ChangePasswordInput => ({

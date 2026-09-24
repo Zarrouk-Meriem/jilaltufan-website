@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
-import { ChangePasswordForm, ProfileForm } from '@/components/forms/AccountForms'
+import { ChangePasswordForm, OfficialNameForm, ProfileForm } from '@/components/forms/AccountForms'
 import { Card, PageOpening } from '@/components/portal/pieces'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { getAccount } from '@/lib/auth/account'
-import { changePassword, updateProfile } from '../../actions'
+import { changePassword, updateOfficialName, updateProfile } from '../../actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,6 +44,18 @@ export default async function ProfilePage({ params }: PageProps<'/[locale]/accou
             email={account.email}
           />
         </Card>
+        {account.kind === 'student' ? (
+          <div id="official-name" className="scroll-mt-28">
+            <Card title={t('account.officialName.title')}>
+              <p className="mb-5 measure text-sm text-ink-700">{t('account.officialName.intro')}</p>
+              <OfficialNameForm
+                action={updateOfficialName}
+                nameAr={account.officialNameAr ?? ''}
+                nameEn={account.officialNameEn ?? ''}
+              />
+            </Card>
+          </div>
+        ) : null}
         <Card title={t('account.profile.passwordTitle')}>
           <ChangePasswordForm action={changePassword} />
         </Card>

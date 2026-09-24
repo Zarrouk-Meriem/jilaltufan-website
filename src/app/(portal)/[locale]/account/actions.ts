@@ -13,6 +13,8 @@ import {
   fieldErrorsOf,
   forgotFormData,
   forgotSchema,
+  officialNameFormData,
+  officialNameSchema,
   setPasswordFormData,
   setPasswordSchema,
   profileFormData,
@@ -188,6 +190,30 @@ export async function updateProfile(_prev: FormState, fd: FormData): Promise<For
     })
   } catch (err) {
     payload.logger.error({ msg: 'profile update failed', id: account.id, err })
+    return error('server')
+  }
+  revalidatePath(`/${localeOf(fd.get('locale'))}/account/profile`)
+  return { status: 'done' }
+}
+
+/** The student's names for certificates, in both scripts. */
+export async function updateOfficialName(_prev: FormState, fd: FormData): Promise<FormState> {
+  const account = await getAccount()
+  if (!account) return error('signedOut')
+  if (account.kind !== 'student') return error('server')
+  const parsed = officialNameSchema.safeParse(officialNameFormData(fd))
+  if (!parsed.success) return error('formInvalid', fieldErrorsOf(parsed.error))
+
+  const payload = await getClient()
+  try {
+    await payload.update({
+      collection: 'accounts',
+      id: account.id,
+      data: { officialNameAr: parsed.data.nameAr, officialNameEn: parsed.data.nameEn },
+      overrideAccess: true,
+    })
+  } catch (err) {
+    payload.logger.error({ msg: 'official name update failed', id: account.id, err })
     return error('server')
   }
   revalidatePath(`/${localeOf(fd.get('locale'))}/account/profile`)

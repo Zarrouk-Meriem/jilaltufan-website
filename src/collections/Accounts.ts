@@ -89,6 +89,32 @@ export const Accounts: CollectionConfig = {
     },
     { name: 'name', type: 'text', label: { ar: 'الاسم', en: 'Name' } },
     {
+      // Spelled as the student wants them printed; a certificate waits until both exist,
+      // and keeps the names it was issued with (a later edit does not rewrite it).
+      type: 'row',
+      admin: { condition: (data) => data?.kind !== 'instructor' },
+      fields: [
+        {
+          name: 'officialNameAr',
+          type: 'text',
+          maxLength: 120,
+          label: { ar: 'الاسم الرسمي بالعربية', en: 'Official name (Arabic)' },
+          admin: {
+            description: {
+              ar: 'كما يُطبع في الشهادة. يكتبه الطالب من نافذته.',
+              en: 'As printed on certificates. The student fills it in from their window.',
+            },
+          },
+        },
+        {
+          name: 'officialNameEn',
+          type: 'text',
+          maxLength: 120,
+          label: { ar: 'الاسم الرسمي بالإنجليزية', en: 'Official name (English)' },
+        },
+      ],
+    },
+    {
       name: 'disabled',
       type: 'checkbox',
       defaultValue: false,

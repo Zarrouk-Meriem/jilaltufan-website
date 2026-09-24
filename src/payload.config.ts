@@ -14,6 +14,7 @@ import { ApplicationFiles } from './collections/ApplicationFiles'
 import { Applications } from './collections/Applications'
 import { Announcements } from './collections/Announcements'
 import { Attendance } from './collections/Attendance'
+import { Certificates } from './collections/Certificates'
 import { Enrollments } from './collections/Enrollments'
 import { ContactMessages } from './collections/ContactMessages'
 import { Events } from './collections/Events'
@@ -57,6 +58,7 @@ const collections = [
   Attendance,
   Enrollments,
   Announcements,
+  Certificates,
   Instructors,
   Projects,
   MinbarPosts,
