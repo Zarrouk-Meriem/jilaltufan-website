@@ -35,7 +35,8 @@ export async function PortalShell({
   const t = await getTranslations()
   const home = (
     <Link href="/" aria-label={t('a11y.logoHome')} className="inline-flex shrink-0 items-center">
-      <Logo locale={locale} surface="dark" height={locale === 'ar' ? 40 : 32} />
+      {/* Above the fold on every portal page, and Next measures it as the LCP. */}
+      <Logo locale={locale} surface="dark" height={locale === 'ar' ? 40 : 32} priority />
     </Link>
   )
 

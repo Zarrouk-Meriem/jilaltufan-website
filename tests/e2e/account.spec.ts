@@ -145,23 +145,28 @@ test('the window shows the student their own application, sessions and materials
   await page.getByRole('button', { name: 'دخول' }).click()
   await expect(page).toHaveURL(/\/ar\/account$/)
 
+  // The overview: where they stand, and the next thing in their calendar.
   const main = page.locator('main')
-  await expect(main).toContainText('طلبك')
   await expect(main.getByText('مقبول', { exact: true })).toBeVisible()
   await expect(main).toContainText(program.title)
-  // Their own details, as they submitted them.
-  await expect(main).toContainText('اختبار آلي')
-  await expect(main).toContainText(email)
-  // The CV they attached is offered back to them by name.
-  await expect(main).toContainText('ما أرفقته')
-  await expect(main.getByRole('link', { name: /\.pdf$/ })).toBeVisible()
-  // The sections that come from the program.
-  await expect(main).toContainText('حصصك')
-  await expect(main).toContainText('موادّك')
+  await expect(main).toContainText('حصتك القادمة')
   await expect(main.getByText('لا حصص بعد')).toHaveCount(0)
 
-  // The window never leaks a staff-only field.
+  // Their application in full, on its own page: the details they submitted and the CV.
+  await page.getByRole('link', { name: 'تفاصيل طلبك' }).click()
+  await expect(page).toHaveURL(/\/ar\/account\/application$/)
+  await expect(main).toContainText('اختبار آلي')
+  await expect(main).toContainText(email)
+  await expect(main).toContainText('ما أرفقته')
+  await expect(main.getByRole('link', { name: /\.pdf$/ })).toBeVisible()
+  // No page of the window leaks a staff-only field.
   await expect(main).not.toContainText('ملاحظات داخلية')
+
+  // The two sections that come from the program.
+  await page.goto('/ar/account/sessions')
+  await expect(main.getByText('لا حصص بعد')).toHaveCount(0)
+  await page.goto('/ar/account/materials')
+  await expect(main).toContainText('موادّي')
 })
 
 test('a student can download the CV they sent, and no one else can', async ({ page }) => {
@@ -220,8 +225,11 @@ test('a student edits their own name, and changes their password with the old on
   await page.getByLabel(/^الاسم/).fill('اسم جديد')
   await page.getByRole('button', { name: 'احفظ', exact: true }).click()
   await expect(page.getByRole('status')).toContainText('حُفظ')
+  // The new name greets them on the overview and names them in the portal's own rail —
+  // which is outside `main`, being chrome rather than content.
   await page.goto('/ar/account')
-  await expect(page.locator('main')).toContainText('اسم جديد')
+  await expect(page.locator('main')).toContainText('اسم')
+  await expect(page.getByText('اسم جديد').first()).toBeVisible()
 
   // A wrong current password changes nothing.
   await page.goto('/ar/account/profile')
@@ -322,10 +330,13 @@ test('a guest sees their session, and sends a file only for a session of theirs'
   await page.getByRole('button', { name: 'دخول' }).click()
   await expect(page).toHaveURL(/\/ar\/account$/)
 
+  // The guest's overview, then the page where materials are sent.
   const main = page.locator('main')
-  await expect(main).toContainText('نافذة المحاضر')
-  await expect(main).toContainText('حصصك')
-  await expect(main).toContainText('موادّ حصصك')
+  await expect(main).toContainText('حصتك القادمة')
+  await expect(main.getByText('لا حصص مسندة إليك بعد')).toHaveCount(0)
+
+  await page.goto('/ar/account/materials')
+  await expect(main).toContainText('موادّ حصصي')
 
   // A file for their own session lands, and is theirs to see afterwards.
   await page.getByLabel(/^الملف/).setInputFiles({
@@ -480,12 +491,15 @@ test('a student signs in, sees their window, and signs out again', async ({ page
   await page.getByRole('button', { name: 'دخول' }).click()
 
   await expect(page).toHaveURL(/\/ar\/account$/)
-  // The window greets them by the name on the account.
-  await expect(page.locator('main')).toContainText('Playwright Student')
-  // With no application behind it, the window says so rather than showing an empty shell.
+  // The overview greets them by name, and the rail names them beside it.
+  await expect(page.locator('main')).toContainText('أهلًا')
+  await expect(page.getByText('Playwright Student').first()).toBeVisible()
+  // With no application behind it, that page says so rather than showing an empty shell.
+  await page.goto('/ar/account/application')
   await expect(page.locator('main')).toContainText('لا يوجد طلب مرتبط بهذا الحساب')
 
-  await page.getByRole('button', { name: 'خروج' }).click()
+  await page.goto('/ar/account')
+  await page.getByRole('button', { name: 'خروج' }).first().click()
   await expect(page).toHaveURL(/\/ar\/account\/sign-in$/)
   // The cookie is gone, not merely the page.
   await page.goto('/ar/account')

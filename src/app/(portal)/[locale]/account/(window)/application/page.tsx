@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound, redirect } from 'next/navigation'
 import { Card, Fact, Facts, PageOpening } from '@/components/portal/pieces'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
+import { EmptyState } from '@/components/ui/EmptyState'
 import type { Locale } from '@/i18n/routing'
 import { getAccount } from '@/lib/auth/account'
 import { getAccountApplication, getSiteSettings } from '@/lib/queries'
@@ -43,8 +44,18 @@ export default async function ApplicationPage({
   if (account.kind === 'instructor') notFound()
 
   const application = await getAccountApplication(account, locale)
-  if (!application) notFound()
   const settings = await getSiteSettings(locale)
+
+  // «طلبي» is in every student's navigation, so it must answer for a student who has none —
+  // an account staff opened by hand, say. A 404 on a link the portal itself offers is a
+  // dead end, not an answer.
+  if (!application)
+    return (
+      <>
+        <PageOpening title={t('account.nav.application')} />
+        <EmptyState title={t('account.noApplication')} body={t('account.noApplicationBody')} />
+      </>
+    )
 
   return (
     <>
