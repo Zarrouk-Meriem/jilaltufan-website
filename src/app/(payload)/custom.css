@@ -59,3 +59,29 @@
 .jaa-changes__table td {
   background: var(--theme-elevation-50);
 }
+
+/*
+ * Lexical parks its floating link editor off-screen while it is closed, with an inline
+ * `transform: translate(-10000px, -10000px)` on `.link-editor`. In LTR that lands in the
+ * inline-start margin, which no browser makes scrollable. Our admin is RTL, where the same
+ * negative offset lands in the *scrollable* direction: every edit page holding a rich-text
+ * field grew a document ~9600px wider than the viewport. There is no scrollbar (Payload
+ * hides body's), but a trackpad swipe still dragged the whole admin sideways into empty
+ * space — `window.scrollX` went to -500 on a flick (2026-09-24).
+ *
+ * `clip` rather than `hidden`: it forbids scrolling instead of creating a scroll container,
+ * so the block axis keeps its own behaviour and `position: sticky` in the header and the
+ * document controls is untouched. Nothing is lost — the axis was already unscrollable by
+ * intent. Fix it here rather than by clipping `.editor`, which is the link editor's
+ * offsetParent: that would clip the toolbar itself once it opens near a field's edge.
+ *
+ * `html` only. The admin scrolls `body`, so `body.scrollWidth` stays 10692 — nothing can
+ * reach it, but it is still what CDP reports as the content size, so a Playwright
+ * `fullPage` screenshot of an admin page is still 10692px wide with the UI in a sliver at
+ * the edge. Screenshot admin pages by viewport, not `fullPage`. Adding `body` to this rule
+ * does not collapse that width either, and costs the admin its vertical scrolling outright
+ * (measured 2026-09-24: `body.scrollTop` stuck at 0). Leave it at one element.
+ */
+html {
+  overflow-x: clip;
+}
