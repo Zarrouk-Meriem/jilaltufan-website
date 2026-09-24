@@ -139,6 +139,13 @@
     "home": "Home",
     "programs": "Training programs"
   },
+  "error": {
+    "title": "This page could not be shown",
+    "body": "Something went wrong on our side, not yours. Try again in a moment; if it keeps happening, write to us and include the error reference below.",
+    "retry": "Try again",
+    "home": "Home",
+    "reference": "Error reference: {digest}"
+  },
   "styleguide": {
     "title": "Styleguide",
     "intro": "The site's visual reference: colour, type, and every component in every state."

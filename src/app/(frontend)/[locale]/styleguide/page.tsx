@@ -45,8 +45,16 @@ function Block({ title, children, id }: { title: string; children: React.ReactNo
   )
 }
 
-export default async function StyleguidePage({ params }: PageProps<'/[locale]/styleguide'>) {
+export default async function StyleguidePage({
+  params,
+  searchParams,
+}: PageProps<'/[locale]/styleguide'>) {
   if (!STYLEGUIDE_ENABLED) notFound()
+  // `?fail=1` throws on purpose so the error page can be seen and tested
+  // (tests/e2e/errors.spec.ts). Never in production.
+  if (process.env.NODE_ENV !== 'production' && (await searchParams).fail === '1') {
+    throw new Error('styleguide: simulated failure')
+  }
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations()
