@@ -14,10 +14,10 @@ next-env.d.ts
 !.env.prod.example
 
 # payload / uploads
-/media/
+/media
 /public/media/
-/application-files/
-/session-files/
+/application-files
+/session-files
 
 # Throwaway staff credentials for the e2e specs, local database only.
 /.e2e-staff.json

@@ -29,6 +29,11 @@ case "$cmd" in
     [[ -e "$dir" ]] && { echo "$dir already exists"; exit 1; }
     git -C "$MAIN" worktree add -q -b "$name" "$dir" main
     cp "$MAIN/.env" "$dir/.env"
+    # Uploads live on local disk (gitignored) and every worktree shares the one local
+    # database, so they share its files too; without them every image answers 400.
+    for d in media application-files session-files; do
+      [[ -d "$MAIN/$d" ]] && ln -s "$MAIN/$d" "$dir/$d"
+    done
     # 3001 is the main checkout's, 3002 the production check's; tasks take 3010+.
     port=3010
     taken=" $(for w in $(git -C "$MAIN" worktree list --porcelain | awk '/^worktree /{print $2}'); do port_of "$w"; done | tr '\n' ' ') "
