@@ -438,6 +438,8 @@ export const PROGRAM_CONTENT: Record<
           type: 'p',
           text: 'إلى جانب التربية والتكوين والبرامج التدريبية، تطلق الأكاديمية مشاريع استراتيجية تسهم بشكل مباشر في جهود التحرير الشامل: مشاريع نوعية ترافق المنظومة التربوية والتدريبية، وتوسّع أثر الأكاديمية، وتحوّل المعرفة إلى هوية ودور ومسؤولية.',
         },
+        { type: 'p', text: 'ومن هذه المشاريع:' },
+        { type: 'ul', items: ['سفراء القدس الشريف'] },
         { type: 'p', text: '[تفاصيل كل مشروع تُنشر لاحقًا.]' },
       ],
       en: [
@@ -445,6 +447,8 @@ export const PROGRAM_CONTENT: Record<
           type: 'p',
           text: 'Alongside education, training, and the programs, the Academy launches strategic projects that contribute directly to the effort of comprehensive liberation: flagship projects that accompany the educational and training system, widen the Academy’s impact, and turn knowledge into identity, role, and responsibility.',
         },
+        { type: 'p', text: 'Among these projects:' },
+        { type: 'ul', items: ['Ambassadors of Al-Quds Al-Sharif'] },
         { type: 'p', text: '[Details of each project will be published later.]' },
       ],
     },

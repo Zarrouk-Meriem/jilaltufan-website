@@ -22,7 +22,8 @@ export type ProgramSeed = {
  * The founding paper: one open track (Oct → May, eight lectures), four directed
  * programs (Jan → Jun, six sessions each, two theoretical and two applied), and the
  * strategic projects that accompany them. «سفراء القدس الشريف» was replaced by the
- * strategic-projects entry at the academy's request (Sep 2026).
+ * strategic-projects entry at the academy's request (Sep 2026), and is now named
+ * as one of those projects in its intro (content.ts).
  */
 export const PROGRAMS: ProgramSeed[] = [
   {
