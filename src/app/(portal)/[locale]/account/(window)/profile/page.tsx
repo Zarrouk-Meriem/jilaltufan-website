@@ -6,6 +6,10 @@ import { Card, PageOpening } from '@/components/portal/pieces'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
 import { getAccount } from '@/lib/auth/account'
+import { getAccountInstructor } from '@/lib/queries'
+import { Prose } from '@/components/content/Prose'
+import { DuotoneImage } from '@/components/ui/DuotoneImage'
+import { TextLink } from '@/components/ui/TextLink'
 import { changePassword, updateOfficialName, updateProfile } from '../../actions'
 
 export const dynamic = 'force-dynamic'
@@ -31,11 +35,50 @@ export default async function ProfilePage({ params }: PageProps<'/[locale]/accou
 
   const account = await getAccount()
   if (!account) redirect(`/${locale}/account/sign-in`)
+  // A guest sees their public profile as the site shows it; the team edits it (TODO.md:
+  // whether guests may edit their own bio and photo is the academy's open decision).
+  const instructor =
+    account.kind === 'instructor' ? await getAccountInstructor(account, locale) : null
+  const photo = instructor?.photo && typeof instructor.photo === 'object' ? instructor.photo : null
 
   return (
     <>
       <PageOpening title={t('account.profile.title')} intro={t('account.profile.intro')} />
       <div className="flex flex-col gap-5">
+        {instructor ? (
+          <Card title={t('account.teaching.profileTitle')}>
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+              <div className="aspect-[4/5] w-32 shrink-0 overflow-hidden rounded-brand surface-navy">
+                {photo?.url ? (
+                  <DuotoneImage
+                    src={photo.url}
+                    alt={photo.alt}
+                    width={photo.width ?? 600}
+                    height={photo.height ?? 750}
+                    className="h-full w-full"
+                    sizes="128px"
+                  />
+                ) : null}
+              </div>
+              <div className="flex min-w-0 flex-col gap-2">
+                <p className="text-lg font-semibold text-ink-900">{instructor.name}</p>
+                {instructor.role ? <p className="text-sm text-ink-500">{instructor.role}</p> : null}
+                {instructor.shortBio ? (
+                  <p className="measure text-base text-ink-700">{instructor.shortBio}</p>
+                ) : null}
+                <Prose data={instructor.bio} className="text-ink-700" />
+                <p className="mt-2 measure text-sm text-ink-500">
+                  {t('account.teaching.profileNote')}
+                </p>
+                {instructor.status === 'published' ? (
+                  <TextLink href={`/instructors/${instructor.slug}`} className="self-start text-sm">
+                    {t('account.teaching.publicPage')}
+                  </TextLink>
+                ) : null}
+              </div>
+            </div>
+          </Card>
+        ) : null}
         <Card title={t('account.profile.detailsTitle')}>
           <ProfileForm
             action={updateProfile}

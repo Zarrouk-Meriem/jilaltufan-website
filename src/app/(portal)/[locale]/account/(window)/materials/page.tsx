@@ -59,20 +59,30 @@ export default async function MaterialsPage({ params }: PageProps<'/[locale]/acc
           {files.length ? (
             <Card title={t('account.teaching.alreadySent')}>
               <ul className="flex flex-col gap-3">
-                {files.map((f) => (
-                  <li key={f.id} className="text-sm">
-                    {f.url ? (
-                      <a
-                        href={f.url}
-                        className="link-grow relative inline-block font-medium text-ink-900"
-                      >
-                        {f.name}
-                      </a>
-                    ) : (
-                      <span className="font-medium text-ink-900">{f.name}</span>
-                    )}
-                  </li>
-                ))}
+                {files.map((f) => {
+                  const session = sessions.find((s) => s.id === f.sessionId)
+                  return (
+                    <li key={f.id} className="flex flex-col gap-0.5 text-sm">
+                      {f.url ? (
+                        <a
+                          href={f.url}
+                          className="link-grow relative inline-block font-medium text-ink-900"
+                        >
+                          {f.name}
+                        </a>
+                      ) : (
+                        <span className="font-medium text-ink-900">{f.name}</span>
+                      )}
+                      {session ? (
+                        <span className="text-xs text-ink-500">
+                          {t('account.teaching.forSession', {
+                            session: `${date(session.startsAt)} — ${session.title}`,
+                          })}
+                        </span>
+                      ) : null}
+                    </li>
+                  )
+                })}
               </ul>
             </Card>
           ) : null}

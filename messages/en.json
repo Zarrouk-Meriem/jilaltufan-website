@@ -137,7 +137,8 @@
     "title": "Page not found",
     "body": "The page may have moved or is no longer available.",
     "home": "Home",
-    "programs": "Training programs"
+    "programs": "Training programs",
+    "window": "Your window"
   },
   "error": {
     "title": "This page could not be shown",
@@ -415,7 +416,9 @@
       "error": "That could not be sent just now. Try again shortly, or write to us and we will help."
     },
     "privateNote": "Keep this link to yourself: anyone who opens it sees your application status.",
-    "notFoundTitle": "Unknown link"
+    "notFoundTitle": "Unknown link",
+    "signIn": "Go to the student window",
+    "signInNote": "First time? Choose your password from the link that came with your acceptance letter."
   },
   "account": {
     "title": "Your **account**",
@@ -500,7 +503,10 @@
       "sent": "We have the file. The team will review it and publish it to the students.",
       "profileNote": "What the instructors page says about you is edited by the team. Write to us if you would like it changed.",
       "alreadySent": "What you have sent",
-      "sendOne": "Send a file"
+      "sendOne": "Send a file",
+      "profileTitle": "Your profile on the instructors page",
+      "publicPage": "See your public page",
+      "forSession": "For {session}"
     },
     "profile": {
       "title": "Your **details**",
@@ -540,6 +546,7 @@
       "disabled": "This account has been deactivated. If you think that is a mistake, write to us.",
       "rateLimited": "Too many attempts in a short time. Wait a moment and try again.",
       "tokenInvalid": "That link has expired or has already been used.",
+      "inviteReissued": "This link expired before your account was activated, so we have sent a new one to your email.",
       "required": "This field is required",
       "email": "Enter a valid email address",
       "tooLong": "Longer than allowed",
@@ -640,6 +647,10 @@
         "certificate": "Receive a certificate"
       },
       "none": "No badges yet."
+    },
+    "sessionsGroup": {
+      "upcoming": "Upcoming",
+      "past": "Past"
     }
   },
   "students": {

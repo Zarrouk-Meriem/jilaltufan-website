@@ -338,6 +338,46 @@ export function passwordResetEmail(locale: Locale, name: string, url: string) {
   }
 }
 
+/**
+ * A fresh activation link, sent when someone opens an invite that expired before they chose
+ * a password. Only ever sent to the address already on the account (awaiting the academy's
+ * sign-off, like the other letters — TODO.md).
+ */
+export function freshInviteEmail(locale: Locale, name: string, url: string) {
+  if (locale === 'ar') {
+    const subject = 'رابط جديد لتفعيل حسابك'
+    return {
+      subject,
+      ...wrap(
+        'ar',
+        subject,
+        [
+          `أهلًا ${name}،`,
+          'انتهت صلاحية رابط تفعيل حسابك قبل أن تختار كلمة السر، فهذا رابط جديد. اختر كلمة السر منه خلال أربع وعشرين ساعة.',
+          REPLY_AR,
+          SIGN_AR,
+        ],
+        { label: ACTIVATE_AR, href: url },
+      ),
+    }
+  }
+  const subject = 'A new link to activate your account'
+  return {
+    subject,
+    ...wrap(
+      'en',
+      subject,
+      [
+        `Hello ${name},`,
+        'The link to activate your account expired before you chose a password, so here is a new one. Choose your password from it within twenty-four hours.',
+        REPLY_EN,
+        SIGN_EN,
+      ],
+      { label: ACTIVATE_EN, href: url },
+    ),
+  }
+}
+
 /** Sent once when staff move an application to «waitlisted»: still in, and what happens next. */
 export function waitlistEmail(locale: Locale, name: string) {
   if (locale === 'ar') {

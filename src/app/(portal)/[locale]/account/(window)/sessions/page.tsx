@@ -43,6 +43,11 @@ export default async function SessionsPage({ params }: PageProps<'/[locale]/acco
     : await getAccountSessions(programs, locale)
   const tz = settings.academyTimeZone
   const now = new Date()
+  const over = (s: (typeof sessions)[number]) =>
+    new Date(s.startsAt).getTime() + (s.durationMinutes ?? 60) * 60_000 < now.getTime()
+  const upcoming = sessions.filter((s) => !over(s))
+  // Most recent first: the one that just ended is the one someone looks back for.
+  const past = sessions.filter(over).reverse()
 
   return (
     <>
@@ -51,30 +56,48 @@ export default async function SessionsPage({ params }: PageProps<'/[locale]/acco
         intro={t(teaching ? 'account.teaching.intro' : 'account.sessionsIntro')}
       />
       {sessions.length ? (
-        <div className="divide-y divide-line rounded-brand border border-line bg-paper px-6">
-          {sessions.map((s) => {
-            const v = sessionView(s, locale, tz, settings.joinWindowMinutes, t, now)
-            return (
-              <SessionRow
-                key={v.id}
-                locale={locale}
-                academyZone={tz}
-                iso={v.iso}
-                parts={v.parts}
-                state={v.state}
-                stateLabel={v.stateLabel}
-                title={v.title}
-                href={teaching ? undefined : v.href}
-                programTitle={teaching ? v.programTitle : undefined}
-                instructor={teaching ? undefined : v.instructor}
-                alQudsLabel={t('session.alQuds')}
-                localLabel={t('session.local')}
-                joinUrl={v.joinUrl}
-                joinLabel={t('session.joinNow')}
-                calendar={v.calendar}
-              />
-            )
-          })}
+        // Upcoming first, then what is over: a long run of past sessions must not bury the
+        // next one (the design lists "past sessions they taught" apart).
+        <div className="flex flex-col gap-10">
+          {(
+            [
+              ['upcoming', upcoming],
+              ['past', past],
+            ] as const
+          )
+            .filter(([, list]) => list.length)
+            .map(([key, list]) => (
+              <section key={key} aria-labelledby={`sessions-${key}`}>
+                <h2 id={`sessions-${key}`} className="mb-4 text-xs font-semibold text-ink-500">
+                  {t(`account.sessionsGroup.${key}`)}
+                </h2>
+                <div className="divide-y divide-line rounded-brand border border-line bg-paper px-6">
+                  {list.map((s) => {
+                    const v = sessionView(s, locale, tz, settings.joinWindowMinutes, t, now)
+                    return (
+                      <SessionRow
+                        key={v.id}
+                        locale={locale}
+                        academyZone={tz}
+                        iso={v.iso}
+                        parts={v.parts}
+                        state={v.state}
+                        stateLabel={v.stateLabel}
+                        title={v.title}
+                        href={teaching ? undefined : v.href}
+                        programTitle={teaching ? v.programTitle : undefined}
+                        instructor={teaching ? undefined : v.instructor}
+                        alQudsLabel={t('session.alQuds')}
+                        localLabel={t('session.local')}
+                        joinUrl={v.joinUrl}
+                        joinLabel={t('session.joinNow')}
+                        calendar={v.calendar}
+                      />
+                    )
+                  })}
+                </div>
+              </section>
+            ))}
         </div>
       ) : (
         <EmptyState

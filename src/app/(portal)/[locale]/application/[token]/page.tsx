@@ -5,6 +5,7 @@ import { StatusLinkReissue } from '@/components/forms/StatusLinkReissue'
 import { PortalShell } from '@/components/portal/PortalShell'
 import { Card, Fact, Facts, PageOpening } from '@/components/portal/pieces'
 
+import { ButtonLink } from '@/components/ui/Button'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import type { Locale } from '@/i18n/routing'
 import { stripAccent } from '@/lib/accent'
@@ -71,6 +72,13 @@ export default async function ApplicationStatusPage({
       <div className="flex flex-col gap-5">
         <Card title={t('statusLabel')}>
           <p className="measure text-base text-ink-700">{t(`note.${status}`)}</p>
+          {status === 'accepted' ? (
+            // Accepted means a window of their own: the way in, and how the first time works.
+            <div className="mt-5 flex flex-col items-start gap-2">
+              <ButtonLink href="/account/sign-in">{t('signIn')}</ButtonLink>
+              <p className="measure text-sm text-ink-500">{t('signInNote')}</p>
+            </div>
+          ) : null}
         </Card>
         <Card title={t('submitted')}>
           <Facts>

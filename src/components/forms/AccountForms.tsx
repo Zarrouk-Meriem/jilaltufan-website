@@ -13,6 +13,9 @@ import type { FormState } from '@/app/(portal)/[locale]/account/actions'
 
 const idle: FormState = { status: 'idle' }
 
+/** Answers that arrive through the error channel but are not mistakes. */
+const GOOD_NEWS = new Set(['inviteReissued'])
+
 /** The honeypot every public form here carries: off-screen, never announced, never filled. */
 function Honeypot() {
   return (
@@ -32,9 +35,17 @@ function FormError({ state }: { state: FormState }) {
   return (
     <div className="min-h-6">
       {state.status === 'error' && state.formError ? (
-        <p role="alert" className="enter font-medium text-error-700">
-          {t(state.formError)}
-        </p>
+        // Not every answer on this line is a mistake: a re-sent invite is good news, said
+        // calmly and announced politely, never in the error colour.
+        GOOD_NEWS.has(state.formError) ? (
+          <p role="status" className="enter font-medium text-ink-900">
+            {t(state.formError)}
+          </p>
+        ) : (
+          <p role="alert" className="enter font-medium text-error-700">
+            {t(state.formError)}
+          </p>
+        )
       ) : null}
     </div>
   )

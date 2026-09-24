@@ -1120,3 +1120,59 @@ test('badges: earned ones in full, the rest faded with how to earn them, drafts 
   await api.delete(`/api/accounts/${account.id}`)
   await api.dispose()
 })
+
+test('the portal has its own not-found page, and an accepted applicant is shown the way in', async ({
+  page,
+}) => {
+  // An unknown follow-up token: the portal's own page, not Next's bare default.
+  await page.goto('/ar/application/no-such-token-in-this-database-000')
+  await expect(page.locator('main h1')).toHaveText('الصفحة غير موجودة')
+  await expect(page.locator('main').getByRole('link', { name: 'نافذتك' })).toBeVisible()
+
+  const { api, email } = await acceptedApplicant(page)
+  const doc = (
+    await (
+      await api.get(`/api/applications?where[email][equals]=${encodeURIComponent(email)}&depth=0`)
+    ).json()
+  ).docs[0] as { statusToken: string }
+  await page.goto(`/ar/application/${doc.statusToken}`)
+  const way = page.locator('main').getByRole('link', { name: 'ادخل إلى نافذة الطالب' })
+  await expect(way).toHaveAttribute('href', '/ar/account/sign-in')
+})
+
+test('a guest instructor sees their public profile, read-only, and their sessions grouped', async ({
+  page,
+}) => {
+  const { api, email, instructorId } = await invitedInstructor(page)
+  const account = (await findAccount(api, email))!
+  const password = `pw-${Date.now()}-playwright`
+  expect((await api.patch(`/api/accounts/${account.id}`, { data: { password } })).ok()).toBe(true)
+  // One published session of theirs, so the sessions page has something to group.
+  const session = (
+    await (
+      await api.get('/api/sessions?where[status][equals]=published&limit=1&depth=0&sort=startsAt')
+    ).json()
+  ).docs[0] as { id: number; instructors?: number[] }
+  await api.patch(`/api/sessions/${session.id}`, {
+    data: { instructors: [...(session.instructors ?? []), instructorId] },
+  })
+
+  await signInAs(page, email, password)
+  await page.goto('/ar/account/profile')
+  const profile = page.locator('main section').filter({ hasText: 'ملفك في صفحة المحاضرين' })
+  await expect(profile).toContainText('ضيف الاختبار')
+  await expect(profile).toContainText('يحرّره الفريق')
+  await expect(profile.getByRole('textbox')).toHaveCount(0) // read-only
+
+  await page.goto('/ar/account/sessions')
+  await expect(
+    page
+      .locator('main h2')
+      .filter({ hasText: /^(القادمة|السابقة)$/ })
+      .first(),
+  ).toBeVisible()
+
+  await api.patch(`/api/sessions/${session.id}`, {
+    data: { instructors: session.instructors ?? [] },
+  })
+})

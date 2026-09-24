@@ -7,6 +7,7 @@ import { APIError } from 'payload'
 import { mintInviteToken, setPasswordUrl, type AccountLocale } from '@/lib/accounts/invite'
 import { getAccount, authCookieName } from '@/lib/auth/account'
 import { passwordResetEmail } from '@/lib/email/templates'
+import { reissueExpiredInvite } from '@/lib/accounts/reissue'
 import {
   changePasswordFormData,
   changePasswordSchema,
@@ -166,8 +167,16 @@ export async function setPassword(_prev: FormState, fd: FormData): Promise<FormS
     })
     if (token) await setAuthCookie(token, 60 * 60 * 24 * 7)
   } catch {
-    // Payload gives one error for expired, spent, and invented tokens alike, and so do we:
-    // the page offers a new link either way.
+    // Payload gives one error for expired, spent, and invented tokens alike. One case is
+    // worth telling apart: an invite that expired before the person ever chose a password.
+    // Holding the link proves the letter reached them, so a fresh one goes to the address
+    // already on the account — never to one typed here — and the page says so (PLAN.md
+    // §13.1.2: the link re-issues itself). A spent link or a reset stays as before.
+    if (
+      resetLimiter.check(clientIp(await headers())).ok &&
+      (await reissueExpiredInvite(payload, parsed.data.token))
+    )
+      return error('inviteReissued')
     return error('tokenInvalid')
   }
   redirect(`/${locale}/account`)
