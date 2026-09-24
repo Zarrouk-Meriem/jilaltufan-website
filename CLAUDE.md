@@ -15,7 +15,7 @@ Read `PLAN.md` before changing architecture. Read `TODO.md` before inventing con
 
 ## Working flow — one task, one worktree (user decision, 2026-09-24)
 
-The main checkout (`JAA`, dev server on 3001) only integrates: **no session edits code in it.** Sessions editing the shared tree hot-reloaded each other's dev server mid-suite (147 false failures on 2026-09-24).
+The main checkout (`JAA`, dev server on 3001) only integrates: **no session edits code in it.** The user starts sessions with **`/task <what to do>`** (`.claude/skills/task/SKILL.md`), which runs the steps below; `/task status` shows what is open and `/task continue <name>` resumes one. Sessions editing the shared tree hot-reloaded each other's dev server mid-suite (147 false failures on 2026-09-24).
 
 1. **Start:** `scripts/wt.sh new <name>` → `../JAA-<name>` on branch `<name>` from `main`, `.env` copied, its own port (3010+, in `.port`), dev server warmed. Work, test, and commit there; Playwright targets it with `PORT=$(cat .port) npx playwright test …`.
 2. **Land:** `scripts/wt.sh land <name>` — rebase on `main`, `pnpm check`, fast-forward `main`. It never pushes; push only when the user asks.
