@@ -122,9 +122,12 @@ export function ForgotForm({
 
   if (state.status === 'done')
     return (
-      <Callout title={t('forgot.sentTitle')} className="enter">
-        <p>{t('forgot.sent')}</p>
-      </Callout>
+      // A status, so a screen reader announces the answer that replaced the form.
+      <div role="status">
+        <Callout title={t('forgot.sentTitle')} className="enter">
+          <p>{t('forgot.sent')}</p>
+        </Callout>
+      </div>
     )
 
   return (

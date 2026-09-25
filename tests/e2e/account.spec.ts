@@ -1,6 +1,7 @@
 import { expect, request, test, type APIRequestContext, type Page } from '@playwright/test'
 import { staffConfigured, staffCredentials } from './helpers/staff'
 import { MINIMAL_PDF, submitApplication } from './helpers/apply'
+import { linkIn, mailLogAvailable, mailMark } from './helpers/mail'
 
 /**
  * The account and its doors (PLAN.md §13.8, step 2): acceptance opens the account, the
@@ -1326,4 +1327,88 @@ test('staff publish an instructor’s PDF as a material in one step, and unpubli
   await api.patch(`/api/sessions/${session.id}`, {
     data: { instructors: session.instructors ?? [] },
   })
+})
+
+/** The path of a set-password link, so it opens on this server whatever SITE_URL says. */
+const pathOf = (url: string) => {
+  const u = new URL(url)
+  return `${u.pathname}${u.search}`
+}
+const SET_PASSWORD = /\/account\/set-password\?token=/
+
+test('an invite is a real way in: the link from the letter sets a first password and signs in', async ({
+  page,
+}) => {
+  test.skip(!mailLogAvailable(), 'needs the dev server log (scripts/dev-restart.sh)')
+  const api = await staffApi(page)
+  const email = `playwright-invite-${Date.now()}@example.com`
+  const since = mailMark()
+  // Opened by hand in the admin: the activation letter goes out (held, and logged).
+  const created = await api.post('/api/accounts', {
+    data: {
+      email,
+      password: `unused-${Date.now()}-x`,
+      kind: 'student',
+      name: 'دعوة اختبار',
+      locale: 'ar',
+    },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+  const account = (await created.json()).doc as { id: number }
+
+  const link = await linkIn(email, SET_PASSWORD, since)
+  await page.goto(pathOf(link))
+  const password = `first-${Date.now()}-playwright`
+  await page.getByLabel(/^كلمة السر الجديدة/).fill(password)
+  await page.getByLabel(/^أعد كتابة كلمة السر/).fill(password)
+  await page.getByRole('button', { name: 'احفظ وادخل' }).click()
+  await expect(page).toHaveURL(/\/ar\/account$/, { timeout: 15_000 })
+
+  // Activated: stamped for staff, and the chosen password is the one that works.
+  const after = await (await api.get(`/api/accounts/${account.id}?depth=0`)).json()
+  expect(after.passwordSetAt).toBeTruthy()
+  expect(
+    (await page.request.post('/api/accounts/login', { data: { email, password } })).status(),
+  ).toBe(200)
+
+  // The same link a second time is spent: refused, with a way to a new one — not re-issued,
+  // since this person has a password now.
+  await page.context().clearCookies()
+  await page.goto(pathOf(link))
+  await page.getByLabel(/^كلمة السر الجديدة/).fill(`again-${password}`)
+  await page.getByLabel(/^أعد كتابة كلمة السر/).fill(`again-${password}`)
+  await page.getByRole('button', { name: 'احفظ وادخل' }).click()
+  await expect(page.locator('main').getByRole('alert')).toContainText('انتهت صلاحية هذا الرابط')
+
+  await api.delete(`/api/accounts/${account.id}`)
+  await api.dispose()
+})
+
+test('a forgotten password is reset from the letter, and the old one stops working', async ({
+  page,
+}) => {
+  test.skip(!mailLogAvailable(), 'needs the dev server log (scripts/dev-restart.sh)')
+  const { api, email, password, account } = await activatedAccount(page)
+
+  const since = mailMark()
+  await page.goto('/ar/account/forgot')
+  await page.getByLabel('البريد الإلكتروني').fill(email)
+  await page.getByRole('button', { name: /أرسل/ }).click()
+  await expect(page.locator('main').getByRole('status')).toContainText('تفقّد بريدك')
+
+  const link = await linkIn(email, SET_PASSWORD, since)
+  await page.goto(pathOf(link))
+  const next = `reset-${Date.now()}-playwright`
+  await page.getByLabel(/^كلمة السر الجديدة/).fill(next)
+  await page.getByLabel(/^أعد كتابة كلمة السر/).fill(next)
+  await page.getByRole('button', { name: 'احفظ وادخل' }).click()
+  await expect(page).toHaveURL(/\/ar\/account$/, { timeout: 15_000 })
+
+  const login = (pw: string) =>
+    page.request.post('/api/accounts/login', { data: { email, password: pw } })
+  expect((await login(next)).status()).toBe(200)
+  expect((await login(password)).status()).toBe(401)
+
+  await api.delete(`/api/accounts/${account.id}`)
+  await api.dispose()
 })
