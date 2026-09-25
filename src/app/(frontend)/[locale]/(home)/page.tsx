@@ -191,6 +191,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             />
           </div>
         ) : null}
+        {/* Phones only: the copy sits over the photograph there, and white text on the dome's
+            highlights measured 1.19:1 (2026-09-25; WCAG asks 4.5:1). A navy scrim rises from
+            the foot, dense where the text is. Wide frames keep the copy beside the photo. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-linear-to-t from-navy-900/95 via-navy-900/80 to-navy-900/10 md:hidden"
+        />
         <div className="relative container-site flex min-h-[78vh] flex-col justify-end py-16 md:py-24">
           <div className="max-w-4xl">
             <p className="text-sm font-medium text-on-navy-muted">{t('site.name')}</p>

@@ -344,7 +344,11 @@
 
 /* Editorial rich text ------------------------------------------------- */
 @layer components {
-  .prose-jaa > * + * {
+  /* Payload's rich text arrives wrapped in its own `div.payload-richtext`; the blocks to
+     space are that div's children, not ours — without the second selector every rich-text
+     paragraph on the site ran into the next (found in the UI pass, 2026-09-25). */
+  .prose-jaa > * + *,
+  .prose-jaa > .payload-richtext > * + * {
     margin-block-start: 1em;
   }
   .prose-jaa h2,

@@ -62,7 +62,7 @@
     "comingSoon": "قريبًا",
     "alQudsTime": "بتوقيت القدس",
     "yourTime": "بتوقيتك المحلي",
-    "sessions": "{count, plural, one {حصة واحدة} two {حصتان} few {# حصص} many {# حصة} other {# حصة}}",
+    "sessions": "{count, plural, =0 {لا حصص} one {حصة واحدة} two {حصتان} few {# حصص} many {# حصة} other {# حصة}}",
     "months": {
       "sep": "سبتمبر",
       "oct": "أكتوبر",
@@ -231,7 +231,7 @@
     "joinNow": "انضم الآن",
     "joinSoon": "يظهر الرابط قبل الموعد بـ {minutes} دقيقة",
     "emailOnly": "الرابط يُرسل بالبريد",
-    "ics": "ملف تقويم (.ics)",
+    "ics": "ملف تقويم (ICS)",
     "google": "تقويم Google",
     "calendarDescription": "حصة مباشرة على Zoom من {program}، أكاديمية جيل الطوفان. الرابط يُرسل للمسجّلين.",
     "calendarLocation": "مباشر على Zoom"
