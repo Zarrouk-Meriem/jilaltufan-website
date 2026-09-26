@@ -140,7 +140,14 @@ export default buildConfig({
   editor: lexicalEditor(),
   email: emailAdapter(),
   secret: process.env.PAYLOAD_SECRET || '',
-  typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
+  typescript: {
+    outputFile: path.resolve(dirname, 'payload-types.ts'),
+    // In dev Payload spawned `payload generate:types` on every start and every hot reload —
+    // and Next starts Payload afresh in each of its page workers, so a suite launched dozens
+    // of these heavy processes; a loaded machine timed out whole runs (2026-09-26). Types are
+    // generated on purpose after a schema change: `pnpm generate:types` (CLAUDE.md).
+    autoGenerate: false,
+  },
   db: postgresAdapter({
     pool: { connectionString: pinnedDatabaseUrl(process.env.DATABASE_URL) },
     migrationDir: path.resolve(dirname, 'migrations'),

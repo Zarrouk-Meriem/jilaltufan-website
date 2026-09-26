@@ -41,6 +41,13 @@ case "$cmd" in
     echo "$port" > "$dir/.port"
     (cd "$dir" && pnpm install --frozen-lockfile --silent && npx --no-install next typegen >/dev/null)
     (cd "$dir" && PORT="$port" scripts/dev-restart.sh --clean)
+    # The throwaway staff accounts the account/activity specs sign in with: without this
+    # file 43 tests skip quietly and a run looks green (twice, 2026-09-25/26). Every run of
+    # the script rotates the passwords, so an older worktree's copy stops working — run it
+    # again there before its next suite.
+    (cd "$dir" && { pnpm payload:tsx run scripts/e2e-staff.ts >/dev/null 2>&1 || true; }
+      [[ -f .e2e-staff.json ]] || pnpm payload:tsx run scripts/e2e-staff.ts >/dev/null 2>&1 || true
+      [[ -f .e2e-staff.json ]] || echo "warning: .e2e-staff.json not written; run: pnpm payload:tsx run scripts/e2e-staff.ts")
     echo "ready: $dir  (branch $name, http://localhost:$port)"
     ;;
 

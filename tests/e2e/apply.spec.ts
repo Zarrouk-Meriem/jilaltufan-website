@@ -117,9 +117,13 @@ test('a reload keeps what was typed and the step reached; start over clears it',
 
   await page.getByRole('button', { name: 'Start over', exact: true }).click()
   await expect(page.getByLabel(L.en.name)).toHaveValue('')
+  // Nothing is saved again until the visitor types: the reset itself is not typing.
+  await page.waitForTimeout(500)
+  expect(await page.evaluate(() => localStorage.getItem('jaa:apply-draft:v1'))).toBeNull()
   await page.reload({ waitUntil: 'networkidle' })
   await expect(page.getByText(L.en.step(1), { exact: true })).toBeVisible()
   await expect(page.getByLabel(L.en.name)).toHaveValue('')
+  await expect(page.getByText(/We restored what you typed/)).toHaveCount(0)
 })
 
 // The draft is written 300 ms after the last change; leaving inside that window (a

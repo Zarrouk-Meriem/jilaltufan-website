@@ -40,9 +40,11 @@ The request is: $ARGUMENTS
 - Commit on the task branch as you go, staging only this task's paths — never `git add -A`.
 - Browser (e2e) tests run against the task's own server:
   - after any source edit, restart clean first: `PORT=$(cat .port) scripts/dev-restart.sh --clean`
-  - admin/account specs need staff accounts in this folder:
-    `pnpm payload:tsx run scripts/e2e-staff.ts`
-  - then `PORT=$(cat .port) pnpm exec playwright test --project=chromium [spec…]`
+  - admin/account specs need staff accounts in this folder; `wt.sh new` creates them, and
+    after another worktree has run a suite, renew them: `pnpm payload:tsx run scripts/e2e-staff.ts`
+    (a summary with «skipped» in it means they were missing, so the run is not complete)
+  - then `PORT=$(cat .port) caffeinate -dims pnpm exec playwright test --project=chromium [spec…]`
+    (`caffeinate` keeps the Mac awake; a suite on a sleeping Mac fails by the dozen)
 
 ## 3. Finish
 

@@ -27,7 +27,11 @@ test.skip(
 
 // One worker, in order: Payload drops a session when two logins for one account land at the
 // same moment — see the note at the top of `activity.spec.ts`.
-test.describe.configure({ mode: 'default' })
+// 60 s a test, not 30: these are whole journeys (apply, accept, sign in, enroll, sign out)
+// on a dev server, and on a loaded machine the longest ran out of the overall budget while
+// its last step was still waiting within its own timeout (2026-09-26). Each wait keeps its
+// own limit, so a real hang still fails at that step.
+test.describe.configure({ mode: 'default', timeout: 60_000 })
 
 async function staffApi(page: Page): Promise<APIRequestContext> {
   const res = await page.request.post('/api/users/login', { data: admin })

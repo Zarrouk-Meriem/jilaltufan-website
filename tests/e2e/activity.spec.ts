@@ -204,7 +204,11 @@ test('a login, a failed login, and a logout are rows too, and the action filter 
   expect((await editorApi.post('/api/users/logout')).status()).toBe(200)
 
   const failures = await request.get(
-    `/api/activity?where[action][equals]=login-failed&sort=-createdAt&limit=5&depth=0`,
+    // Its own two addresses, not the five newest failures: account.spec fails sign-ins of
+    // its own in another worker, and those could push these two off a newest-five list.
+    `/api/activity?where[action][equals]=login-failed` +
+      `&where[title][in]=${encodeURIComponent(`${wrongEmail},${editor.email}`)}` +
+      '&sort=-createdAt&limit=5&depth=0',
   )
   const rows = (await failures.json()).docs as Row[]
   expect(rows.every((r) => r.action === 'login-failed')).toBe(true)

@@ -94,7 +94,10 @@ test.describe('header shrink never fights scroll anchoring', () => {
         // Step through the threshold slowly and let each step settle for a few frames —
         // the oscillation showed up within four frames of crossing 24px.
         for (let y = 0; y <= 80; y += 2) {
-          window.scrollTo(0, y)
+          // Instant, not the page's smooth scrolling: under a loaded suite the glide was
+          // still one 2 px step short after four frames, which read as the browser moving
+          // the page on its own ("scrollY drifted at target 54, received 52", 2026-09-24/26).
+          window.scrollTo({ top: y, behavior: 'instant' })
           for (let f = 0; f < 4; f++) {
             await raf()
             out.push({
