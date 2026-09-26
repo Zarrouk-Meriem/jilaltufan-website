@@ -27,6 +27,7 @@ import {
 } from './content'
 import {
   MISSION,
+  OPEN_TRAINING_TITLES,
   PLACEHOLDER,
   PROGRAMS,
   RENAMED_PROGRAMS,
@@ -214,6 +215,7 @@ async function seed() {
     log(`program ${p.slug} → ${program.id}`)
 
     const months = seasonMonths(p.season)
+    const titles = p.slug === 'open-training' ? OPEN_TRAINING_TITLES : undefined
     for (let i = 0; i < months.length; i++) {
       const mo = months[i]!
       const number = i + 1
@@ -230,8 +232,15 @@ async function seed() {
           status: 'published',
         },
         {
-          ar: { title: `[الحصة ${mo.ar}]`, summary: PLACEHOLDER.ar },
-          en: { title: `[Session ${number}: ${mo.en}]`, summary: PLACEHOLDER.en },
+          // Real titles where the academy has given them; the rest stay marked placeholders.
+          ar: {
+            title: titles?.ar[i] ?? `[الحصة ${mo.ar}]`,
+            summary: PLACEHOLDER.ar,
+          },
+          en: {
+            title: titles?.en[i] ?? `[Session ${number}: ${mo.en}]`,
+            summary: PLACEHOLDER.en,
+          },
         },
       )
     }

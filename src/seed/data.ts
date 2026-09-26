@@ -122,6 +122,34 @@ export function seasonMonths(season: ProgramSeed['season']) {
   })
 }
 
+/**
+ * Open Training's eight lectures, October to May, from the academy's lecturer file
+ * «المحاضرون — التدريب المفتوح» (received 2026-09-26). Dates, times and lecturers are still
+ * open there, so the sessions stay flagged placeholders; the English is ours, for review.
+ */
+export const OPEN_TRAINING_TITLES = {
+  ar: [
+    'فلسطين؛ القضية والهوية ومسؤولية الجيل',
+    'تاريخ الصراع على فلسطين؛ الجذور والمحطات والتحولات',
+    'القدس الشريف؛ التاريخ والهوية وواقع التهويد',
+    'المشروع الصهيوني؛ النشأة والبنية وأدوات النفوذ',
+    'فلسطين والنظام الدولي؛ القانون والمؤسسات وموازين القوة',
+    'الإعلام وصناعة الوعي؛ تفكيك السرديات وبناء الخطاب',
+    'القيادة والصلابة النفسية في زمن الأزمات',
+    'من الوعي إلى الأثر؛ حملات المناصرة والمبادرات المجتمعية',
+  ],
+  en: [
+    'Palestine: the cause, identity, and the responsibility of a generation',
+    'The history of the struggle over Palestine: roots, milestones, and turning points',
+    'Al-Quds Al-Sharif: history, identity, and the reality of Judaization',
+    'The Zionist project: origins, structure, and instruments of influence',
+    'Palestine and the international order: law, institutions, and the balance of power',
+    'Media and the making of awareness: dismantling narratives, building discourse',
+    'Leadership and psychological resilience in times of crisis',
+    'From awareness to impact: advocacy campaigns and community initiatives',
+  ],
+}
+
 export const MISSION = {
   ar: 'نُعِدّ جيلًا واعيًا بقضايا أمته، قادرًا على نصرتها بالعلم والعمل. برامج علمية وفكرية وقيادية لفهم القضية الفلسطينية في أبعادها التاريخية والسياسية والفكرية، وتحوّل الوعي إلى معرفةٍ وكفاءةٍ وأثر.',
   en: "We prepare a generation aware of its nation's causes and able to serve them through knowledge and action. Scholarly, intellectual, and leadership programs to understand the Palestinian cause in its historical, political, and intellectual dimensions, turning awareness into knowledge, competence, and impact.",
