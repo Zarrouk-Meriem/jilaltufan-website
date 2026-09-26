@@ -338,7 +338,8 @@
       "aboutYou": "Tell us about yourself",
       "cv": "CV",
       "pledge": "I commit to attending and taking part seriously in the program's sessions, completing its assignments, and respecting the <conduct>code of conduct</conduct>.",
-      "consent": "I agree to my data being processed according to the <privacy>privacy policy</privacy>."
+      "ageConfirmed": "I confirm that I am 18 or older.",
+      "consent": "I have read the <privacy>Privacy Policy</privacy> and the <terms>Terms and Conditions</terms> and I agree to them."
     },
     "genders": {
       "female": "Female",
@@ -368,12 +369,14 @@
       "phone": "Enter the country code and a valid number.",
       "tooLong": "This is longer than allowed.",
       "dateOfBirth": "Enter a valid date of birth.",
+      "underAge": "Sorry, applications are open to those aged 18 and over.",
       "motivationShort": "Write at least 20 characters.",
       "aboutShort": "Write at least 20 characters.",
       "cvTooLarge": "The file is larger than 5 MB.",
       "cvType": "The file must be a PDF or Word document.",
       "pledge": "The commitment pledge is required.",
-      "consent": "Agreeing to the privacy policy is required.",
+      "ageConfirmed": "Please confirm that you are 18 or older.",
+      "consent": "You need to agree to the Privacy Policy and the Terms and Conditions.",
       "spam": "The form could not be sent.",
       "rateLimited": "Too many submissions in a short time. Please try again in a few minutes.",
       "turnstile": "We couldn't verify you're not a robot. Please try again.",
@@ -837,84 +840,24 @@
     "successBody": "Thank you. We'll reply to your email address."
   },
   "privacy": {
-    "title": "Privacy policy",
-    "draftNote": "Draft pending the Academy's review and approval.",
-    "updated": "Last updated: {date}",
-    "sections": [
-      {
-        "h": "What we collect",
-        "p": [
-          "When you apply we collect: full name, gender, date of birth, email, phone number, nationality, country of residence, profession, any organisation you belong to, links to your social accounts (optional), how you heard about the Academy, your motivation, a short note about yourself, and your CV (optional).",
-          "When you contact us we collect: name, email, subject, and your message."
-        ]
-      },
-      {
-        "h": "Why we collect it",
-        "p": [
-          "To review applications and contact applicants, to send registered participants the links and times of live sessions, and to reply to messages."
-        ]
-      },
-      {
-        "h": "Who can see it",
-        "p": [
-          "Only the Academy's team responsible for reviewing applications and running the programs; CVs are visible to no one else. We do not sell data or share it with third parties for marketing.",
-          "Data is stored with the hosting and email providers the Academy contracts."
-        ]
-      },
-      {
-        "h": "How long we keep it",
-        "p": [
-          "For as long as it is needed to run the program you applied to; then it is deleted or anonymised unless the law requires otherwise."
-        ]
-      },
-      {
-        "h": "Your rights",
-        "p": [
-          "You can ask to access, correct, or delete your data by writing to the address below."
-        ]
-      },
-      {
-        "h": "Cookies",
-        "p": [
-          "The site uses a single cookie to remember your preferred language. We use no advertising trackers."
-        ]
-      },
-      {
-        "h": "Contact",
-        "p": ["For any question about this policy: {email}"]
-      }
-    ]
+    "title": "Privacy Policy",
+    "description": "How Jil Altufan Academy collects, uses and protects your personal data, and your rights over it.",
+    "updatedLabel": "Last updated:",
+    "updated": "26 September 2026",
+    "intro": [],
+    "pending": "[Placeholder] The English translation of this policy is being prepared. Until it is published, the Arabic version applies.",
+    "pendingLink": "Read the privacy policy in Arabic",
+    "sections": []
   },
   "terms": {
-    "title": "Terms",
-    "draftNote": "Draft pending the Academy's review and approval.",
-    "sections": [
-      {
-        "h": "Using the site",
-        "p": [
-          "This site is the digital home of Jil Altufan Academy. Its content is for reading and learning; please don't republish it without permission."
-        ]
-      },
-      {
-        "h": "Program registration",
-        "p": [
-          "Submitting an application does not mean automatic acceptance unless the program is open-registration. The Academy reviews applications and contacts applicants.",
-          "Information given in an application must be accurate."
-        ]
-      },
-      {
-        "h": "Live sessions",
-        "p": [
-          "Zoom links are for registered participants and must not be shared. The Academy may change times or cancel sessions, notifying registrants."
-        ]
-      },
-      {
-        "h": "Conduct",
-        "p": [
-          "Participants are expected to follow the code of conduct published in the student window."
-        ]
-      }
-    ]
+    "title": "Terms and Conditions",
+    "description": "The terms for using the Jil Altufan Academy website, applying, and taking part in its programs.",
+    "updatedLabel": "Last updated:",
+    "updated": "26 September 2026",
+    "intro": [],
+    "pending": "[Placeholder] The English translation of these terms is being prepared. Until it is published, the Arabic version applies.",
+    "pendingLink": "Read the terms in Arabic",
+    "sections": []
   },
   "social": {
     "instagram": "Instagram",

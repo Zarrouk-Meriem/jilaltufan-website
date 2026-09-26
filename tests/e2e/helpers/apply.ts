@@ -33,6 +33,7 @@ export const L = {
     about: /حدّثنا عن نفسك/,
     cv: 'السيرة الذاتية',
     pledge: /أتعهد/,
+    ageConfirmed: /أؤكد أن عمري 18 سنة فأكثر/,
     consent: /أوافق/,
     next: 'التالي',
     back: 'السابق',
@@ -67,6 +68,7 @@ export const L = {
     about: /Tell us about yourself/,
     cv: 'CV',
     pledge: /I commit/,
+    ageConfirmed: /I confirm that I am 18 or older/,
     consent: /I agree/,
     next: 'Next',
     back: 'Back',
@@ -144,6 +146,7 @@ export async function fillThroughToLastStep(
     .getByLabel(l.about)
     .fill('An automated browser, third year, interested in checking that forms still work.')
   await page.getByLabel(l.pledge).check()
+  await page.getByLabel(l.ageConfirmed).check()
   await page.getByLabel(l.consent).check()
   return email
 }

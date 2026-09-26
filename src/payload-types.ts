@@ -209,7 +209,7 @@ export interface AccountAuthOperations {
   };
 }
 /**
- * Open Training and the five directed programs. Each has its own page and eight sessions per season.
+ * Open Training, the four programs of Directed Training, and the strategic projects. Each has its own page and its sessions in the season.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "programs".
@@ -1061,7 +1061,12 @@ export interface Application {
   aboutYou?: string | null;
   cv?: (number | null) | ApplicationFile;
   pledge: boolean;
+  ageConfirmed?: boolean | null;
   consent: boolean;
+  /**
+   * When the applicant sent the form, having agreed to the policy and terms.
+   */
+  consentAcceptedAt?: string | null;
   locale?: ('ar' | 'en') | null;
   /**
    * Choosing Rejected alone sends nothing. Tick this and save to send the rejection email; it cannot be unsent.
@@ -2240,7 +2245,9 @@ export interface ApplicationsSelect<T extends boolean = true> {
   aboutYou?: T;
   cv?: T;
   pledge?: T;
+  ageConfirmed?: T;
   consent?: T;
+  consentAcceptedAt?: T;
   locale?: T;
   sendRejectionEmail?: T;
   reviewingEmailSentAt?: T;

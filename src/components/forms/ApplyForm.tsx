@@ -538,12 +538,35 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
             {...register('pledge')}
           />
           <Checkbox
+            id="ageConfirmed"
+            required
+            error={err('ageConfirmed')}
+            label={t('fields.ageConfirmed')}
+            {...register('ageConfirmed')}
+          />
+          <Checkbox
             id="consent"
             required
             error={err('consent')}
             label={t.rich('fields.consent', {
+              // A new tab, so reading them never costs the visitor what they typed.
               privacy: (chunks) => (
-                <Link href="/privacy" className="underline decoration-red-600 underline-offset-2">
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener"
+                  className="underline decoration-red-600 underline-offset-2"
+                >
+                  {chunks}
+                </Link>
+              ),
+              terms: (chunks) => (
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  rel="noopener"
+                  className="underline decoration-red-600 underline-offset-2"
+                >
                   {chunks}
                 </Link>
               ),

@@ -38,49 +38,61 @@ test('typing a section title shows in the preview at once; visitors see it only 
 }) => {
   test.setTimeout(90_000)
   const stamp = `لماذا نحن ${Date.now()}`
-  expect((await page.request.post('/api/users/login', { data: editor })).status()).toBe(200)
-  await page.goto('/admin/globals/home-page?locale=ar')
+  const login = await page.request.post('/api/users/login', { data: editor })
+  expect(login.status()).toBe(200)
+  const { token } = (await login.json()) as { token: string }
+  let original: string | null = null
+  // Whatever happens below, the published title goes back: a run that failed after
+  // «Publish changes» once left the stamp on the home page (2026-09-26).
+  const restore = async () => {
+    if (original === null) return
+    await page.request.post('/api/globals/home-page?locale=ar', {
+      headers: { Authorization: `JWT ${token}` },
+      data: { missionTitle: original, _status: 'published' },
+    })
+  }
+  try {
+    await page.goto('/admin/globals/home-page?locale=ar')
 
-  // The pane: open it if the editor's preference left it closed.
-  await page.setViewportSize({ width: 1600, height: 1000 })
-  const frame = page.frameLocator('iframe').first()
-  await page.getByRole('button', { name: 'Publish changes' }).waitFor()
-  // The pane's device switcher is there exactly when the pane is open; the iframe alone is
-  // mounted before it shows, so testing that toggled an opening pane shut.
-  const toolbar = page.getByText('Responsive', { exact: true }).first()
-  await toolbar.waitFor({ timeout: 3_000 }).catch(() => {})
-  if (!(await toolbar.isVisible())) await page.getByRole('button', { name: 'Live Preview' }).click()
-  await expect(toolbar).toBeVisible()
-  await expect(frame.locator('main')).toBeVisible({ timeout: 20_000 })
+    // The pane: open it if the editor's preference left it closed.
+    await page.setViewportSize({ width: 1600, height: 1000 })
+    const frame = page.frameLocator('iframe').first()
+    await page.getByRole('button', { name: 'Publish changes' }).waitFor()
+    // The pane's device switcher is there exactly when the pane is open; the iframe alone is
+    // mounted before it shows, so testing that toggled an opening pane shut.
+    const toolbar = page.getByText('Responsive', { exact: true }).first()
+    await toolbar.waitFor({ timeout: 3_000 }).catch(() => {})
+    if (!(await toolbar.isVisible()))
+      await page.getByRole('button', { name: 'Live Preview' }).click()
+    await expect(toolbar).toBeVisible()
+    await expect(frame.locator('main')).toBeVisible({ timeout: 20_000 })
 
-  await page.getByRole('button', { name: 'Sections', exact: true }).click()
-  // Each section is a folded panel whose header holds a «Toggle block» button.
-  await page.getByRole('button', { name: 'Toggle block' }).first().click()
-  const title = page.locator('#field-missionTitle')
-  const original = await title.inputValue()
-  await title.fill(stamp)
+    await page.getByRole('button', { name: 'Sections', exact: true }).click()
+    // Each section is a folded panel whose header holds a «Toggle block» button.
+    await page.getByRole('button', { name: 'Toggle block' }).first().click()
+    const title = page.locator('#field-missionTitle')
+    original = await title.inputValue()
+    await title.fill(stamp)
 
-  // No save pressed: the autosaved draft reaches the pane.
-  await expect(frame.getByRole('heading', { name: stamp })).toBeVisible({ timeout: 20_000 })
+    // No save pressed: the autosaved draft reaches the pane.
+    await expect(frame.getByRole('heading', { name: stamp })).toBeVisible({ timeout: 20_000 })
 
-  // A visitor still reads the published page.
-  const visitor = await browser.newPage()
-  await visitor.goto('/ar')
-  await expect(visitor.getByRole('heading', { name: stamp })).toHaveCount(0)
+    // A visitor still reads the published page.
+    const visitor = await browser.newPage()
+    await visitor.goto('/ar')
+    await expect(visitor.getByRole('heading', { name: stamp })).toHaveCount(0)
 
-  // Published: now everyone sees it.
-  await page.getByRole('button', { name: 'Publish changes' }).click()
-  await expect(page.getByText(/updated successfully|published successfully/i).first()).toBeVisible({
-    timeout: 15_000,
-  })
-  await visitor.goto('/ar')
-  await expect(visitor.getByRole('heading', { name: stamp })).toBeVisible()
-  await visitor.close()
-
-  // Put the title back for everything else that reads the home page.
-  await title.fill(original)
-  await page.getByRole('button', { name: 'Publish changes' }).click()
-  await expect(page.getByText(/updated successfully|published successfully/i).first()).toBeVisible({
-    timeout: 15_000,
-  })
+    // Published: now everyone sees it.
+    await page.getByRole('button', { name: 'Publish changes' }).click()
+    await expect(
+      page.getByText(/updated successfully|published successfully/i).first(),
+    ).toBeVisible({
+      timeout: 15_000,
+    })
+    await visitor.goto('/ar')
+    await expect(visitor.getByRole('heading', { name: stamp })).toBeVisible()
+    await visitor.close()
+  } finally {
+    await restore()
+  }
 })

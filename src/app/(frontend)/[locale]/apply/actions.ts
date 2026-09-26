@@ -112,7 +112,9 @@ export async function submitApplication(
         aboutYou: data.aboutYou,
         cv: cvId,
         pledge: true,
+        ageConfirmed: true,
         consent: true,
+        consentAcceptedAt: new Date().toISOString(),
         locale: data.locale,
       },
     })

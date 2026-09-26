@@ -23,6 +23,7 @@ import * as migration_20260924_205223_staff_tools from './20260924_205223_staff_
 import * as migration_20260924_212009_instructor_files from './20260924_212009_instructor_files'
 import * as migration_20260926_104704_conduct_rights from './20260926_104704_conduct_rights'
 import * as migration_20260926_141955_home_sections_drafts from './20260926_141955_home_sections_drafts'
+import * as migration_20260926_152312_application_age_consent from './20260926_152312_application_age_consent'
 
 export const migrations = [
   {
@@ -149,5 +150,10 @@ export const migrations = [
     up: migration_20260926_141955_home_sections_drafts.up,
     down: migration_20260926_141955_home_sections_drafts.down,
     name: '20260926_141955_home_sections_drafts',
+  },
+  {
+    up: migration_20260926_152312_application_age_consent.up,
+    down: migration_20260926_152312_application_age_consent.down,
+    name: '20260926_152312_application_age_consent',
   },
 ]

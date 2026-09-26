@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import { alternatesFor } from '@/lib/seo'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { LegalText } from '@/components/content/LegalText'
 import { PageIntro } from '@/components/sections/PageIntro'
-import { Callout } from '@/components/ui/Callout'
 import type { Locale } from '@/i18n/routing'
-import { getSiteSettings } from '@/lib/queries'
 
 export const revalidate = 3600
 
@@ -13,7 +12,11 @@ export async function generateMetadata({
 }: PageProps<'/[locale]/terms'>): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'terms' })
-  return { alternates: alternatesFor(locale as Locale, '/terms'), title: t('title') }
+  return {
+    alternates: alternatesFor(locale as Locale, '/terms'),
+    title: t('title'),
+    description: t('description'),
+  }
 }
 
 export default async function LegalPage({ params }: PageProps<'/[locale]/terms'>) {
@@ -21,27 +24,18 @@ export default async function LegalPage({ params }: PageProps<'/[locale]/terms'>
   const locale = raw as Locale
   setRequestLocale(locale)
   const t = await getTranslations('terms')
-  const settings = await getSiteSettings(locale)
-  const sections = t.raw('sections') as { h: string; p: string[] }[]
   return (
     <>
       <PageIntro locale={locale} title={t('title')} />
       <div className="container-reading py-14 md:py-20">
-        <Callout className="mb-12">
-          <p>{t('draftNote')}</p>
-        </Callout>
-        <div className="flex flex-col gap-12">
-          {sections.map((s, i) => (
-            <section key={i}>
-              <h2 className="text-lg">{s.h}</h2>
-              {s.p.map((p, j) => (
-                <p key={j} className="mt-4 measure text-ink-700">
-                  {p.replace('{email}', settings.contactEmail)}
-                </p>
-              ))}
-            </section>
-          ))}
-        </div>
+        <LegalText
+          updatedLabel={t('updatedLabel')}
+          updated={t('updated')}
+          intro={t.raw('intro') as string[]}
+          sections={t.raw('sections') as { h: string; body: string[] }[]}
+          pending={t('pending') || undefined}
+          pendingLink={{ href: '/terms', locale: 'ar', label: t('pendingLink') }}
+        />
       </div>
     </>
   )

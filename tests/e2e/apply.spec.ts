@@ -95,6 +95,19 @@ test('a CV is required, and the CV, pledge and consent are marked required', asy
   await expect(page.getByRole('status')).toHaveCount(0)
 })
 
+// The academy's rule (2026-09-26): 18 or older, no guardian route; refused in the browser (and
+// by the same schema on the server) with its own sentence, and the age box is required.
+test('an applicant under 18 is refused with the academy’s sentence', async ({ page }) => {
+  await page.goto('/ar/apply', { waitUntil: 'networkidle' })
+  await fillThroughToLastStep(page, 'ar')
+  await page.getByRole('button', { name: L.ar.back, exact: true }).click()
+  await page.getByRole('button', { name: L.ar.back, exact: true }).click()
+  await pick(page, L.ar.year, String(new Date().getFullYear() - 17))
+  await page.getByRole('button', { name: L.ar.next, exact: true }).click()
+  await expect(page.getByText('عذرًا، التسجيل متاح لمن بلغوا 18 سنة فأكثر.')).toBeVisible()
+  await expect(page.getByText(L.ar.step(1), { exact: true })).toBeVisible()
+})
+
 test('the country combobox filters as you type and picks with the keyboard', async ({ page }) => {
   await page.goto('/ar/apply', { waitUntil: 'networkidle' })
   const input = page.getByLabel(L.ar.nationality)

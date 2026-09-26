@@ -236,12 +236,35 @@ export const Applications: CollectionConfig = {
                   label: { ar: 'تعهّد بالالتزام', en: 'Commitment pledge' },
                 },
                 {
+                  // Not required in the schema: applications sent before 2026-09-26 had no
+                  // such box. The form and the server action require it for every new one.
+                  name: 'ageConfirmed',
+                  type: 'checkbox',
+                  label: { ar: 'أكّد أن عمره 18 سنة فأكثر', en: 'Confirmed 18 or older' },
+                },
+                {
                   name: 'consent',
                   type: 'checkbox',
                   required: true,
-                  label: { ar: 'الموافقة على سياسة الخصوصية', en: 'Privacy consent' },
+                  label: {
+                    ar: 'الموافقة على سياسة الخصوصية والشروط والأحكام',
+                    en: 'Agreed to the Privacy Policy and Terms',
+                  },
                 },
               ],
+            },
+            {
+              name: 'consentAcceptedAt',
+              type: 'date',
+              label: { ar: 'وقت الموافقة', en: 'Consent given at' },
+              admin: {
+                readOnly: true,
+                date: { pickerAppearance: 'dayAndTime' },
+                description: {
+                  ar: 'حين أرسل صاحب الطلب النموذج بعد الموافقة على السياسة والشروط.',
+                  en: 'When the applicant sent the form, having agreed to the policy and terms.',
+                },
+              },
             },
           ],
         },

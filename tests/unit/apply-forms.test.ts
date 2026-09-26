@@ -3,6 +3,7 @@ import {
   applySchema,
   CV_MAX_BYTES,
   formDataToInput,
+  isAdult,
   STEP_FIELDS,
   toFieldErrors,
 } from '@/lib/forms/apply-schema'
@@ -28,6 +29,7 @@ const valid = {
   aboutYou: 'طالبة في السنة الثالثة، مهتمة بالإعلام والعمل التطوعي.',
   cv: new File([new Uint8Array(512)], 'cv.pdf', { type: 'application/pdf' }),
   pledge: true,
+  ageConfirmed: true,
   consent: true,
   locale: 'ar',
   website: '',
@@ -134,6 +136,31 @@ describe('applySchema', () => {
     expect(new Set(all).size).toBe(all.length)
     const hidden = ['locale', 'website', 'turnstileToken']
     for (const k of Object.keys(valid)) if (!hidden.includes(k)) expect(all).toContain(k)
+  })
+
+  // The academy's rule (2026-09-26): 18 or older on the day of submission, no guardian route.
+  it('refuses anyone under 18 on the day of submission, with its own message', () => {
+    const now = new Date()
+    const iso = (y: number, m: number, d: number) =>
+      new Date(Date.UTC(y, m, d)).toISOString().slice(0, 10)
+    const y = now.getUTCFullYear()
+    const m = now.getUTCMonth()
+    const d = now.getUTCDate()
+    const young = applySchema.safeParse({ ...valid, dateOfBirth: iso(y - 18, m, d + 1) })
+    expect(young.success).toBe(false)
+    if (!young.success) expect(toFieldErrors(young.error).dateOfBirth).toBe('underAge')
+    expect(applySchema.safeParse({ ...valid, dateOfBirth: iso(y - 18, m, d) }).success).toBe(true)
+  })
+
+  it('counts a 29 February birthday from 1 March in a common year', () => {
+    expect(isAdult('2008-02-29', new Date(Date.UTC(2026, 1, 28)))).toBe(false)
+    expect(isAdult('2008-02-29', new Date(Date.UTC(2026, 2, 1)))).toBe(true)
+  })
+
+  it('requires the age confirmation box, like the consent', () => {
+    const r = applySchema.safeParse({ ...valid, ageConfirmed: false })
+    expect(r.success).toBe(false)
+    if (!r.success) expect(toFieldErrors(r.error).ageConfirmed).toBe('ageConfirmed')
   })
 })
 

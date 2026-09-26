@@ -35,6 +35,18 @@ const dateOfBirth = z
     const min = new Date(Date.UTC(now.getUTCFullYear() - 100, now.getUTCMonth(), now.getUTCDate()))
     return d < now && d > min
   }, 'dateOfBirth')
+  .refine((s) => isAdult(s), 'underAge')
+
+/**
+ * 18 or older on the day of submission — the academy's rule (2026-09-26), with no guardian
+ * route. A date that is not a real day passes here; the check above reports it instead.
+ * Born on 29 February: the eighteenth birthday falls on 1 March in a common year.
+ */
+export function isAdult(dateOfBirth: string, now = new Date()): boolean {
+  const [y, m, d] = dateOfBirth.split('-').map(Number)
+  if (!y || !m || !d) return true
+  return Date.UTC(y + 18, m - 1, d) <= now.getTime()
+}
 
 /**
  * The CV arrives as a File from FormData on the server and from the file input on the
@@ -107,6 +119,7 @@ export const applyObject = z.object({
   aboutYou: z.string().trim().min(20, 'aboutShort').max(2000, 'tooLong'),
   cv,
   pledge: z.literal(true, { error: 'pledge' }),
+  ageConfirmed: z.literal(true, { error: 'ageConfirmed' }),
   consent: z.literal(true, { error: 'consent' }),
   locale: z.enum(['ar', 'en']),
   /** Honeypot: real browsers leave it empty. */
@@ -128,7 +141,7 @@ export type FieldErrors = Partial<Record<keyof ApplyData, string>>
 export const STEP_FIELDS: readonly (readonly (keyof ApplyInput)[])[] = [
   ['fullName', 'gender', 'dateOfBirth', 'email', 'phone', 'nationality', 'country', 'profession'],
   ['affiliated', 'affiliationName', 'facebook', 'instagram', 'linkedin'],
-  ['hearAbout', 'motivation', 'aboutYou', 'cv', 'pledge', 'consent'],
+  ['hearAbout', 'motivation', 'aboutYou', 'cv', 'pledge', 'ageConfirmed', 'consent'],
 ]
 
 /** Flatten a zod error into { field: messageKey }. */
@@ -169,6 +182,7 @@ export function formDataToInput(fd: FormData): ApplyInput {
     aboutYou: s('aboutYou'),
     cv: file instanceof File && file.size > 0 ? file : undefined,
     pledge: checked('pledge'),
+    ageConfirmed: checked('ageConfirmed'),
     consent: checked('consent'),
     locale: (s('locale') === 'en' ? 'en' : 'ar') as 'ar' | 'en',
     website: s('website'),
