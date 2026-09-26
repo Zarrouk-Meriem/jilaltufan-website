@@ -227,7 +227,9 @@ async function seed() {
           program: program.id,
           number,
           startsAt: placeholderStart(mo.y, mo.m),
-          durationMinutes: 90,
+          // The lecturer file gives Open Training 90 to 120 minutes: the session holds the whole
+          // slot; attendance measures what was actually held (heldMinutes in zoom/reconcile).
+          durationMinutes: p.slug === 'open-training' ? 120 : 90,
           sessionStatus: 'scheduled',
           status: 'published',
         },

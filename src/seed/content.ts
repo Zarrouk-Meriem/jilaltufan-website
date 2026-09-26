@@ -301,8 +301,8 @@ export const PROGRAM_CONTENT: Record<
       ],
     },
     duration: {
-      ar: 'ثماني محاضرات، محاضرة واحدة شهريًا من أكتوبر إلى مايو',
-      en: 'Eight lectures, one per month from October to May',
+      ar: '8 حصص',
+      en: '8 sessions',
     },
   },
   'palestine-our-compass': {

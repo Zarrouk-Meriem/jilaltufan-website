@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import report from '../fixtures/zoom-participants.json'
 import {
+  heldMinutes,
   minutesByEmail,
   minutesNeeded,
   reconcile,
@@ -121,5 +122,32 @@ describe('reconcile', () => {
       sessionMinutes: SESSION_MINUTES,
     })
     expect(out.create[0]).toMatchObject({ state: 'present', minutes: 30 })
+  })
+})
+
+// A lecture runs 90 to 120 minutes (the academy's lecturer file, 2026-09-26); the session
+// stores 120, so «half» is measured against what was actually held.
+describe('heldMinutes', () => {
+  const at = (m: number) => new Date(Date.UTC(2026, 9, 15, 13, m)).toISOString()
+  const lecture: ZoomParticipant[] = [
+    { user_email: 'a@example.com', duration: 90 * 60, join_time: at(0), leave_time: at(90) },
+    { user_email: 'b@example.com', duration: 50 * 60, join_time: at(5), leave_time: at(55) },
+  ]
+
+  it('is first join to last leave', () => expect(heldMinutes(lecture)).toBe(90))
+  it('is 0 when the report has no times', () => expect(heldMinutes([{ duration: 60 }])).toBe(0))
+
+  it('counts a student who stayed for all of a 90-minute lecture in a 120-minute slot', () => {
+    const plan = reconcile({
+      participants: lecture,
+      roster: [
+        { accountId: 1, email: 'a@example.com' },
+        { accountId: 2, email: 'b@example.com' },
+      ],
+      existing: [],
+      sessionMinutes: 120,
+    })
+    // Half of the 90 held, 45: both present — against the 120 slot, b (50) would have been absent.
+    expect(plan.create.map((r) => r.state)).toEqual(['present', 'present'])
   })
 })

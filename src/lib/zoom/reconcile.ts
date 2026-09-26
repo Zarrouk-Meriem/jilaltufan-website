@@ -13,6 +13,27 @@ export type ZoomParticipant = {
   name?: string | null
   /** Seconds in the meeting, for this stretch of attendance. */
   duration?: number | null
+  /** ISO times of this stretch; Zoom's report carries both. */
+  join_time?: string | null
+  leave_time?: string | null
+}
+
+/**
+ * How long the meeting actually ran: first join to last leave, in minutes; 0 when the report
+ * carries no times. A lecture's slot is 90 to 120 minutes (the academy's lecturer file,
+ * 2026-09-26) and the session stores the longer end, so «half the session» is measured against
+ * what was actually held — a student who stayed for all of a 90-minute lecture is present.
+ */
+export function heldMinutes(participants: ZoomParticipant[]): number {
+  let first = Infinity
+  let last = -Infinity
+  for (const p of participants) {
+    const join = p.join_time ? Date.parse(p.join_time) : NaN
+    const leave = p.leave_time ? Date.parse(p.leave_time) : NaN
+    if (Number.isFinite(join)) first = Math.min(first, join)
+    if (Number.isFinite(leave)) last = Math.max(last, leave)
+  }
+  return last > first ? Math.round((last - first) / 60_000) : 0
 }
 
 export type RosterEntry = { accountId: number; email: string }
@@ -87,7 +108,8 @@ export function reconcile(args: {
   sessionMinutes: number
 }): Reconciled {
   const { participants, roster, existing, sessionMinutes } = args
-  const threshold = minutesNeeded(sessionMinutes)
+  const held = heldMinutes(participants)
+  const threshold = minutesNeeded(held > 0 ? Math.min(sessionMinutes, held) : sessionMinutes)
   const minutes = minutesByEmail(participants)
   const byAccount = new Map(existing.map((r) => [r.accountId, r]))
 
