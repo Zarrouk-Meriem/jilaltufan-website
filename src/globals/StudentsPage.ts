@@ -37,8 +37,8 @@ export const StudentsPage: GlobalConfig = {
               type: 'checkbox',
               defaultValue: true,
               label: {
-                ar: 'إظهار بطاقة «حسابي — قريبًا»',
-                en: 'Show the "My account — soon" card',
+                ar: 'إظهار بطاقة الحساب (الدخول إلى النافذة)',
+                en: 'Show the account card (sign in to the window)',
               },
             },
           ],

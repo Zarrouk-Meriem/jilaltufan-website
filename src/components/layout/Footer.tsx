@@ -40,6 +40,8 @@ export async function Footer({ locale }: { locale: string }) {
       links: [
         { href: '/students', label: t('nav.students') },
         { href: '/instructors', label: t('nav.instructors') },
+        // The windows themselves: /account sends a signed-out visitor to the sign-in form.
+        { href: '/account', label: t('nav.signIn') },
         { href: '/knowledge/minbar', label: t('footer.minbar') },
         { href: '/knowledge/materials', label: t('footer.materials') },
         { href: '/events', label: t('footer.camp') },

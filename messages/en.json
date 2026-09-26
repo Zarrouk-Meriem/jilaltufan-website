@@ -26,6 +26,7 @@
     "events": "Events",
     "students": "Student window",
     "instructors": "Instructor window",
+    "signIn": "Sign in",
     "apply": "Apply now",
     "contact": "Contact",
     "projects": "Projects",
@@ -750,15 +751,19 @@
         "a": "The Academy's team reviews applications, then contacts you at the email address you registered; once accepted, you choose your program."
       }
     ],
-    "accountTitle": "My account",
-    "accountSoon": "Coming soon",
-    "accountBody": "You'll be able to follow your sessions and materials from your own account.",
+    "accountTitle": "Your academy account",
+    "accountBody": "Once your application is accepted, your account opens: your programs, sessions, materials, certificates and the team’s announcements.",
+    "accountCta": "Sign in to your window",
+    "accountForgot": "Forgot your password?",
+    "accountNotYet": "Not applied yet?",
     "contactTitle": "Have a question?",
     "contactBody": "The Academy's team answers through the contact form."
   },
   "instructors": {
     "title": "Instructor **window**",
     "intro": "The instructor directory, and what an instructor needs to deliver a session and share materials.",
+    "accountCta": "Sign in to the instructor window",
+    "accountNote": "A guest instructor’s account opens with an invitation from the Academy team.",
     "directoryTitle": "Instructors",
     "empty": "Instructor profiles haven't been published yet.",
     "forTitle": "For instructors",

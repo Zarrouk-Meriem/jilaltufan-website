@@ -7,7 +7,6 @@ import { PageIntro } from '@/components/sections/PageIntro'
 import { ProgramFilter } from '@/components/sections/ProgramFilter'
 import { SessionRow } from '@/components/sections/SessionRow'
 import { Accordion } from '@/components/ui/Accordion'
-import { Badge } from '@/components/ui/Badge'
 import { ButtonLink } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { SectionHeading } from '@/components/ui/SectionHeading'
@@ -123,7 +122,12 @@ export default async function StudentsPage({
         title={t('students.title')}
         intro={textOr(cms.intro, t('students.intro'))}
         ordinal={t('nav.students')}
-      />
+      >
+        {/* The way into the window itself: /account sends a signed-out visitor to sign in. */}
+        <ButtonLink href="/account" className="mt-8">
+          {t('students.accountCta')}
+        </ButtonLink>
+      </PageIntro>
       <div className="container-site grid gap-12 py-14 md:grid-cols-12 md:py-20">
         <div className="flex flex-col gap-20 md:col-span-8">
           <section>
@@ -263,15 +267,23 @@ export default async function StudentsPage({
 
         <aside className="flex flex-col gap-4 md:col-span-4">
           {cms.showAccountCard !== false ? (
-            <div className="rounded-brand border border-line bg-paper-2 p-6" aria-disabled="true">
-              <div className="flex items-center justify-between gap-3">
-                <span className="inline-flex items-center gap-2 text-md font-semibold text-ink-900">
-                  <Icon name="lock" className="size-4 text-navy-900" />
-                  {t('students.accountTitle')}
-                </span>
-                <Badge tone="muted">{t('students.accountSoon')}</Badge>
-              </div>
+            <div className="rounded-brand border border-line bg-paper-2 p-6">
+              <h2 className="inline-flex items-center gap-2 text-md font-semibold text-ink-900">
+                <Icon name="lock" className="size-4 text-navy-900" />
+                {t('students.accountTitle')}
+              </h2>
               <p className="mt-3 text-sm text-ink-700">{t('students.accountBody')}</p>
+              <ButtonLink href="/account" size="sm" className="mt-4">
+                {t('students.accountCta')}
+              </ButtonLink>
+              <ul className="mt-4 flex flex-col gap-2 text-sm">
+                <li>
+                  <TextLink href="/account/forgot">{t('students.accountForgot')}</TextLink>
+                </li>
+                <li className="text-ink-700">
+                  {t('students.accountNotYet')} <TextLink href="/apply">{t('nav.apply')}</TextLink>
+                </li>
+              </ul>
             </div>
           ) : null}
           <div className="rounded-brand border border-line p-6">

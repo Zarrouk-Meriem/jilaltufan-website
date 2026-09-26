@@ -25,6 +25,7 @@ export async function SiteHeader({ locale }: { locale: string }) {
     utility: [
       { href: '/students', label: t('nav.students') },
       { href: '/instructors', label: t('nav.instructors') },
+      { href: '/account', label: t('nav.signIn') },
     ],
     apply: { href: '/apply', label: t('nav.apply') },
   }

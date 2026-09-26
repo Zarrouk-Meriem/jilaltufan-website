@@ -63,7 +63,12 @@ export default async function InstructorsPage({ params }: PageProps<'/[locale]/i
         title={t('instructors.title')}
         intro={textOr(cms.intro, t('instructors.intro'))}
         ordinal={t('nav.instructors')}
-      />
+      >
+        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <ButtonLink href="/account">{t('instructors.accountCta')}</ButtonLink>
+          <p className="text-sm text-ink-700">{t('instructors.accountNote')}</p>
+        </div>
+      </PageIntro>
       <div className="container-site flex flex-col gap-20 py-14 md:py-20">
         <section>
           <SectionHeading
