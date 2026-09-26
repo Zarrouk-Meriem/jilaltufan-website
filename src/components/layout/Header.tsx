@@ -15,6 +15,8 @@ type Props = {
   primary: NavItem[]
   utility: NavItem[]
   apply: NavItem
+  /** The way into the student and instructor windows (user decision, 2026-09-26). */
+  signIn: NavItem
   labels: {
     mainNav: string
     utilityNav: string
@@ -25,7 +27,7 @@ type Props = {
   }
 }
 
-export function Header({ locale, primary, utility, apply, labels }: Props) {
+export function Header({ locale, primary, utility, apply, signIn, labels }: Props) {
   const [compact, setCompact] = useState(false)
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
@@ -132,6 +134,12 @@ export function Header({ locale, primary, utility, apply, labels }: Props) {
               tone="muted"
               className="hidden md:inline-flex"
             />
+            <Link
+              href={signIn.href as never}
+              className="link-grow relative hidden h-9 items-center text-sm text-ink-500 hover:text-ink-900 md:inline-flex"
+            >
+              {signIn.label}
+            </Link>
             <ButtonLink href={apply.href as never} size="md" className="max-sm:hidden">
               {apply.label}
             </ButtonLink>

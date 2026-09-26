@@ -38,6 +38,7 @@ export async function SiteHeader({ locale }: { locale: string }) {
       primary={primary.length ? primary : defaults.primary}
       utility={utility.length ? utility : defaults.utility}
       apply={cta ?? defaults.apply}
+      signIn={{ href: '/account', label: t('nav.signInShort') }}
       labels={{
         mainNav: t('a11y.mainNavigation'),
         utilityNav: t('a11y.utilityNavigation'),
