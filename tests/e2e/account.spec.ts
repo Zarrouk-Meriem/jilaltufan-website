@@ -1164,7 +1164,12 @@ test('badges: earned ones in full, the rest faded with how to earn them, drafts 
 
   // Deleting a badge takes it back from everyone (its awards go with it).
   for (const id of [manual, oneSession, certificate, draft]) await api.delete(`/api/badges/${id}`)
-  const left = await api.get(`/api/badge-awards?where[account][equals]=${account.id}&limit=0`)
+  // Its own badges' awards only: a run cut short leaves its badges behind, and an automatic
+  // one among them is earned by this account too (seen after an interrupted run, 2026-09-26).
+  const left = await api.get(
+    `/api/badge-awards?where[account][equals]=${account.id}` +
+      `&where[badge][in]=${[manual, oneSession, certificate, draft].join(',')}&limit=0`,
+  )
   expect((await left.json()).totalDocs).toBe(0)
   await api.delete(`/api/accounts/${account.id}`)
   await api.dispose()
