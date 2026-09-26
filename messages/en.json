@@ -686,12 +686,8 @@
     "conductTitle": "Code of conduct",
     "conduct": [
       {
-        "title": "Academic integrity",
-        "text": "Full commitment to scholarly honesty, and avoiding cheating, plagiarism, or passing off the work of others in any form."
-      },
-      {
         "title": "Attendance",
-        "text": "Attending lectures and training workshops at their scheduled times, within the permitted absence rates before a warning or dismissal."
+        "text": "Attending lectures and training workshops at their scheduled times, within the permitted absence rates."
       },
       {
         "title": "Active participation",
@@ -711,11 +707,15 @@
       },
       {
         "title": "Respect for diversity",
-        "text": "Treating every member of the Academy with respect, whatever their nationality, ethnicity, or intellectual background, and avoiding any form of bullying or discrimination."
+        "text": "Treating every member of the Academy with respect, whatever their nationality, ethnicity, or intellectual background, and avoiding any form of discrimination."
       },
       {
         "title": "Official channels",
         "text": "Using the academic email or the official groups set up for contacting the Academy's administration and teaching staff."
+      },
+      {
+        "title": "Academic integrity",
+        "text": "Full commitment to scholarly honesty, and avoiding cheating, plagiarism, or passing off the work of others in any form."
       }
     ],
     "rightsTitle": "Rights the Academy guarantees every participant",
@@ -726,7 +726,7 @@
       },
       {
         "title": "Privacy and confidentiality",
-        "text": "Protection of the participant's personal and academic data, which is not shared."
+        "text": "Protection of the participant's personal and academic data, which is never shared outside the Academy's own bodies."
       }
     ],
     "faqTitle": "Frequently asked questions",
