@@ -3,7 +3,7 @@
  * themselves, free:
  *
  *   - التدريب المفتوح (track `open`) — open to every accepted student;
- *   - **one** of the four البرامج الموجّهة (track `directed`) at a time;
+ *   - **one** of the four programs of التدريب الموجّه (track `directed`) at a time;
  *   - strategic projects (track `projects`) are not a program anyone enrolls in.
  *
  * A student's directed choice is final for them; staff can move or remove it from the

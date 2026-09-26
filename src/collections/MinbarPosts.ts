@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { previewURL } from '@/lib/preview'
 import { publishedOrStaff, staffOnly } from '@/access'
 import {
   localizedRichText,
@@ -20,8 +21,8 @@ export const MinbarPosts: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'publishedAt', 'status'],
     livePreview: {
-      url: ({ data, locale }) =>
-        `${process.env.NEXT_PUBLIC_SITE_URL}/${locale.code}/knowledge/minbar/${data.slug}`,
+      url: ({ data, locale, req }) =>
+        previewURL(`/${locale.code}/knowledge/minbar/${data.slug}`, req),
     },
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },

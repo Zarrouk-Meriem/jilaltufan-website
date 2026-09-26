@@ -27,6 +27,8 @@ const ACCOUNTS = [
   { key: 'ADMIN_B', email: 'e2e-admin-b@example.test', role: 'admin' as const },
   // account.spec.ts
   { key: 'ADMIN_C', email: 'e2e-admin-c@example.test', role: 'admin' as const },
+  // live-preview.spec.ts — an editor, the person who edits the pages
+  { key: 'EDITOR_B', email: 'e2e-editor-b@example.test', role: 'editor' as const },
 ]
 
 const payload = await getPayload({ config })

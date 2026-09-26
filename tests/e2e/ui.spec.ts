@@ -25,3 +25,36 @@ test('on a phone the hero copy sits on a navy scrim; on a wide frame it does not
   await page.setViewportSize({ width: 1280, height: 900 })
   await expect(scrim).toBeHidden()
 })
+
+// A scrolling row inside a grid stretched the whole home page to 876 px on a phone
+// (the Directed Training carousel, 2026-09-26): grid items grow to their content unless told not to.
+test('no page scrolls sideways on a phone', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 })
+  for (const path of ['/ar', '/en', '/ar/programs', '/en/programs']) {
+    await page.goto(path, { waitUntil: 'networkidle' })
+    const [sw, cw] = await page.evaluate(() => [
+      document.documentElement.scrollWidth,
+      document.documentElement.clientWidth,
+    ])
+    expect(sw, path).toBeLessThanOrEqual(cw)
+  }
+})
+
+test('the Directed Training carousel moves one card forward, in either direction of writing', async ({
+  page,
+}) => {
+  for (const [locale, name, next, prev] of [
+    ['ar', 'التدريب الموجّه', 'التالي', 'السابق'],
+    ['en', 'Directed Training', 'Next', 'Previous'],
+  ] as const) {
+    await page.goto(`/${locale}`, { waitUntil: 'networkidle' })
+    const region = page.getByRole('region', { name })
+    const track = region.locator('ul')
+    await expect(region.getByRole('button', { name: prev })).toBeDisabled()
+    await region.getByRole('button', { name: next }).click()
+    await expect
+      .poll(() => track.evaluate((el) => Math.abs(el.scrollLeft)), { message: locale })
+      .toBeGreaterThan(100)
+    await expect(region.getByRole('button', { name: prev })).toBeEnabled()
+  }
+})

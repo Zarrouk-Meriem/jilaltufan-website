@@ -334,6 +334,9 @@ export function logActivity(collection: CollectionConfig): CollectionConfig {
 export function logGlobalActivity(global: GlobalConfig): GlobalConfig {
   const afterChange: NonNullable<GlobalConfig['hooks']>['afterChange'] = [
     async ({ doc, previousDoc, req, global: g }) => {
+      // An autosaved draft (the live-preview pages save one every few hundred milliseconds
+      // of typing) is not a change anyone sees; its publish is, and that one is recorded.
+      if ((doc as { _status?: string })._status === 'draft') return doc
       const cfg = g as SanitizedGlobalConfig
       await record(req, {
         action: 'update',

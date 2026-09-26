@@ -85,3 +85,9 @@
 html {
   overflow-x: clip;
 }
+
+/* Textareas grow with their content (Payload measures a hidden clone); nobody drags them.
+   The corner grip let an editor shrink a field below its text (user feedback, 2026-09-26). */
+html .field-type.textarea textarea {
+  resize: none;
+}

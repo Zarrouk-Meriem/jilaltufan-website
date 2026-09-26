@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs'
  * bug in the code under test (2026-09-24). The environment still wins when it is set, for a
  * CI that would rather pass them in.
  */
-export type StaffKey = 'ADMIN' | 'EDITOR' | 'ADMIN_B' | 'ADMIN_C'
+export type StaffKey = 'ADMIN' | 'EDITOR' | 'ADMIN_B' | 'ADMIN_C' | 'EDITOR_B'
 export type Credentials =
   { email: string; password: string } | { email: undefined; password: undefined }
 

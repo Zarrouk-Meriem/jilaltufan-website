@@ -107,28 +107,26 @@ export default async function ProgramsPage({ params }: PageProps<'/[locale]/prog
         </div>
       </section>
 
+      {/* One strategic project: the card is the section, shown whole the way Open Training
+          is. A heading above it repeated the card word for word (user report, 2026-09-26). */}
       {projects.length ? (
         <section className="container-site py-14 md:py-20">
-          <SectionHeading
-            locale={locale}
-            size="md"
-            ordinal={ordinalFor(2, t)}
-            title={t('programs.projectsTitle')}
-            intro={t('programs.projectsIntro')}
-          />
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
-            {projects.map((p) => (
+          <h2 className="sr-only">{t('programs.projectsTitle')}</h2>
+          <div className="grid gap-4">
+            {projects.map((p, i) => (
               <ProgramCard
                 key={p.id}
+                featured
                 href={`/programs/${p.slug}`}
                 title={p.title}
                 image={mediaImage(p.coverImage, 'card')}
                 description={p.shortDescription}
+                ordinal={projects.length > 1 ? String(i + 1).padStart(2, '0') : ordinalFor(2, t)}
                 trackLabel={trackLabel(p.track, t)}
                 registration={registrationBadge(p.registrationMode, t)}
                 sessionsLabel={sessionsCountLabel(p, t)}
                 seasonLabel={seasonRange(p, t)}
-                motif={p.accentMotif}
+                featuredCta={t('common.readMore')}
               />
             ))}
           </div>

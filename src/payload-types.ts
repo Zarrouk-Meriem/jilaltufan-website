@@ -2634,6 +2634,7 @@ export interface AboutPage {
         id?: string | null;
       }[]
     | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2660,18 +2661,40 @@ export interface HomePage {
   secondaryCtaLabel?: string | null;
   showNextSession?: boolean | null;
   showMission?: boolean | null;
+  missionTitle?: string | null;
+  missionText?: string | null;
+  pillars?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   showPrograms?: boolean | null;
+  programsTitle?: string | null;
+  programsIntro?: string | null;
   showSeason?: boolean | null;
+  seasonTitle?: string | null;
+  seasonIntro?: string | null;
   showUpcoming?: boolean | null;
+  upcomingTitle?: string | null;
+  upcomingIntro?: string | null;
   showCamp?: boolean | null;
+  campTitle?: string | null;
+  campIntro?: string | null;
+  campCtaLabel?: string | null;
   showMinbar?: boolean | null;
+  minbarTitle?: string | null;
   showInstructors?: boolean | null;
+  instructorsTitle?: string | null;
   /**
    * Shows only when Site settings → Statistics is on and has figures.
    */
   showStats?: boolean | null;
+  statsTitle?: string | null;
   closingTitle?: string | null;
   closingText?: string | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2721,6 +2744,7 @@ export interface StudentsPage {
         id?: string | null;
       }[]
     | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2741,6 +2765,7 @@ export interface InstructorsPage {
     | null;
   materialsBody?: string | null;
   scheduleBody?: string | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2906,6 +2931,7 @@ export interface AboutPageSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2923,15 +2949,37 @@ export interface HomePageSelect<T extends boolean = true> {
   secondaryCtaLabel?: T;
   showNextSession?: T;
   showMission?: T;
+  missionTitle?: T;
+  missionText?: T;
+  pillars?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
   showPrograms?: T;
+  programsTitle?: T;
+  programsIntro?: T;
   showSeason?: T;
+  seasonTitle?: T;
+  seasonIntro?: T;
   showUpcoming?: T;
+  upcomingTitle?: T;
+  upcomingIntro?: T;
   showCamp?: T;
+  campTitle?: T;
+  campIntro?: T;
+  campCtaLabel?: T;
   showMinbar?: T;
+  minbarTitle?: T;
   showInstructors?: T;
+  instructorsTitle?: T;
   showStats?: T;
+  statsTitle?: T;
   closingTitle?: T;
   closingText?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2976,6 +3024,7 @@ export interface StudentsPageSelect<T extends boolean = true> {
         answer?: T;
         id?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2994,6 +3043,7 @@ export interface InstructorsPageSelect<T extends boolean = true> {
       };
   materialsBody?: T;
   scheduleBody?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

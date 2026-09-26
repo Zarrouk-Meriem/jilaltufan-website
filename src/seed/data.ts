@@ -123,8 +123,8 @@ export function seasonMonths(season: ProgramSeed['season']) {
 }
 
 export const MISSION = {
-  ar: 'نُعدّ الشباب العربي والمسلم لفهم القضية الفلسطينية ونصرتها بعلمٍ وكفاءة: برامج تربوية ومعرفية وسياسية مباشرة عبر الإنترنت، بمناهج علمية وأدوات عملية، تُرسّخ الهوية وتصنع الأثر في مختلف الميادين.',
-  en: 'We prepare young Arabs and Muslims to understand the Palestinian cause and serve it with knowledge and competence: live online programs in education, knowledge, and politics, built on sound curricula and practical tools, that strengthen identity and make an impact in every field.',
+  ar: 'نُعِدّ جيلًا واعيًا بقضايا أمته، قادرًا على نصرتها بالعلم والعمل. برامج علمية وفكرية وقيادية لفهم القضية الفلسطينية في أبعادها التاريخية والسياسية والفكرية، وتحوّل الوعي إلى معرفةٍ وكفاءةٍ وأثر.',
+  en: "We prepare a generation aware of its nation's causes and able to serve them through knowledge and action. Scholarly, intellectual, and leadership programs to understand the Palestinian cause in its historical, political, and intellectual dimensions, turning awareness into knowledge, competence, and impact.",
 }
 
 /**
@@ -165,7 +165,7 @@ export const WINDOWS: Record<
   ar: {
     how: [
       'جميع الحصص مباشرة على Zoom، ولا توجد تسجيلات.',
-      'التدريب المفتوح ثماني محاضرات شهرية من أكتوبر إلى مايو، والبرامج الموجّهة ست حصص شهرية من يناير إلى يونيو.',
+      'التدريب المفتوح ثماني محاضرات شهرية من أكتوبر إلى مايو، والتدريب الموجّه ست حصص شهرية من يناير إلى يونيو.',
       'المواعيد معلنة بتوقيت القدس، ويعرض الموقع توقيتك المحلي إلى جانبه.',
       'يصلك رابط كل حصة بالبريد الإلكتروني قبل موعدها، ويظهر زر الانضمام على الموقع قبل البداية بـ {minutes} دقيقة.',
     ],
@@ -198,7 +198,7 @@ export const WINDOWS: Record<
   en: {
     how: [
       'All sessions are live on Zoom; there are no recordings.',
-      'Open Training is eight monthly lectures from October to May; the directed programs are six monthly sessions from January to June.',
+      'Open Training is eight monthly lectures from October to May; Directed Training is six monthly sessions from January to June.',
       'Times are announced in Al-Quds time; the site shows your local time beside them.',
       "You receive each session's link by email before it starts, and the join button appears on the site {minutes} minutes before.",
     ],

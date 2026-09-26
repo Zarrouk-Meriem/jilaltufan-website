@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { previewURL } from '@/lib/preview'
 import { publishedOrStaff, staffFieldOnly, staffOnly } from '@/access'
 import { inviteInstructorAccount } from './hooks/instructor-invite'
 import { localizedRichText, localizedText, localizedTextarea, publicMeta, seoField } from '@/fields'
@@ -14,8 +15,7 @@ export const Instructors: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'role', 'status'],
     livePreview: {
-      url: ({ data, locale }) =>
-        `${process.env.NEXT_PUBLIC_SITE_URL}/${locale.code}/instructors/${data.slug}`,
+      url: ({ data, locale, req }) => previewURL(`/${locale.code}/instructors/${data.slug}`, req),
     },
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },

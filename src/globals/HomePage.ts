@@ -1,18 +1,31 @@
 import type { GlobalConfig } from 'payload'
+import { previewURL } from '@/lib/preview'
 import { anyone, staffOnly } from '@/access'
-import { localizedText, localizedTextarea } from '@/fields'
+import type { Field } from 'payload'
+import { localizedText, localizedTextarea, plainText, plainTextarea } from '@/fields'
 
 const toggle = (name: string, label: { ar: string; en: string }, def = true) =>
   ({ name, type: 'checkbox', defaultValue: def, label }) as const
+
+/** One home section: its switch and its texts, folded so the tab reads as a list. */
+const section = (label: { ar: string; en: string }, fields: Field[]): Field => ({
+  type: 'collapsible',
+  label,
+  admin: { initCollapsed: true },
+  fields,
+})
 
 export const HomePage: GlobalConfig = {
   slug: 'home-page',
   label: { ar: 'الصفحة الرئيسية', en: 'Home page' },
   admin: {
     group: { ar: 'الإعدادات', en: 'Settings' },
-    livePreview: { url: ({ locale }) => `${process.env.NEXT_PUBLIC_SITE_URL}/${locale.code}` },
+    livePreview: { url: ({ locale, req }) => previewURL(`/${locale.code}`, req) },
   },
   access: { read: anyone, update: staffOnly },
+  // Autosaved drafts: the live-preview pane follows the typing, and nothing reaches visitors
+  // until «Publish changes».
+  versions: { drafts: { autosave: { interval: 400 } } },
   fields: [
     {
       type: 'tabs',
@@ -79,25 +92,76 @@ export const HomePage: GlobalConfig = {
         },
         {
           label: { ar: 'الأقسام', en: 'Sections' },
+          description: {
+            ar: 'لكل قسم مفتاح إظهاره ونصوصه. الحقل الفارغ يُعرض بالنص الافتراضي. في العناوين، ضع الكلمة المميّزة بين نجمتين: لماذا **الأكاديمية**؟',
+            en: 'Each section has its switch and its texts. An empty field shows the default text. In titles, wrap the accent word in double stars: Why the **Academy**?',
+          },
           fields: [
-            toggle('showMission', { ar: 'الرسالة والركائز', en: 'Mission & pillars' }),
-            toggle('showPrograms', { ar: 'البرامج', en: 'Programs' }),
-            toggle('showSeason', { ar: 'الموسم (الخط الزمني)', en: 'Season timeline' }),
-            toggle('showUpcoming', { ar: 'الحصص القادمة', en: 'Upcoming sessions' }),
-            toggle('showCamp', { ar: 'المخيم', en: 'Camp band' }),
-            toggle('showMinbar', { ar: 'من منبر الطوفان', en: 'From Minbar' }),
-            toggle('showInstructors', { ar: 'المحاضرون', en: 'Instructors' }),
-            {
-              ...toggle('showStats', { ar: 'شريط الإحصاءات', en: 'Statistics band' }, false),
-              admin: {
-                description: {
-                  ar: 'يظهر فقط إذا فُعّلت الإحصاءات وأُدخلت أرقام في إعدادات الموقع → الإحصاءات.',
-                  en: 'Shows only when Site settings → Statistics is on and has figures.',
+            section({ ar: 'الرسالة والركائز', en: 'Mission & pillars' }, [
+              toggle('showMission', { ar: 'إظهار القسم', en: 'Show this section' }),
+              localizedText('missionTitle', { ar: 'العنوان', en: 'Title' }),
+              localizedTextarea('missionText', { ar: 'نص الرسالة', en: 'Mission text' }),
+              {
+                name: 'pillars',
+                type: 'array',
+                localized: true,
+                maxRows: 6,
+                label: { ar: 'الركائز', en: 'Pillars' },
+                labels: {
+                  singular: { ar: 'ركيزة', en: 'Pillar' },
+                  plural: { ar: 'الركائز', en: 'Pillars' },
+                },
+                fields: [
+                  plainText('title', { ar: 'العنوان', en: 'Title' }, { required: true }),
+                  plainTextarea('text', { ar: 'النص', en: 'Text' }, { required: true }),
+                ],
+              },
+            ]),
+            section({ ar: 'البرامج', en: 'Programs' }, [
+              toggle('showPrograms', { ar: 'إظهار القسم', en: 'Show this section' }),
+              localizedText('programsTitle', { ar: 'العنوان', en: 'Title' }),
+              localizedTextarea('programsIntro', { ar: 'المقدّمة', en: 'Intro' }),
+            ]),
+            section({ ar: 'الموسم (الخط الزمني)', en: 'Season timeline' }, [
+              toggle('showSeason', { ar: 'إظهار القسم', en: 'Show this section' }),
+              localizedText('seasonTitle', { ar: 'العنوان', en: 'Title' }),
+              localizedTextarea('seasonIntro', { ar: 'المقدّمة', en: 'Intro' }),
+            ]),
+            section({ ar: 'الحصص القادمة', en: 'Upcoming sessions' }, [
+              toggle('showUpcoming', { ar: 'إظهار القسم', en: 'Show this section' }),
+              localizedText('upcomingTitle', { ar: 'العنوان', en: 'Title' }),
+              localizedTextarea('upcomingIntro', { ar: 'المقدّمة', en: 'Intro' }),
+            ]),
+            section({ ar: 'المخيم', en: 'Camp band' }, [
+              toggle('showCamp', { ar: 'إظهار القسم', en: 'Show this section' }),
+              localizedText('campTitle', { ar: 'العنوان', en: 'Title' }),
+              localizedTextarea('campIntro', { ar: 'المقدّمة', en: 'Intro' }),
+              localizedText('campCtaLabel', { ar: 'نص الزر', en: 'Button label' }),
+            ]),
+            section({ ar: 'من منبر الطوفان', en: 'From Minbar' }, [
+              toggle('showMinbar', { ar: 'إظهار القسم', en: 'Show this section' }),
+              localizedText('minbarTitle', { ar: 'العنوان', en: 'Title' }),
+            ]),
+            section({ ar: 'المحاضرون', en: 'Instructors' }, [
+              toggle('showInstructors', { ar: 'إظهار القسم', en: 'Show this section' }),
+              localizedText('instructorsTitle', { ar: 'العنوان', en: 'Title' }),
+            ]),
+            section({ ar: 'شريط الإحصاءات', en: 'Statistics band' }, [
+              {
+                ...toggle('showStats', { ar: 'إظهار القسم', en: 'Show this section' }, false),
+                admin: {
+                  description: {
+                    ar: 'يظهر فقط إذا فُعّلت الإحصاءات وأُدخلت أرقام في إعدادات الموقع → الإحصاءات.',
+                    en: 'Shows only when Site settings → Statistics is on and has figures.',
+                  },
                 },
               },
-            },
-            localizedText('closingTitle', { ar: 'عنوان الدعوة الختامية', en: 'Closing CTA title' }),
-            localizedTextarea('closingText', { ar: 'نص الدعوة الختامية', en: 'Closing CTA text' }),
+              localizedText('statsTitle', { ar: 'العنوان', en: 'Title' }),
+            ]),
+            section({ ar: 'الدعوة الختامية', en: 'Closing call' }, [
+              localizedText('closingTitle', { ar: 'العنوان', en: 'Title' }),
+              localizedTextarea('closingText', { ar: 'النص', en: 'Text' }),
+            ]),
           ],
         },
       ],

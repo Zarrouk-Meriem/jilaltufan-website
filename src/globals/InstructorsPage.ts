@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { previewURL } from '@/lib/preview'
 import { anyone, staffOnly } from '@/access'
 import { localizedTextarea, plainTextarea } from '@/fields'
 
@@ -13,10 +14,13 @@ export const InstructorsPage: GlobalConfig = {
       en: 'Anything left empty here falls back to the default copy. Instructors themselves are added under "Instructors".',
     },
     livePreview: {
-      url: ({ locale }) => `${process.env.NEXT_PUBLIC_SITE_URL}/${locale.code}/instructors`,
+      url: ({ locale, req }) => previewURL(`/${locale.code}/instructors`, req),
     },
   },
   access: { read: anyone, update: staffOnly },
+  // Autosaved drafts: the live-preview pane follows the typing, and nothing reaches visitors
+  // until «Publish changes».
+  versions: { drafts: { autosave: { interval: 400 } } },
   fields: [
     localizedTextarea('intro', { ar: 'المقدّمة', en: 'Intro' }, { maxLength: 300 }),
     {

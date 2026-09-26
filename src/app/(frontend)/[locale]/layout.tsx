@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Footer } from '@/components/layout/Footer'
+import { LivePreview } from '@/components/layout/LivePreview'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { SkipLink } from '@/components/layout/SkipLink'
 import { localeMeta, routing, type Locale } from '@/i18n/routing'
@@ -51,6 +53,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   const ts = await getTranslations('site')
   const settings = await getSiteSettings(locale)
   const sameAs = (settings.socials ?? []).map((x) => x.url).filter((u): u is string => !!u)
+  const preview = (await draftMode()).isEnabled
+  const tp = await getTranslations('preview')
 
   return (
     <html
@@ -77,6 +81,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             {children}
           </main>
           <Footer locale={locale} />
+          {preview ? <LivePreview label={tp('label')} exitLabel={tp('exit')} /> : null}
         </NextIntlClientProvider>
       </body>
     </html>

@@ -3,7 +3,7 @@
     "name": "Jil Altufan Academy",
     "nameShort": "Jil Altufan",
     "tagline": "Through knowledge, we are liberated.",
-    "mission": "We prepare young Arabs and Muslims to understand the Palestinian cause and serve it with knowledge and competence: live online programs in education, knowledge, and politics, built on sound curricula and practical tools, that strengthen identity and make an impact in every field.",
+    "mission": "We prepare a generation aware of its nation's causes and able to serve them through knowledge and action. Scholarly, intellectual, and leadership programs to understand the Palestinian cause in its historical, political, and intellectual dimensions, turning awareness into knowledge, competence, and impact.",
     "description": "The digital home of Jil Altufan Academy: training programs, live sessions, content and knowledge, and events."
   },
   "a11y": {
@@ -57,6 +57,8 @@
     "readMore": "Read more",
     "viewAll": "View all",
     "back": "Back",
+    "previous": "Previous",
+    "next": "Next",
     "loading": "Loading…",
     "placeholder": "[Placeholder]",
     "comingSoon": "Coming soon",
@@ -103,11 +105,11 @@
       }
     },
     "programsTitle": "Training **programs**",
-    "programsIntro": "One open track for a wide audience, four directed programs of six sessions each, and strategic projects alongside the training.",
+    "programsIntro": "One open track for a wide audience, Directed Training with four programs of six sessions each, and strategic projects alongside the training.",
     "openTrackLabel": "Open track",
-    "directedTrackLabel": "Directed programs",
+    "directedTrackLabel": "Directed Training",
     "seasonTitle": "One **season**, nine stations",
-    "seasonIntro": "October to June: Open Training meets once a month from October to May, and the directed programs once a month from January to June. The current station is marked in red.",
+    "seasonIntro": "October to June: Open Training meets once a month from October to May, and Directed Training once a month from January to June. The current station is marked in red.",
     "upcomingTitle": "Upcoming **sessions**",
     "upcomingIntro": "The next three sessions across all programs, in Al-Quds time and yours.",
     "campTitle": "The **Jil Altufan** Camp",
@@ -183,11 +185,11 @@
   },
   "programs": {
     "title": "Training **programs**",
-    "intro": "Choose your path. Open Training for anyone who wants to begin, the directed programs for those who want to go deeper, and the strategic projects for those who want to act.",
+    "intro": "Choose your path. Open Training for anyone who wants to begin, Directed Training for those who want to go deeper, and the strategic projects for those who want to act.",
     "openTitle": "Open Training",
     "openIntro": "An independent track for the widest circle of the nation's youth: eight monthly lectures from October to May, each season carrying the name of a leading, symbolic figure from the history of the Palestinian cause.",
-    "directedTitle": "Directed programs",
-    "directedIntro": "Directed training builds capability and competence: four programs, two theoretical and two applied, six sessions each from January to June. They run at the same time, and each participant joins one program only.",
+    "directedTitle": "Directed Training",
+    "directedIntro": "Directed Training builds capability and competence: four programs, two theoretical and two applied, six sessions each from January to June. They run at the same time, and each participant joins one program only.",
     "howItWorks": "How the programs work",
     "step1": "Apply to the Academy in three short steps.",
     "step2": "After review and acceptance you choose your program, and the link to each session reaches you before it starts.",
@@ -576,7 +578,7 @@
       "intro": "Open Training is open to everyone accepted, and you may add one directed program. Enrollment is free.",
       "openTitle": "Open Training",
       "openIntro": "Open to everyone accepted by the Academy; you can take it alongside a directed program.",
-      "directedTitle": "Directed programs",
+      "directedTitle": "Directed Training",
       "directedIntro": "You choose one directed program only. Once you confirm, you cannot change it yourself; write to the team if you need to.",
       "state": {
         "available": "Open for enrollment",
@@ -666,7 +668,7 @@
     "howTitle": "How do live sessions work?",
     "how": [
       "All sessions are live on Zoom; there are no recordings.",
-      "Open Training is eight monthly lectures from October to May; the directed programs are six monthly sessions from January to June.",
+      "Open Training is eight monthly lectures from October to May; Directed Training is six monthly sessions from January to June.",
       "Times are announced in Al-Quds time; the site shows your local time beside them.",
       "You receive each session's link by email before it starts, and the join button appears on the site {minutes} minutes before."
     ],
@@ -939,5 +941,9 @@
     "kind": "Kind",
     "issued": "Issued on",
     "number": "Certificate number"
+  },
+  "preview": {
+    "label": "Preview mode: unpublished drafts are showing.",
+    "exit": "Exit"
   }
 }

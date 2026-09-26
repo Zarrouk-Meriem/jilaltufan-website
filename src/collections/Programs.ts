@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { previewURL } from '@/lib/preview'
 import { publishedOrStaff, staffOnly } from '@/access'
 import {
   localizedRichText,
@@ -36,14 +37,13 @@ export const Programs: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'track', 'registrationMode', 'status', 'order'],
     livePreview: {
-      url: ({ data, locale }) =>
-        `${process.env.NEXT_PUBLIC_SITE_URL}/${locale.code}/programs/${data.slug}`,
+      url: ({ data, locale, req }) => previewURL(`/${locale.code}/programs/${data.slug}`, req),
     },
     preview: (data, { locale }) =>
       `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/programs/${data.slug}`,
     description: {
-      ar: 'التدريب المفتوح والبرامج الموجّهة الخمسة. لكل برنامج صفحة خاصة وثماني حصص في الموسم.',
-      en: 'Open Training and the five directed programs. Each has its own page and eight sessions per season.',
+      ar: 'التدريب المفتوح، وبرامج التدريب الموجّه الأربعة، والمشاريع الاستراتيجية. لكل برنامج صفحة خاصة وحصصه في الموسم.',
+      en: 'Open Training, the four programs of Directed Training, and the strategic projects. Each has its own page and its sessions in the season.',
     },
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },

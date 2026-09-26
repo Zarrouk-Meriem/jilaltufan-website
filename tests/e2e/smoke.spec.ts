@@ -88,18 +88,20 @@ test('root redirects by Accept-Language and defaults to Arabic', async ({ browse
   }
 })
 
+// 15 s for each switch: the style guide renders on demand and is the heaviest page; under a
+// full four-worker suite the navigation took longer than 5 s (2026-09-26), alone it never did.
 test('language switch keeps the visitor on the equivalent page', async ({ page }) => {
   await page.goto('/ar/styleguide')
   await page
     .getByRole('contentinfo')
     .getByRole('link', { name: /English/ })
     .click()
-  await expect(page).toHaveURL(/\/en\/styleguide$/)
+  await expect(page).toHaveURL(/\/en\/styleguide$/, { timeout: 15_000 })
   await page
     .getByRole('contentinfo')
     .getByRole('link', { name: /العربية/ })
     .click()
-  await expect(page).toHaveURL(/\/ar\/styleguide$/)
+  await expect(page).toHaveURL(/\/ar\/styleguide$/, { timeout: 15_000 })
 })
 
 test('mobile menu is keyboard operable', async ({ page }) => {

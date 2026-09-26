@@ -229,7 +229,7 @@ export const REGISTRATION_NOTE: Record<'ar' | 'en', Block[]> = {
   ar: [
     {
       type: 'p',
-      text: 'تُعقد البرامج الموجّهة الأربعة في الوقت نفسه، ويلتحق كل مشارك ببرنامج واحد فقط، بحسب اهتمامه وحاجته وتخصّصه.',
+      text: 'تُعقد برامج التدريب الموجّه الأربعة في الوقت نفسه، ويلتحق كل مشارك ببرنامج واحد فقط، بحسب اهتمامه وحاجته وتخصّصه.',
     },
     {
       type: 'ul',
@@ -247,7 +247,7 @@ export const REGISTRATION_NOTE: Record<'ar' | 'en', Block[]> = {
   en: [
     {
       type: 'p',
-      text: 'The four directed programs run at the same time, and each participant joins one program only, according to their interest, need, and background.',
+      text: 'The four programs of Directed Training run at the same time, and each participant joins one program only, according to their interest, need, and background.',
     },
     {
       type: 'ul',

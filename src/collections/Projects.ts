@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { previewURL } from '@/lib/preview'
 import { publishedOrStaff, staffOnly } from '@/access'
 import { localizedRichText, localizedText, localizedTextarea, publicMeta, seoField } from '@/fields'
 
@@ -13,8 +14,7 @@ export const Projects: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'projectStatus', 'status'],
     livePreview: {
-      url: ({ data, locale }) =>
-        `${process.env.NEXT_PUBLIC_SITE_URL}/${locale.code}/projects/${data.slug}`,
+      url: ({ data, locale, req }) => previewURL(`/${locale.code}/projects/${data.slug}`, req),
     },
   },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },

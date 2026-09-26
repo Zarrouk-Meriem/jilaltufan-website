@@ -60,6 +60,7 @@ export default function proxy(req: NextRequest) {
 }
 
 export const config = {
-  // Everything except: Payload (/admin, /api — they set their own headers), Next internals, media, files.
-  matcher: '/((?!admin|api|_next|_vercel|media|.*\\..*).*)',
+  // Everything except: Payload (/admin, /api — they set their own headers), the live-preview
+  // entry (/preview), Next internals, media, files.
+  matcher: '/((?!admin|api|preview|_next|_vercel|media|.*\\..*).*)',
 }

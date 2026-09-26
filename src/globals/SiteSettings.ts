@@ -164,8 +164,8 @@ export const SiteSettings: GlobalConfig = {
               min: 1,
               max: 100,
               label: {
-                ar: 'نسبة الحضور المطلوبة للتخرّج (البرامج الموجّهة، ٪)',
-                en: 'Attendance required to graduate (directed programs, %)',
+                ar: 'نسبة الحضور المطلوبة للتخرّج (التدريب الموجّه، ٪)',
+                en: 'Attendance required to graduate (Directed Training, %)',
               },
               admin: {
                 description: {

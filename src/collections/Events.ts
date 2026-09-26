@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { previewURL } from '@/lib/preview'
 import { publishedOrStaff, staffOnly } from '@/access'
 import {
   localizedRichText,
@@ -18,8 +19,7 @@ export const Events: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'type', 'startDate', 'status'],
     livePreview: {
-      url: ({ data, locale }) =>
-        `${process.env.NEXT_PUBLIC_SITE_URL}/${locale.code}/events/${data.slug}`,
+      url: ({ data, locale, req }) => previewURL(`/${locale.code}/events/${data.slug}`, req),
     },
     description: {
       ar: 'مخيمات جيل الطوفان (نوع "مخيم") والأنشطة والندوات.',

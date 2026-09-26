@@ -5,6 +5,8 @@
  */
 import 'dotenv/config'
 import config from '@payload-config'
+import arMessages from '../../messages/ar.json'
+import enMessages from '../../messages/en.json'
 import { getPayload, type Payload, type Where } from 'payload'
 import type { AboutPage } from '@/payload-types'
 
@@ -292,6 +294,7 @@ async function seed() {
       locale,
       overrideAccess: true,
       data: {
+        _status: 'published' as const,
         title: locale === 'ar' ? 'عن الأكاديمية' : 'About the Academy',
         intro: richText(ABOUT_INTRO[locale]),
         vision: VISION[locale],
@@ -324,6 +327,7 @@ async function seed() {
         locale,
         overrideAccess: true,
         data: {
+          _status: 'published' as const,
           howSteps: w.how.map((text) => ({ text })),
           joinSteps: w.join.map((text) => ({ text })),
           conduct: w.conduct,
@@ -354,7 +358,11 @@ async function seed() {
       slug: 'students-page',
       locale,
       overrideAccess: true,
-      data: { conduct: WINDOWS[locale].conduct, rights: WINDOWS[locale].rights },
+      data: {
+        _status: 'published' as const,
+        conduct: WINDOWS[locale].conduct,
+        rights: WINDOWS[locale].rights,
+      },
     })
     log(`charter ${locale}`)
   }
@@ -371,6 +379,7 @@ async function seed() {
         locale,
         overrideAccess: true,
         data: {
+          _status: 'published' as const,
           guidelines: w.guidelines.map((text) => ({ text })),
           materialsBody: w.materialsBody,
           scheduleBody: w.scheduleBody,
@@ -408,22 +417,57 @@ async function seed() {
       ? `social links + ${missing.map((m) => m.platform).join(', ')}`
       : 'skip social links (complete)',
   )
+  // Home page: fill what is empty, never what an editor wrote (until 2026-09-26 this block
+  // overwrote the hero on every run, and a production seed reset an edited subtitle).
   for (const locale of ['ar', 'en'] as const) {
+    const home = await payload.findGlobal({
+      slug: 'home-page',
+      locale,
+      fallbackLocale: false,
+      overrideAccess: true,
+      depth: 0,
+    })
+    const m = (locale === 'ar' ? arMessages : enMessages).home
+    const defaults = {
+      heroTitle: locale === 'ar' ? 'بالعلم **نتحرّر**' : 'Through knowledge, we are **liberated**',
+      heroSubtitle: MISSION[locale],
+      primaryCtaLabel: locale === 'ar' ? 'استكشف البرامج' : 'Explore programs',
+      secondaryCtaLabel: locale === 'ar' ? 'سجّل الآن' : 'Apply now',
+      missionTitle: m.missionTitle,
+      missionText: MISSION[locale],
+      programsTitle: m.programsTitle,
+      programsIntro: m.programsIntro,
+      seasonTitle: m.seasonTitle,
+      seasonIntro: m.seasonIntro,
+      upcomingTitle: m.upcomingTitle,
+      upcomingIntro: m.upcomingIntro,
+      campTitle: m.campTitle,
+      campIntro: m.campIntro,
+      campCtaLabel: m.campCta,
+      minbarTitle: m.minbarTitle,
+      instructorsTitle: m.instructorsTitle,
+      statsTitle: m.statsTitle,
+      closingTitle: m.closingTitle,
+      closingText: m.closingText,
+    } as const
+    const data: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(defaults))
+      if (!String((home as unknown as Record<string, unknown>)[k] ?? '').trim()) data[k] = v
+    if (!home.pillars?.length)
+      data.pillars = Object.values(m.pillars).map((x) => ({ title: x.title, text: x.text }))
+    if (!Object.keys(data).length) {
+      log(`skip home page ${locale} (complete)`)
+      continue
+    }
     await payload.updateGlobal({
       slug: 'home-page',
       locale,
       overrideAccess: true,
-      data: {
-        heroTitle:
-          locale === 'ar' ? 'بالعلم **نتحرّر**' : 'Through knowledge, we are **liberated**',
-        heroSubtitle: MISSION[locale],
-        primaryCtaLabel: locale === 'ar' ? 'استكشف البرامج' : 'Explore programs',
-        secondaryCtaLabel: locale === 'ar' ? 'سجّل الآن' : 'Apply now',
-        showStats: false,
-      },
+      data: { ...data, _status: 'published' },
     })
+    log(`home page ${locale} + ${Object.keys(data).join(', ')}`)
   }
-  log('site settings + home page')
+  log('site settings')
 
   log('done')
   process.exit(0)

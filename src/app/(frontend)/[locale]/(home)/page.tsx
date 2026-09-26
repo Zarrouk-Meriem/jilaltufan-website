@@ -9,6 +9,7 @@ import { ButtonLink } from '@/components/ui/Button'
 import { LivingCascade } from '@/components/brand/LivingCascade'
 import { DuotoneImage } from '@/components/ui/DuotoneImage'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { Carousel } from '@/components/ui/Carousel'
 import { Reveal } from '@/components/ui/Reveal'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { TextLink } from '@/components/ui/TextLink'
@@ -30,8 +31,9 @@ import { currentSeasonStartYear, formatInZone, monthKeyInZone, seasonMonthKeys }
 import { ordinalFor, registrationBadge, sessionView } from '@/lib/view'
 import { SeasonRange } from '@/components/content/SeasonRange'
 import { cn } from '@/lib/cn'
+import { listOr, textOr } from '@/lib/cms'
 import { mediaImage, optimizedImageUrl } from '@/lib/media'
-import { seasonMonths, seasonRange, sessionsCountLabel, trackLabel } from '@/lib/program'
+import { seasonMonths, seasonRange, sessionsCountLabel } from '@/lib/program'
 
 export const revalidate = 60
 
@@ -79,6 +81,14 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   ])
   const tz = settings.academyTimeZone
   const win = settings.joinWindowMinutes
+  // Editors own the section texts (Home page → Sections); the messages are the fallback.
+  const pillars = listOr(
+    home.pillars?.map((p) => ({ title: p.title, text: p.text })),
+    (['educational', 'cognitive', 'political'] as const).map((k) => ({
+      title: t(`home.pillars.${k}.title`),
+      text: t(`home.pillars.${k}.text`),
+    })),
+  )
 
   // Season stations: count sessions per month across all programs.
   const seasonYear = currentSeasonStartYear(now, tz)
@@ -104,7 +114,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   }))
 
   const open = programs.filter((p) => p.track === 'open')
-  const directed = programs.filter((p) => p.track !== 'open')
+  const directed = programs.filter((p) => p.track === 'directed')
+  const projects = programs.filter((p) => p.track === 'projects')
   const next = upcoming[0] ? sessionView(upcoming[0], locale, tz, win, t, now) : null
   const heroTitle = home.heroTitle || t('home.heroTitle')
   const hero = parseAccent(heroTitle)
@@ -215,7 +226,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 </span>
               ))}
             </h1>
-            <p className="mt-8 max-w-[34rem] text-base text-on-navy-muted">
+            <p className="mt-8 max-w-[38rem] text-md leading-relaxed text-on-navy-muted">
               {home.heroSubtitle || t('site.mission')}
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
@@ -279,19 +290,19 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               <SectionHeading
                 locale={locale}
                 ordinal={ordinalFor(0, t)}
-                title={t('home.missionTitle')}
+                title={textOr(home.missionTitle, t('home.missionTitle'))}
               />
             </div>
             <div className="md:col-span-7">
               <p className="text-lg leading-relaxed text-balance text-ink-900">
-                {t('site.mission')}
+                {textOr(home.missionText, t('site.mission'))}
               </p>
               <ul className="mt-12 grid gap-8 border-t border-line pt-8 sm:grid-cols-3">
-                {(['educational', 'cognitive', 'political'] as const).map((k, i) => (
-                  <li key={k}>
+                {pillars.map((p, i) => (
+                  <li key={i}>
                     <span className="text-xs text-ink-500">{String(i + 1).padStart(2, '0')}</span>
-                    <h3 className="mt-2 text-md">{t(`home.pillars.${k}.title`)}</h3>
-                    <p className="mt-2 text-sm text-ink-700">{t(`home.pillars.${k}.text`)}</p>
+                    <h3 className="mt-2 text-md">{p.title}</h3>
+                    <p className="mt-2 text-sm text-ink-700">{p.text}</p>
                   </li>
                 ))}
               </ul>
@@ -304,7 +315,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {showStats ? (
         <section className="pattern-marks-navy surface-navy">
           <div className="container-site py-14 md:py-20">
-            <h2 className="sr-only">{t('home.statsTitle')}</h2>
+            <h2 className="sr-only">{textOr(home.statsTitle, t('home.statsTitle'))}</h2>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
               {stats.map((s, i) => (
                 <div key={s.id ?? i} className="border-t border-on-navy-line pt-5">
@@ -327,8 +338,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               <SectionHeading
                 locale={locale}
                 ordinal={ordinalFor(1, t)}
-                title={t('home.programsTitle')}
-                intro={t('home.programsIntro')}
+                title={textOr(home.programsTitle, t('home.programsTitle'))}
+                intro={textOr(home.programsIntro, t('home.programsIntro'))}
               />
               <TextLink href="/programs" className="mb-1">
                 {t('home.allPrograms')}
@@ -350,24 +361,52 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                   featuredCta={t('common.readMore')}
                 />
               ))}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-                {directed.map((p, i) => (
-                  <ProgramCard
-                    key={p.id}
-                    href={`/programs/${p.slug}`}
-                    title={p.title}
-                    image={mediaImage(p.coverImage, 'card')}
-                    description={p.shortDescription}
-                    ordinal={String(i + 1).padStart(2, '0')}
-                    trackLabel={trackLabel(p.track, t)}
-                    registration={registrationBadge(p.registrationMode, t)}
-                    sessionsLabel={sessionsCountLabel(p, t)}
-                    seasonLabel={season(p)}
-                    motif={p.accentMotif}
-                    className={i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'}
-                  />
-                ))}
-              </div>
+              {directed.length ? (
+                <div className="mt-8 min-w-0">
+                  <h3 className="text-md font-semibold text-ink-900">
+                    {t('home.directedTrackLabel')}
+                  </h3>
+                  <Carousel
+                    className="mt-4"
+                    label={t('home.directedTrackLabel')}
+                    previousLabel={t('common.previous')}
+                    nextLabel={t('common.next')}
+                  >
+                    {directed.map((p, i) => (
+                      <ProgramCard
+                        key={p.id}
+                        href={`/programs/${p.slug}`}
+                        title={p.title}
+                        image={mediaImage(p.coverImage, 'card')}
+                        description={p.shortDescription}
+                        ordinal={String(i + 1).padStart(2, '0')}
+                        trackLabel={t('home.directedTrackLabel')}
+                        registration={registrationBadge(p.registrationMode, t)}
+                        sessionsLabel={sessionsCountLabel(p, t)}
+                        seasonLabel={season(p)}
+                        motif={p.accentMotif}
+                      />
+                    ))}
+                  </Carousel>
+                </div>
+              ) : null}
+              {/* A single strategic project: shown whole, the way Open Training is. */}
+              {projects.map((p) => (
+                <ProgramCard
+                  key={p.id}
+                  featured
+                  className="mt-8"
+                  href={`/programs/${p.slug}`}
+                  title={p.title}
+                  image={mediaImage(p.coverImage, 'card')}
+                  description={p.shortDescription}
+                  trackLabel={t('home.projectsTrackLabel')}
+                  registration={registrationBadge(p.registrationMode, t)}
+                  sessionsLabel={sessionsCountLabel(p, t)}
+                  seasonLabel={season(p)}
+                  featuredCta={t('common.readMore')}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -380,8 +419,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             <SectionHeading
               locale={locale}
               ordinal={ordinalFor(2, t)}
-              title={t('home.seasonTitle')}
-              intro={t('home.seasonIntro')}
+              title={textOr(home.seasonTitle, t('home.seasonTitle'))}
+              intro={textOr(home.seasonIntro, t('home.seasonIntro'))}
             />
             <div className="mt-14">
               <SeasonTimeline
@@ -401,8 +440,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               <SectionHeading
                 locale={locale}
                 ordinal={ordinalFor(3, t)}
-                title={t('home.upcomingTitle')}
-                intro={t('home.upcomingIntro')}
+                title={textOr(home.upcomingTitle, t('home.upcomingTitle'))}
+                intro={textOr(home.upcomingIntro, t('home.upcomingIntro'))}
               />
               <TextLink href="/schedule" className="mb-1">
                 {t('home.viewSchedule')}
@@ -448,13 +487,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 locale={locale}
                 onNavy
                 ordinal={ordinalFor(4, t)}
-                title={t('home.campTitle')}
-                intro={camp.summary || t('home.campIntro')}
+                title={textOr(home.campTitle, t('home.campTitle'))}
+                intro={camp.summary || textOr(home.campIntro, t('home.campIntro'))}
               />
             </div>
             <div className="md:col-span-5 md:text-end">
               <ButtonLink href={`/events/${camp.slug}`} variant="onNavy" size="lg">
-                {t('home.campCta')}
+                {textOr(home.campCtaLabel, t('home.campCta'))}
               </ButtonLink>
             </div>
           </div>
@@ -468,7 +507,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             <SectionHeading
               locale={locale}
               ordinal={ordinalFor(5, t)}
-              title={t('home.minbarTitle')}
+              title={textOr(home.minbarTitle, t('home.minbarTitle'))}
             />
             <ul className="mt-12 grid gap-8 md:grid-cols-3">
               {posts.map((p) => (
@@ -494,7 +533,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             <SectionHeading
               locale={locale}
               ordinal={ordinalFor(6, t)}
-              title={t('home.instructorsTitle')}
+              title={textOr(home.instructorsTitle, t('home.instructorsTitle'))}
             />
             <ul className="mt-12 grid grid-cols-2 gap-6 md:grid-cols-4">
               {instructors.map((i) => {
@@ -530,8 +569,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           <SectionHeading
             locale={locale}
             align="center"
-            title={home.closingTitle || t('home.closingTitle')}
-            intro={home.closingText || t('home.closingText')}
+            title={home.closingTitle || textOr(home.closingTitle, t('home.closingTitle'))}
+            intro={home.closingText || textOr(home.closingText, t('home.closingText'))}
           />
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <ButtonLink href="/apply" size="lg">

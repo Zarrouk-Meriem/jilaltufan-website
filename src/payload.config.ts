@@ -36,6 +36,7 @@ import { Navigation } from './globals/Navigation'
 import { SiteSettings } from './globals/SiteSettings'
 import { StudentsPage } from './globals/StudentsPage'
 import { logActivity, logGlobalActivity } from './lib/payload/activity'
+import { revalidateGlobalOnChange, revalidateOnChange } from './lib/payload/revalidate'
 import { emailAdapter } from './lib/payload/email'
 import { pinnedDatabaseUrl } from './lib/payload/db-url'
 import { storagePlugins } from './lib/payload/storage'
@@ -50,6 +51,20 @@ const devOrigin =
   process.env.NODE_ENV !== 'production' && process.env.PORT
     ? `http://localhost:${process.env.PORT}`
     : undefined
+
+// What visitors read: a published change to any of these refreshes the cached pages at once
+// (`src/lib/payload/revalidate.ts`). Submissions and accounts are not on the list — an
+// application must not throw away every cached page.
+const PUBLIC = new Set([
+  'programs',
+  'sessions',
+  'instructors',
+  'projects',
+  'minbar-posts',
+  'materials',
+  'events',
+  'media',
+])
 
 // Order = admin sidebar order within each group. Every collection and global is logged
 // to the activity log (`src/lib/payload/activity.ts`); the log itself is the last entry.
@@ -119,6 +134,8 @@ export default buildConfig({
       },
     },
     livePreview: {
+      // The pane beside the form, from the first visit: editors see the page as they type.
+      openByDefault: true,
       breakpoints: [
         { label: 'Mobile', name: 'mobile', width: 375, height: 812 },
         { label: 'Tablet', name: 'tablet', width: 768, height: 1024 },
@@ -135,8 +152,11 @@ export default buildConfig({
     defaultLocale: 'ar',
     fallback: true,
   },
-  collections: [...collections.map(logActivity), Activity(collections, globals)],
-  globals: globals.map(logGlobalActivity),
+  collections: [
+    ...collections.map(logActivity).map((c) => (PUBLIC.has(c.slug) ? revalidateOnChange(c) : c)),
+    Activity(collections, globals),
+  ],
+  globals: globals.map(logGlobalActivity).map(revalidateGlobalOnChange),
   editor: lexicalEditor(),
   email: emailAdapter(),
   secret: process.env.PAYLOAD_SECRET || '',
