@@ -60,12 +60,6 @@ type Row = {
   changes: { field: string; label: { ar: string }; from?: unknown; to?: unknown }[]
 }
 
-async function latest(request: APIRequestContext, limit = 5): Promise<Row[]> {
-  const res = await request.get(`/api/activity?limit=${limit}&sort=-createdAt&depth=0`)
-  expect(res.status(), await res.text()).toBe(200)
-  return (await res.json()).docs
-}
-
 /** The rows a given account's own actions produced, asked for by name. */
 async function rowsByUser(request: APIRequestContext, email: string): Promise<Row[]> {
   const res = await request.get(
@@ -241,7 +235,11 @@ test('a re-save with no change records the save and nothing else', async ({ page
   const settings = await request.get('/api/globals/site-settings?locale=ar&depth=0')
   const { contactEmail } = (await settings.json()) as { contactEmail: string }
   await request.post('/api/globals/site-settings?locale=ar', { data: { contactEmail } })
-  const [row] = await latest(request, 1)
+  // Its own row, not simply the newest: account.spec creates accounts in another worker at
+  // the same moment, and one of those rows landed on top here under a full suite (2026-09-25).
+  const [row] = (await rowsByUser(request, admin.email!)).filter(
+    (r) => r.target === 'site-settings',
+  )
   expect(row).toMatchObject({ action: 'update', target: 'site-settings', changes: [] })
 })
 

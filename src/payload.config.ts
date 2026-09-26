@@ -110,6 +110,13 @@ export default buildConfig({
         Logo: '@/components/admin/Logo#Logo',
         Icon: '@/components/admin/Icon#Icon',
       },
+      views: {
+        // Payload's own page left a browser signed in to a window stuck (see the component).
+        unauthorized: {
+          Component: '@/components/admin/Unauthorized#UnauthorizedView',
+          path: '/unauthorized',
+        },
+      },
     },
     livePreview: {
       breakpoints: [

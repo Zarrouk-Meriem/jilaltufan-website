@@ -675,6 +675,47 @@ test('an account is not staff: no admin, and no reading anyone else', async ({ p
   await expect(page).not.toHaveURL(/\/admin\/collections/)
 })
 
+// Seen on production, 2026-09-25: a browser signed in to a window opened /admin and was
+// stuck — Payload's «Log out» there calls /api/users/logout, which refuses an account.
+test('a window account on /admin is told who it is and can sign out to let staff in', async ({
+  page,
+}) => {
+  const { email, password } = await activatedAccount(page)
+  const login = await page.request.post('/api/accounts/login', { data: { email, password } })
+  expect(login.status(), await login.text()).toBe(200)
+
+  // Payload honours the cookie only on a same-origin request, so ask from inside the page.
+  const inPage = (path: string, method = 'GET') =>
+    page.evaluate(
+      async ([p, m]) => {
+        const r = await fetch(p, { method: m, credentials: 'include' })
+        return { status: r.status, body: await r.json() }
+      },
+      [path, method] as const,
+    )
+
+  await page.goto('/admin')
+  // The cause: the staff sign-out refuses an account, and the account stays signed in.
+  expect((await inPage('/api/users/logout', 'POST')).status).toBe(403)
+  expect((await inPage('/api/accounts/me')).body.user?.email).toBe(email)
+  await expect(page).toHaveURL(/\/admin\/unauthorized$/)
+  await expect(page.getByRole('heading', { name: 'لوحة الإدارة لفريق الأكاديمية' })).toBeVisible()
+  await expect(page.getByText(email)).toBeVisible()
+  await expect(page.getByRole('link', { name: 'العودة إلى نافذتي' })).toHaveAttribute(
+    'href',
+    '/ar/account',
+  )
+
+  await page.getByRole('button', { name: 'اخرج وادخل بحساب الفريق' }).click()
+  await expect(page).toHaveURL(/\/admin\/login/, { timeout: 15_000 })
+  expect((await inPage('/api/accounts/me')).body.user).toBeNull()
+
+  // And the door is open for staff now.
+  expect((await page.request.post('/api/users/login', { data: admin })).status()).toBe(200)
+  await page.goto('/admin')
+  await expect(page).not.toHaveURL(/unauthorized|login/)
+})
+
 /** Signs in through the form, the way a student does. */
 async function signInAs(page: Page, email: string, password: string) {
   await page.goto('/ar/account/sign-in')
