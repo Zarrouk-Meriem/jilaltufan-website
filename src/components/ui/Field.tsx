@@ -147,9 +147,13 @@ export function Checkbox({
   label,
   error,
   id,
+  required,
   className,
   ...rest
-}: { label: React.ReactNode; error?: string; id: string } & Omit<ComponentProps<'input'>, 'type'>) {
+}: { label: React.ReactNode; error?: string; id: string; required?: boolean } & Omit<
+  ComponentProps<'input'>,
+  'type' | 'required'
+>) {
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="flex items-start gap-3 text-sm text-ink-700">
@@ -158,13 +162,23 @@ export function Checkbox({
           type="checkbox"
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
+          // Marked, not the native attribute: the browser's own bubble would pre-empt the
+          // form's error line, like every other field here.
+          aria-required={required || undefined}
           className={cn(
             'check-brand mt-1 size-4 shrink-0 cursor-pointer scroll-mt-44 appearance-none rounded-brand border border-line-strong bg-paper transition-[background-color,border-color] duration-150 ease-brand checked:border-red-600 checked:bg-red-600 hover:border-ink-700 focus:outline-none focus-visible:border-ink-900 focus-visible:shadow-[var(--focus-halo)] motion-reduce:transition-none',
             className,
           )}
           {...rest}
         />
-        <span>{label}</span>
+        <span>
+          {label}
+          {required ? (
+            <span aria-hidden className="ms-1 text-red-600">
+              *
+            </span>
+          ) : null}
+        </span>
       </label>
       <Message id={id} error={error} />
     </div>

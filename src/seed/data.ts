@@ -3,6 +3,9 @@
  * and every seeded record carries isPlaceholder: true. No people, dates, or
  * statistics are invented — see TODO.md for what the academy must supply.
  */
+import arMessages from '../../messages/ar.json'
+import enMessages from '../../messages/en.json'
+
 export const SEASON = { startYear: 2026, endYear: 2027 }
 
 export const PLACEHOLDER = { ar: '[نص مؤقت]', en: '[Placeholder]' }
@@ -143,14 +146,16 @@ export const SOCIALS: {
 /**
  * Student / instructor window copy — the same built-in text as messages/*.json, entered
  * into Payload so editors have a starting point. The seed only writes it while the
- * globals are empty; the conduct line is a marked placeholder until the academy sends its own.
+ * globals are empty. The participation charter is the academy's own (supplied 2026-09-26),
+ * read from the message files so the two copies cannot drift.
  */
 export const WINDOWS: Record<
   'ar' | 'en',
   {
     how: string[]
     join: string[]
-    conduct: string[]
+    conduct: { title: string; text: string }[]
+    rights: { title: string; text: string }[]
     faq: [string, string][]
     guidelines: string[]
     materialsBody: string
@@ -170,7 +175,8 @@ export const WINDOWS: Record<
       'ادخل باسمك الحقيقي كما سجّلته حتى يتعرّف عليك المحاضر.',
       'أبقِ الميكروفون مغلقًا حتى يُطلب منك التحدّث.',
     ],
-    conduct: ['[نص مؤقت: يحدّده فريق الأكاديمية]'],
+    conduct: arMessages.students.conduct,
+    rights: arMessages.students.rights,
     faq: [
       ['هل تُسجَّل الحصص؟', 'لا. جميع الحصص مباشرة فقط.'],
       [
@@ -202,7 +208,8 @@ export const WINDOWS: Record<
       'Join with your real name as registered so the instructor recognises you.',
       "Keep your microphone muted until you're invited to speak.",
     ],
-    conduct: ["[Placeholder: to be defined by the Academy's team]"],
+    conduct: enMessages.students.conduct,
+    rights: enMessages.students.rights,
     faq: [
       ['Are sessions recorded?', 'No. All sessions are live only.'],
       [

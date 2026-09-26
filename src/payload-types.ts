@@ -2702,6 +2702,14 @@ export interface StudentsPage {
     | null;
   conduct?:
     | {
+        title?: string | null;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  rights?:
+    | {
+        title?: string | null;
         text: string;
         id?: string | null;
       }[]
@@ -2950,6 +2958,14 @@ export interface StudentsPageSelect<T extends boolean = true> {
   conduct?:
     | T
     | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  rights?:
+    | T
+    | {
+        title?: T;
         text?: T;
         id?: T;
       };

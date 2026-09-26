@@ -26,7 +26,7 @@ const valid = {
   hearAbout: 'friend',
   motivation: 'أريد الالتحاق لأنني أبحث عن مسار تربوي ومعرفي جاد.',
   aboutYou: 'طالبة في السنة الثالثة، مهتمة بالإعلام والعمل التطوعي.',
-  cv: undefined,
+  cv: new File([new Uint8Array(512)], 'cv.pdf', { type: 'application/pdf' }),
   pledge: true,
   consent: true,
   locale: 'ar',
@@ -101,8 +101,12 @@ describe('applySchema', () => {
     })
     expect(png.success).toBe(false)
     if (!png.success) expect(toFieldErrors(png.error).cv).toBe('cvType')
-    // An untouched file input registers as an empty string: no file, not an error.
-    expect(applySchema.safeParse({ ...valid, cv: '' }).success).toBe(true)
+    // An untouched file input registers as an empty string: no file, and a CV is required.
+    for (const none of ['', undefined]) {
+      const r = applySchema.safeParse({ ...valid, cv: none })
+      expect(r.success).toBe(false)
+      if (!r.success) expect(toFieldErrors(r.error).cv).toBe('required')
+    }
   })
 
   it('rejects a filled honeypot', () => {

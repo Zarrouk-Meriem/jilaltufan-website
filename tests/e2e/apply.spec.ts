@@ -68,9 +68,31 @@ test('a filled honeypot is silently accepted (bots learn nothing) but not surfac
 }) => {
   await page.goto('/en/apply', { waitUntil: 'networkidle' })
   await fillThroughToLastStep(page, 'en')
+  await page
+    .getByLabel(L.en.cv)
+    .setInputFiles({ name: 'cv.pdf', mimeType: 'application/pdf', buffer: MINIMAL_PDF })
   await page.locator('#website').fill('http://spam.example', { force: true })
   await page.getByRole('button', { name: L.en.submit }).click()
   await expect(page.getByRole('status')).toBeVisible({ timeout: 20_000 })
+})
+
+// A CV is required (user decision, 2026-09-26), and every required box says so: the pledge
+// and the consent looked optional beside fields marked with «*» (user report, same day).
+test('a CV is required, and the CV, pledge and consent are marked required', async ({ page }) => {
+  await page.goto('/ar/apply', { waitUntil: 'networkidle' })
+  await fillThroughToLastStep(page, 'ar')
+  for (const field of [
+    page.locator('label[for="cv"]'),
+    page.locator('label[for="pledge"]'),
+    page.locator('label[for="consent"]'),
+  ])
+    await expect(field.first()).toContainText('*')
+  await expect(page.locator('#pledge')).toHaveAttribute('aria-required', 'true')
+  await expect(page.locator('#consent')).toHaveAttribute('aria-required', 'true')
+
+  await page.getByRole('button', { name: L.ar.submit }).click()
+  await expect(page.locator('#cv-error')).toContainText(L.ar.required)
+  await expect(page.getByRole('status')).toHaveCount(0)
 })
 
 test('the country combobox filters as you type and picks with the keyboard', async ({ page }) => {

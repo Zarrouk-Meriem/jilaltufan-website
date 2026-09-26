@@ -21,6 +21,7 @@ import * as migration_20260924_183138_certificates from './20260924_183138_certi
 import * as migration_20260924_190938_badges from './20260924_190938_badges'
 import * as migration_20260924_205223_staff_tools from './20260924_205223_staff_tools'
 import * as migration_20260924_212009_instructor_files from './20260924_212009_instructor_files'
+import * as migration_20260926_104704_conduct_rights from './20260926_104704_conduct_rights'
 
 export const migrations = [
   {
@@ -137,5 +138,10 @@ export const migrations = [
     up: migration_20260924_212009_instructor_files.up,
     down: migration_20260924_212009_instructor_files.down,
     name: '20260924_212009_instructor_files',
+  },
+  {
+    up: migration_20260926_104704_conduct_rights.up,
+    down: migration_20260926_104704_conduct_rights.down,
+    name: '20260926_104704_conduct_rights',
   },
 ]

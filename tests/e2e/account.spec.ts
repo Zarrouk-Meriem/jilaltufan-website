@@ -182,7 +182,8 @@ test('the window shows the student their own application, sessions and materials
   await page.getByLabel('البريد الإلكتروني').fill(email)
   await page.getByLabel(/^كلمة السر/).fill(password)
   await page.getByRole('button', { name: 'دخول' }).click()
-  await expect(page).toHaveURL(/\/ar\/account$/)
+  // The action, the redirect and the overview's first render: 15 s, as in signInAs.
+  await expect(page).toHaveURL(/\/ar\/account$/, { timeout: 15_000 })
 
   // The overview: where they stand, and the next thing in their calendar.
   const main = page.locator('main')
@@ -258,7 +259,8 @@ test('a student edits their own name, and changes their password with the old on
   await page.getByLabel('البريد الإلكتروني').fill(email)
   await page.getByLabel(/^كلمة السر/).fill(password)
   await page.getByRole('button', { name: 'دخول' }).click()
-  await expect(page).toHaveURL(/\/ar\/account$/)
+  // The action, the redirect and the overview's first render: 15 s, as in signInAs.
+  await expect(page).toHaveURL(/\/ar\/account$/, { timeout: 15_000 })
 
   await page.goto('/ar/account/profile')
   await page.getByLabel(/^الاسم(?! الرسمي)/).fill('اسم جديد')
@@ -382,7 +384,8 @@ test('a guest sees their session, and sends a file only for a session of theirs'
   await page.getByLabel('البريد الإلكتروني').fill(email)
   await page.getByLabel(/^كلمة السر/).fill(password)
   await page.getByRole('button', { name: 'دخول' }).click()
-  await expect(page).toHaveURL(/\/ar\/account$/)
+  // The action, the redirect and the overview's first render: 15 s, as in signInAs.
+  await expect(page).toHaveURL(/\/ar\/account$/, { timeout: 15_000 })
 
   // The guest's overview, then the page where materials are sent.
   const main = page.locator('main')
@@ -476,7 +479,8 @@ test('the register is staff-only, sticks against Zoom, and shows the student the
   await page.getByLabel('البريد الإلكتروني').fill(email)
   await page.getByLabel(/^كلمة السر/).fill(password)
   await page.getByRole('button', { name: 'دخول' }).click()
-  await expect(page).toHaveURL(/\/ar\/account$/)
+  // The action, the redirect and the overview's first render: 15 s, as in signInAs.
+  await expect(page).toHaveURL(/\/ar\/account$/, { timeout: 15_000 })
   await expect(page.locator('main')).toContainText('حضرت 1 من')
   await expect(page.locator('main')).toContainText('بعذر')
 
@@ -577,7 +581,8 @@ test('the window and the profile page raise nothing in the console', async ({ pa
   await page.getByLabel('البريد الإلكتروني').fill(email)
   await page.getByLabel(/^كلمة السر/).fill(password)
   await page.getByRole('button', { name: 'دخول' }).click()
-  await expect(page).toHaveURL(/\/ar\/account$/)
+  // The action, the redirect and the overview's first render: 15 s, as in signInAs.
+  await expect(page).toHaveURL(/\/ar\/account$/, { timeout: 15_000 })
   await page.goto('/ar/account/profile')
   await expect(page.getByLabel(/^الاسم(?! الرسمي)/)).toBeVisible()
 

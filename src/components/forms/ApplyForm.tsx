@@ -514,6 +514,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
         />
         <FileInput
           id="cv"
+          required
           label={t('fields.cv')}
           hint={t('hints.cv')}
           accept={CV_ACCEPT}
@@ -525,6 +526,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
         <div className="flex flex-col gap-4 border-t border-line pt-6">
           <Checkbox
             id="pledge"
+            required
             error={err('pledge')}
             label={t.rich('fields.pledge', {
               conduct: (chunks) => (
@@ -537,6 +539,7 @@ export function ApplyForm({ action, countries, dialCodes, turnstileSiteKey }: Pr
           />
           <Checkbox
             id="consent"
+            required
             error={err('consent')}
             label={t.rich('fields.consent', {
               privacy: (chunks) => (

@@ -72,7 +72,23 @@ export const StudentsPage: GlobalConfig = {
               type: 'array',
               localized: true,
               label: { ar: 'بنود الميثاق', en: 'Conduct points' },
-              fields: [plainTextarea('text', { ar: 'البند', en: 'Point' }, { required: true })],
+              fields: [
+                plainText('title', { ar: 'عنوان البند (اختياري)', en: 'Heading (optional)' }),
+                plainTextarea('text', { ar: 'البند', en: 'Point' }, { required: true }),
+              ],
+            },
+            {
+              name: 'rights',
+              type: 'array',
+              localized: true,
+              label: {
+                ar: 'الحقوق التي تضمنها الأكاديمية للمشارك',
+                en: 'Rights the Academy guarantees every participant',
+              },
+              fields: [
+                plainText('title', { ar: 'عنوان الحق (اختياري)', en: 'Heading (optional)' }),
+                plainTextarea('text', { ar: 'الحق', en: 'Right' }, { required: true }),
+              ],
             },
           ],
         },

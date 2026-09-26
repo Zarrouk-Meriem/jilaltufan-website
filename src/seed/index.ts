@@ -326,13 +326,38 @@ async function seed() {
         data: {
           howSteps: w.how.map((text) => ({ text })),
           joinSteps: w.join.map((text) => ({ text })),
-          conduct: w.conduct.map((text) => ({ text })),
+          conduct: w.conduct,
+          rights: w.rights,
           faq: w.faq.map(([question, answer]) => ({ question, answer })),
         },
       })
     }
     log('students window')
   } else log('skip students window (editor-owned)')
+  // The participation charter arrived after the window was seeded (2026-09-26): replace it
+  // while it is still the placeholder (or empty), never once an editor has written their own.
+  const charterIsPlaceholder = (rows: { text: string }[] | null | undefined) =>
+    !rows?.length || rows.every((r) => /^\[(نص مؤقت|Placeholder)/.test(r.text))
+  for (const locale of ['ar', 'en'] as const) {
+    const current = await payload.findGlobal({
+      slug: 'students-page',
+      locale,
+      fallbackLocale: false,
+      overrideAccess: true,
+      depth: 0,
+    })
+    if (!charterIsPlaceholder(current.conduct)) {
+      log(`skip charter ${locale} (editor-owned)`)
+      continue
+    }
+    await payload.updateGlobal({
+      slug: 'students-page',
+      locale,
+      overrideAccess: true,
+      data: { conduct: WINDOWS[locale].conduct, rights: WINDOWS[locale].rights },
+    })
+    log(`charter ${locale}`)
+  }
   const instructorsPage = await payload.findGlobal({
     slug: 'instructors-page',
     overrideAccess: true,

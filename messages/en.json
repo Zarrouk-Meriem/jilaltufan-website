@@ -356,7 +356,7 @@
       "links": "Optional. A profile link or a username.",
       "motivation": "What do you expect from the program, and what will you do with what you learn? At least 20 characters.",
       "aboutYou": "Your studies or work, your interests, and any experience in public work. At least 20 characters.",
-      "cv": "Optional. PDF or Word, up to 5 MB."
+      "cv": "PDF or Word, up to 5 MB."
     },
     "errors": {
       "required": "This field is required.",
@@ -684,7 +684,51 @@
     "materialsTitle": "My program's materials",
     "noMaterials": "No materials have been published for this program yet.",
     "conductTitle": "Code of conduct",
-    "conduct": ["[Placeholder: to be defined by the Academy's team]"],
+    "conduct": [
+      {
+        "title": "Academic integrity",
+        "text": "Full commitment to scholarly honesty, and avoiding cheating, plagiarism, or passing off the work of others in any form."
+      },
+      {
+        "title": "Attendance",
+        "text": "Attending lectures and training workshops at their scheduled times, within the permitted absence rates before a warning or dismissal."
+      },
+      {
+        "title": "Active participation",
+        "text": "Engaging positively with trainers and fellow participants in discussions and group activities, to get the most out of them."
+      },
+      {
+        "title": "Responsible use of systems",
+        "text": "Keeping your login accounts for the learning platforms safe, and never sharing them with outside parties."
+      },
+      {
+        "title": "Technical readiness",
+        "text": "Making sure your devices are charged, your internet connection is good, and the tools you need are at hand before lectures or tests begin."
+      },
+      {
+        "title": "Digital respect",
+        "text": "No recording, filming, or publishing of lectures or course content outside the official platform without prior written permission, to protect intellectual property and privacy."
+      },
+      {
+        "title": "Respect for diversity",
+        "text": "Treating every member of the Academy with respect, whatever their nationality, ethnicity, or intellectual background, and avoiding any form of bullying or discrimination."
+      },
+      {
+        "title": "Official channels",
+        "text": "Using the academic email or the official groups set up for contacting the Academy's administration and teaching staff."
+      }
+    ],
+    "rightsTitle": "Rights the Academy guarantees every participant",
+    "rights": [
+      {
+        "title": "A safe and fair environment",
+        "text": "The right to learn in a motivating environment, free of bias, built on equal opportunity and fair assessment."
+      },
+      {
+        "title": "Privacy and confidentiality",
+        "text": "Protection of the participant's personal and academic data, which is not shared."
+      }
+    ],
     "faqTitle": "Frequently asked questions",
     "faq": [
       {

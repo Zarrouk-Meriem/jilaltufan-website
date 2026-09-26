@@ -39,7 +39,8 @@ const dateOfBirth = z
 /**
  * The CV arrives as a File from FormData on the server and from the file input on the
  * client; a bare string is what an untouched `<input type="file">` registers as. Anything
- * empty means "no file".
+ * empty means "no file" — and a CV is required (user decision, 2026-09-26; it was optional
+ * until then, so older applications may have none).
  */
 const cv = z
   .unknown()
@@ -49,6 +50,7 @@ const cv = z
       return (v as FileList).item(0) ?? undefined
     return undefined
   })
+  .refine((f) => !!f, 'required')
   .refine((f) => !f || f.size <= CV_MAX_BYTES, 'cvTooLarge')
   .refine(
     (f) =>

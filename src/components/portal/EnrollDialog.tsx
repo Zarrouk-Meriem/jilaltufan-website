@@ -90,6 +90,7 @@ export function EnrollDialog({
             <Checkbox
               id={agreeId}
               name="agree"
+              required
               label={t('dialog.agree')}
               checked={agreed}
               onChange={(e) => setAgreed(e.currentTarget.checked)}

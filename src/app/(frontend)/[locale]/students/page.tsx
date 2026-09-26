@@ -80,19 +80,37 @@ export default async function StudentsPage({
     )
   const how = points(cms.howSteps, 'students.how').map((x) => x.replace('{minutes}', String(win)))
   const join = points(cms.joinSteps, 'students.join')
-  const conduct = points(cms.conduct, 'students.conduct')
+  // The charter's points carry an optional heading («النزاهة الأكاديمية: …»).
+  type Point = { title?: string; text: string }
+  const titled = (
+    rows: { title?: string | null; text: string }[] | null | undefined,
+    key: string,
+  ) =>
+    listOr<Point>(
+      rows?.map((r) => ({ title: r.title || undefined, text: r.text })),
+      t.raw(key) as Point[],
+    )
+  const conduct = titled(cms.conduct, 'students.conduct')
+  const rights = titled(cms.rights, 'students.rights')
   const faq = listOr(
     cms.faq?.map((f) => ({ q: f.question, a: f.answer })),
     t.raw('students.faq') as { q: string; a: string }[],
   )
-  const list = (items: string[]) => (
+  const list = (items: (string | Point)[]) => (
     <ol className="flex flex-col divide-y divide-line border-y border-line">
       {items.map((x, i) => (
         <li key={i} className="flex gap-6 py-4">
           <span className="w-8 shrink-0 text-sm text-red-700 tabular-nums">
             {String(i + 1).padStart(2, '0')}
           </span>
-          <span className="text-ink-900">{x}</span>
+          {typeof x === 'string' ? (
+            <span className="text-ink-900">{x}</span>
+          ) : (
+            <span className="flex flex-col gap-1">
+              {x.title ? <span className="font-semibold text-ink-900">{x.title}</span> : null}
+              <span className={x.title ? 'text-ink-700' : 'text-ink-900'}>{x.text}</span>
+            </span>
+          )}
         </li>
       ))}
     </ol>
@@ -215,6 +233,14 @@ export default async function StudentsPage({
               title={t('students.conductTitle')}
             />
             <div className="mt-8">{list(conduct)}</div>
+            {rights.length ? (
+              <>
+                <h3 className="mt-12 text-lg font-semibold text-ink-900">
+                  {t('students.rightsTitle')}
+                </h3>
+                <div className="mt-6">{list(rights)}</div>
+              </>
+            ) : null}
           </section>
           <section>
             <SectionHeading
